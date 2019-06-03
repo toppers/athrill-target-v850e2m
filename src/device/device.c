@@ -4,6 +4,7 @@
 #include "concrete_executor/target/dbg_target_serial.h"
 #include <stdio.h>
 #include "std_device_ops.h"
+#include "athrill_mpthread.h"
 
 #ifdef CONFIG_STAT_PERF
 ProfStatType cpuemu_dev_timer_prof;
@@ -38,6 +39,7 @@ static DeviceExSerialOpType device_ex_serial_file_op = {
 
 static void device_init_clock(MpuAddressRegionType *region)
 {
+	(void)mpthread_init();
 	/*
 	 * OSTC
 	 */

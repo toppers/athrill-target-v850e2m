@@ -29,7 +29,7 @@ build_all:
 	make -f $(CORE_MKDIR)/Makefile.main all
 	make -f $(CORE_MKDIR)/Makefile.cui all
 	make -f $(CORE_MKDIR)/Makefile.cpu all
-	make -f $(CORE_MKDIR)/Makefile.device all
+	make -f $(TARGET_MKDIR)/Makefile.device all
 	make -f $(CORE_MKDIR)/Makefile.bus all
 	make -f $(CORE_MKDIR)/Makefile.loader all
 	make -f $(CORE_MKDIR)/Makefile.mpu all
@@ -49,7 +49,7 @@ $(LIBCPU):
 	make -f $(CORE_MKDIR)/Makefile.cpu all
 
 $(LIBDEVICE): 
-	make -f $(CORE_MKDIR)/Makefile.device all
+	make -f $(TARGET_MKDIR)/Makefile.device all
 
 $(LIBBUS): 
 	make -f $(CORE_MKDIR)/Makefile.bus all
@@ -65,7 +65,7 @@ $(LIBSTD):
 
 clean:
 	make -f $(CORE_MKDIR)/Makefile.cpu clean
-	make -f $(CORE_MKDIR)/Makefile.device clean
+	make -f $(TARGET_MKDIR)/Makefile.device clean
 	make -f $(CORE_MKDIR)/Makefile.bus clean
 	make -f $(CORE_MKDIR)/Makefile.cui clean
 	make -f $(CORE_MKDIR)/Makefile.loader clean
