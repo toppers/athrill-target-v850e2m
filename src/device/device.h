@@ -13,6 +13,7 @@
 extern void device_init_intc(CpuType *cpu, MpuAddressRegionType *region);
 extern void device_init_timer(MpuAddressRegionType *region);
 extern void device_init_serial(MpuAddressRegionType *region);
+extern void device_init_can(MpuAddressRegionType *region);
 
 /*
  * デバイスクロック供給

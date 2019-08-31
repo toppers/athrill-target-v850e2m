@@ -56,6 +56,7 @@ static void device_init_clock(MpuAddressRegionType *region)
 
 void device_init(CpuType *cpu, DeviceClockType *dev_clock)
 {
+	uint32 enable_mros = 0;
 	char *path;
 	dev_clock->clock = 0;
 	dev_clock->intclock = 0;
@@ -73,6 +74,10 @@ void device_init(CpuType *cpu, DeviceClockType *dev_clock)
 	}
 	else {
 		device_ex_serial_register_ops(1U, &device_ex_serial_op);
+	}
+	cpuemu_get_devcfg_value("DEBUG_FUNC_ENABLE_MROS", &enable_mros);
+	if (enable_mros != 0) {
+		device_init_can(&mpu_address_map.map[MPU_ADDRESS_REGION_INX_CAN]);
 	}
 
 	return;
