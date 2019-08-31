@@ -32,14 +32,35 @@ static AthrillMrosDevPubReqType pub_req_table[MROS_PUB_REQ_NUM] = {
 		{ .topic_name = "CANID_0x100", .pub = NULL },
 		{ .topic_name = "CANID_0x101", .pub = NULL },
 };
+void topic_callback_01(const char *data, int datalen);
+void topic_callback_02(const char *data, int datalen);
 static AthrillMrosDevSubReqType sub_req_table[MROS_SUB_REQ_NUM] = {
-		{ .topic_name = "CANID_0x400", .sub = NULL, .callback = NULL, .sub = NULL },
-		{ .topic_name = "CANID_0x404", .sub = NULL, .callback = NULL, .sub = NULL },
+		{ .topic_name = "CANID_0x400", .sub = NULL, .callback = topic_callback_01, .sub = NULL },
+		{ .topic_name = "CANID_0x404", .sub = NULL, .callback = topic_callback_02, .sub = NULL },
 };
+
+static MpuAddressRegionType *can_data_region;
+void topic_callback_01(const char *data, int datalen)
+{
+	uint32 copylen = datalen;
+	if (copylen > 8) {
+		copylen = 8;
+	}
+	memcpy(&can_data_region->data[0], data, copylen);
+}
+void topic_callback_02(const char *data, int datalen)
+{
+	uint32 copylen = datalen;
+	if (copylen > 8) {
+		copylen = 8;
+	}
+	memcpy(&can_data_region->data[8], data, copylen);
+}
 
 void device_init_can(MpuAddressRegionType *region)
 {
 	int err;
+	can_data_region = region;
 	set_athrill_task();
 	err = athrill_mros_device_pub_register(pub_req_table, MROS_PUB_REQ_NUM);
 	if (err < 0) {
@@ -91,7 +112,10 @@ static Std_ReturnType can_put_data8(MpuAddressRegionType *region, CoreIdType cor
 	*((uint8*)(&region->data[off])) = data;
 
 	if ((addr >= VCAN_TX_FLAG_BASE) && (addr < (VCAN_TX_FLAG_BASE + VCAN_TX_FLAG_SIZE))) {
-		//TODO
+		if (off <= 1) {
+			uint32 tx_addr = VCAN_TX_DATA_0(off) - VCAN_BASE;
+			ros_topic_publish(pub_req_table[off].pub, &region->data[tx_addr], 8U);
+		}
 	}
 
 	return STD_E_OK;
@@ -106,9 +130,6 @@ static Std_ReturnType can_put_data32(MpuAddressRegionType *region, CoreIdType co
 {
 	uint32 off = (addr - region->start);
 	*((uint32*)(&region->data[off])) = data;
-	if ((addr >= VCAN_TX_DATA_BASE) && (addr < (VCAN_TX_DATA_BASE + VCAN_TX_DATA_SIZE))) {
-		//TODO
-	}
 	return STD_E_OK;
 }
 static Std_ReturnType can_get_pointer(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint8 **data)
