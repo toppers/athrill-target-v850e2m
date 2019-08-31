@@ -8,6 +8,7 @@ LIBMPU		:= libmpu.a
 LIBLOADER	:= libloader.a
 LIBSTD		:= libstd.a
 LIBMAIN		:= libmain.a
+LIBMROS		:= libmros.a
 
 
 AROBJS		:= $(LIBMAIN)
@@ -18,6 +19,7 @@ AROBJS		+= $(LIBBUS)
 AROBJS		+= $(LIBMPU)
 AROBJS		+= $(LIBLOADER)
 AROBJS		+= $(LIBSTD)
+AROBJS		+= $(LIBMROS)
 
 all: $(AROBJS)
 	$(RANLIB) $(AROBJS)
@@ -34,6 +36,7 @@ build_all:
 	make -f $(CORE_MKDIR)/Makefile.loader all
 	make -f $(CORE_MKDIR)/Makefile.mpu all
 	make -f $(CORE_MKDIR)/Makefile.std all
+	make -f $(CORE_MKDIR)/Makefile.mros all
 	$(RANLIB) $(AROBJS)
 	$(GCC) -O3 $(LFLAGS) $(AROBJS) -o $(TARGET)  $(LIBS)
 	$(CP) $(TARGET) $(INSTALL_DIR)/
@@ -63,6 +66,9 @@ $(LIBMPU):
 $(LIBSTD):
 	make -f $(CORE_MKDIR)/Makefile.std all
 
+$(LIBMROS):
+	make -f $(CORE_MKDIR)/Makefile.mros all
+
 clean:
 	make -f $(CORE_MKDIR)/Makefile.cpu clean
 	make -f $(TARGET_MKDIR)/Makefile.device clean
@@ -72,6 +78,7 @@ clean:
 	make -f $(CORE_MKDIR)/Makefile.mpu clean
 	make -f $(CORE_MKDIR)/Makefile.std clean
 	make -f $(CORE_MKDIR)/Makefile.main clean
+	make -f $(CORE_MKDIR)/Makefile.mros clean
 	$(RM) -f $(TARGET) 
 	$(RM) -f $(INSTALL_DIR)/$(TARGET)
 		
