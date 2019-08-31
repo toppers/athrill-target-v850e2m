@@ -3,6 +3,7 @@
 
 #define MPU_ADDRESS_REGION_MASK_PH		0x03FFFFFF
 #define MPU_ADDRESS_REGION_MASK_CPU		0x06FFFFFF
+#define MPU_ADDRESS_REGION_MASK_CAN		0x08FFFFFF
 
 #define MPU_ADDRESS_REGION_SIZE_INX_INTC	(0xFFFFF1FB - 0xFFFFF100)
 #define MPU_ADDRESS_REGION_SIZE_INX_SERIAL	(0xFFFFFA78 - 0xFFFFFA00)
@@ -70,6 +71,19 @@ MpuAddressMapType mpu_address_map = {
 						.data		= memory_data_SERIAL,
 						.ops		= &serial_memory_operation
 				},
+				/*
+				 * INDEX :CANレジスタ(仮想用)
+				 */
+				{
+						.type		= DEVICE,
+						.is_malloc	= FALSE,
+						.permission	= MPU_ADDRESS_REGION_PERM_ALL,
+						.start		= 0x08FF0000,
+						.size		= MPU_ADDRESS_REGION_SIZE_INX_CAN,
+						.mask		= MPU_ADDRESS_REGION_MASK_CAN,
+						.data		= memory_data_CAN,
+						.ops		= &can_memory_operation
+				},
 
 				/*
 				 * INDEX :DEVICE(その他内蔵周辺I/O領域)
@@ -111,19 +125,6 @@ MpuAddressMapType mpu_address_map = {
 						.mask		= MPU_ADDRESS_REGION_MASK_CPU,
 						.data		= memory_data_CPU,
 						.ops		= &cpu_register_operation
-				},
-				/*
-				 * INDEX :CANレジスタ(仮想用)
-				 */
-				{
-						.type		= DEVICE,
-						.is_malloc	= FALSE,
-						.permission	= MPU_ADDRESS_REGION_PERM_ALL,
-						.start		= 0x08FF0000,
-						.size		= MPU_ADDRESS_REGION_SIZE_INX_CAN,
-						.mask		= MPU_ADDRESS_REGION_MASK_CPU,
-						.data		= memory_data_CAN,
-						.ops		= &can_memory_operation
 				},
 		}
 };

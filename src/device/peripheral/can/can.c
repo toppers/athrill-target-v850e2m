@@ -86,9 +86,6 @@ static Std_ReturnType can_get_data8(MpuAddressRegionType *region, CoreIdType cor
 	uint32 off = (addr - region->start);
 	*data = *((uint8*)(&region->data[off]));
 
-	if ((addr >= VCAN_RX_FLAG_BASE) && (addr < (VCAN_RX_FLAG_BASE + VCAN_RX_FLAG_SIZE))) {
-		//TODO
-	}
 	return STD_E_OK;
 }
 static Std_ReturnType can_get_data16(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint16 *data)
@@ -101,20 +98,18 @@ static Std_ReturnType can_get_data32(MpuAddressRegionType *region, CoreIdType co
 {
 	uint32 off = (addr - region->start);
 	*data = *((uint32*)(&region->data[off]));
-	if ((addr >= VCAN_RX_DATA_BASE) && (addr < (VCAN_RX_DATA_BASE + VCAN_RX_DATA_SIZE))) {
-		//TODO
-	}
 	return STD_E_OK;
 }
 static Std_ReturnType can_put_data8(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint8 data)
 {
 	uint32 off = (addr - region->start);
+	uint32 mbox;
 	*((uint8*)(&region->data[off])) = data;
 
 	if ((addr >= VCAN_TX_FLAG_BASE) && (addr < (VCAN_TX_FLAG_BASE + VCAN_TX_FLAG_SIZE))) {
-		if (off <= 1) {
-			uint32 tx_addr = VCAN_TX_DATA_0(off) - VCAN_BASE;
-			ros_topic_publish(pub_req_table[off].pub, &region->data[tx_addr], 8U);
+		mbox = addr - VCAN_TX_FLAG_BASE;
+		if (mbox <= 1) {
+			ros_topic_publish(pub_req_table[mbox].pub, &region->data[VCAN_TX_DATA_0(mbox) - region->start], 8U);
 		}
 	}
 
