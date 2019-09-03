@@ -14,12 +14,12 @@
 #define VCAN_TX_FLAG_BASE	0x08FF3000
 #define VCAN_TX_FLAG_SIZE	0x1000
 
-
+#define VCAN_MAX_MBOX_NUM		1024
 /*
  * RX CAN DATA ADDR
  */
-#define VCAN_RX_DATA_0(mbox)	(VCAN_RX_DATA_BASE + ( ( 8 * (mbox) + 0 ) )
-#define VCAN_RX_DATA_1(mbox)	(VCAN_RX_DATA_BASE + ( ( 8 * (mbox) + 4 ) )
+#define VCAN_RX_DATA_0(mbox)	(VCAN_RX_DATA_BASE + ( ( 8 * (mbox) + 0 ) ))
+#define VCAN_RX_DATA_1(mbox)	(VCAN_RX_DATA_BASE + ( ( 8 * (mbox) + 4 ) ))
 
 
 /*
