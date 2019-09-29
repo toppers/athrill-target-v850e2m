@@ -53,6 +53,7 @@ static void device_init_clock(MpuAddressRegionType *region)
 	return;
 }
 
+static uint32 enable_vdev = 0;
 
 void device_init(CpuType *cpu, DeviceClockType *dev_clock)
 {
@@ -79,6 +80,10 @@ void device_init(CpuType *cpu, DeviceClockType *dev_clock)
 	if (enable_mros != 0) {
 		device_init_can(&mpu_address_map.map[MPU_ADDRESS_REGION_INX_CAN]);
 	}
+	cpuemu_get_devcfg_value("DEBUG_FUNC_ENABLE_VDEV", &enable_vdev);
+	if (enable_vdev != 0) {
+		device_init_vdev(&mpu_address_map.map[MPU_ADDRESS_REGION_INX_VDEV]);
+	}
 
 	return;
 }
@@ -96,9 +101,16 @@ void device_supply_clock(DeviceClockType *dev_clock)
 	device_supply_clock_serial(dev_clock);
 	CPUEMU_DEV_SERIAL_PROF_END();
 
+	if (enable_vdev == TRUE) {
+		CPUEMU_DEV_INTR_PROF_START();
+		device_supply_clock_vdev(dev_clock);
+		CPUEMU_DEV_INTR_PROF_END();
+	}
+
 	CPUEMU_DEV_INTR_PROF_START();
 	device_supply_clock_intc(dev_clock);
 	CPUEMU_DEV_INTR_PROF_END();
+
 	return;
 }
 

@@ -27,6 +27,7 @@ VPATH	+=	$(TARGET_DIR)/device/peripheral
 VPATH	+=	$(TARGET_DIR)/device/peripheral/timer
 VPATH	+=	$(TARGET_DIR)/device/peripheral/serial
 VPATH	+=	$(TARGET_DIR)/device/peripheral/can
+VPATH	+=	$(TARGET_DIR)/device/peripheral/vdev
 VPATH	+=	$(TARGET_DIR)/debugger/executor/concrete_executor
 
 
@@ -36,6 +37,7 @@ CFLAGS	+= $(IFLAGS)
 OBJS	:=	device.o
 OBJS	+=	timer.o
 OBJS	+=	can.o
+OBJS	+=	vdev.o
 OBJS	+=	serial.o
 OBJS	+=	dbg_target_serial.o
 OBJS	+=	dbg_target_cpu.o

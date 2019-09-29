@@ -14,6 +14,7 @@ extern void device_init_intc(CpuType *cpu, MpuAddressRegionType *region);
 extern void device_init_timer(MpuAddressRegionType *region);
 extern void device_init_serial(MpuAddressRegionType *region);
 extern void device_init_can(MpuAddressRegionType *region);
+extern void device_init_vdev(MpuAddressRegionType *region);
 
 /*
  * デバイスクロック供給
@@ -21,6 +22,7 @@ extern void device_init_can(MpuAddressRegionType *region);
 extern void device_supply_clock_intc(DeviceClockType *dev_clock);
 extern void device_supply_clock_timer(DeviceClockType *dev_clock);
 extern void device_supply_clock_serial(DeviceClockType *dev_clock);
+extern void device_supply_clock_vdev(DeviceClockType *dev_clock);
 
 /*
  * 割込み関数
