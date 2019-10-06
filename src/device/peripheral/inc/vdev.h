@@ -20,12 +20,12 @@
 /*
  * TX VDEV DATA ADDR
  */
-#define VCAN_TX_DATA(index)	(VDEV_TX_DATA_BASE + ( ( 4 * (index) + 0 ) ))
+#define VDEV_TX_DATA(index)	(VDEV_TX_DATA_BASE + ( ( 4 * (index) + 0 ) ))
 
 /*
  * TX VDEV FLAG ADDR
  */
-#define VCAN_TX_FLAG(index)	(VDEV_TX_FLAG_BASE + ( ( 1 * (index) + 0 ) ))
+#define VDEV_TX_FLAG(index)	(VDEV_TX_FLAG_BASE + ( ( 1 * (index) + 0 ) ))
 
 
 #endif /* _VDEV_H_ */

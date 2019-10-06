@@ -39,6 +39,7 @@ static MpthrIdType vdev_thrid;
 typedef struct {
 	UdpCommConfigType config;
 	UdpCommType comm;
+	const char *remote_ipaddr;
 	MpuAddressRegionType *region;
 } VdevUdpControlType;
 
@@ -50,6 +51,7 @@ static MpthrOperationType vdev_op = {
 };
 
 static VdevUdpControlType vdev_udp_control;
+static char *remote_ipaddr = "127.0.0.1";
 
 void device_init_vdev(MpuAddressRegionType *region)
 {
@@ -59,6 +61,7 @@ void device_init_vdev(MpuAddressRegionType *region)
 	vdev_udp_control.region = region;
 	vdev_udp_control.config.is_wait = TRUE;
 
+	(void)cpuemu_get_devcfg_string("DEBUG_FUNC_VDEV_TX_IPADDR", &remote_ipaddr);
 	err = cpuemu_get_devcfg_value("DEBUG_FUNC_VDEV_TX_PORTNO", &portno);
 	if (err != STD_E_OK) {
 		printf("ERROR: can not load param DEBUG_FUNC_VDEV_TX_PORTNO\n");
@@ -138,10 +141,10 @@ static Std_ReturnType vdev_put_data8(MpuAddressRegionType *region, CoreIdType co
 	*((uint8*)(&region->data[off])) = data;
 	uint32 tx_off = VDEV_TX_DATA_BASE - region->start;
 
-	if (addr == VCAN_TX_FLAG(0)) {
+	if (addr == VDEV_TX_FLAG(0)) {
 		memcpy(&vdev_udp_control.comm.write_data.buffer[0], &region->data[tx_off], UDP_BUFFER_LEN);
 		vdev_udp_control.comm.write_data.len = UDP_BUFFER_LEN;
-		err = udp_comm_write(&vdev_udp_control.comm);
+		err = udp_comm_remote_write(&vdev_udp_control.comm, remote_ipaddr);
 		if (err != STD_E_OK) {
 			printf("WARNING: vdevput_data8: udp send error=%d\n", err);
 		}
