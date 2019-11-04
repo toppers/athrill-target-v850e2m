@@ -2,8 +2,8 @@
 #ifndef _OP_DEC_TYPES_H_
 #define _OP_DEC_TYPES_H_
 
-#include "cpu_dec/op_format.h"
-#include "cpu_dec/op_codeid.h"
+#include "op_format.h"
+#include "op_codeid.h"
 
 #define OP_DECODE_MAX	(3)
 
@@ -24,6 +24,7 @@ typedef struct {
 	OpCodeFormatType12 type12;
 	OpCodeFormatType13 type13;
 	OpCodeFormatType14 type14;
+	OpCodeFormatType_f type_f;
 } OpDecodedCodeType;
 
 #endif /* _OP_DEC_TYPES_H_ */

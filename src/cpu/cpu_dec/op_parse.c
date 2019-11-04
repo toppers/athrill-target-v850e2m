@@ -1,6 +1,6 @@
-#include "cpu_dec/op_parse.h"
-#include "cpu_dec/op_parse_private.h"
-#include "cpu_dec/op_dec.h"
+#include "op_parse.h"
+#include "op_parse_private.h"
+#include "op_dec.h"
 
 int op_parse(uint16 code[OP_DECODE_MAX], OpDecodedCodeType *decoded_code, OperationCodeType *optype)
 {

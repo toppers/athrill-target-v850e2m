@@ -1,6 +1,6 @@
 #include <stdlib.h>
 
-#include "cpu_exec/op_exec_ops.h"
+#include "op_exec_ops.h"
 #include "cpu.h"
 #include "bus.h"
 

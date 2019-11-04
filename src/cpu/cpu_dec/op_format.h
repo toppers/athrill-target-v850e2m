@@ -3,7 +3,7 @@
 
 #include "std_types.h"
 
-#define OP_CODE_FORMAT_NUM	14
+#define OP_CODE_FORMAT_NUM	15
 typedef enum {
 	OP_CODE_FORMAT_1 = 0,
 	OP_CODE_FORMAT_2,
@@ -19,6 +19,7 @@ typedef enum {
 	OP_CODE_FORMAT_12,
 	OP_CODE_FORMAT_13,
 	OP_CODE_FORMAT_14,
+	OP_CODE_FORMAT_F,
 	OP_CODE_FORMAT_UNKNOWN,
 } OpCodeFormatId;
 
@@ -171,4 +172,16 @@ typedef struct {
 	uint16 sub2;	/* 19-16 */
 	uint32 disp_high;	/* 47-32 */
 } OpCodeFormatType14;
+
+/*
+ * 浮動小数点演算命令(Format F:I)
+ */
+typedef struct {
+	uint16 reg2;		/* 15-11 */
+	uint16 opcode;		/* 10-5 */
+	uint16 reg1;		/* 4-0 */
+	uint16 reg3;		/* 31-27 */
+	uint32 subopcode;	/* 26-16 */
+} OpCodeFormatType_f;
+
 #endif /* _OP_FORMAT_H_ */

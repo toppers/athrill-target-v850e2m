@@ -11,6 +11,14 @@
 #define BIT_MASK_16			( (1U << 16U) )
 
 
+/*
+ * 31 ==> 15
+ * 30 ==> 14
+ * 29 ==> 13
+ * 28 ==> 12
+ * 27 ==> 11
+ */
+#define BIT_MASK_31_27		( (1U << 15U) | (1U << 14U) | (1U << 13U) | (1U << 12U) | (1U << 11U) )
 #define BIT_MASK_15_11		( (1U << 15U) | (1U << 14U) | (1U << 13U) | (1U << 12U) | (1U << 11U) )
 #define BIT_MASK_4_0		( (1U <<  4U) | (1U <<  3U) | (1U <<  2U) | (1U <<  1U) | (1U <<  0U) )
 
@@ -27,11 +35,13 @@
 #define GET_VALUE_BIT_6_5(data)		( ( (data) & BIT_MASK_6_5 ) >> 5U )
 #define GET_VALUE_BIT_22_21(data)	( ( (data) & BIT_MASK_22_21 ) >> 21U )
 
+#define GET_VALUE_BIT_31_27(data1)	( ( (data1) & BIT_MASK_31_27 ) >> 11U )
 #define GET_VALUE_BIT_15_11(data)	( ( (data) & BIT_MASK_15_11 ) >> 11U )
 #define GET_VALUE_BIT_4_0(data)		( ( (data) & BIT_MASK_4_0 ) >> 0U )
 
 #define GET_REG1(data)	GET_VALUE_BIT_4_0(data)
 #define GET_REG2(data)	GET_VALUE_BIT_15_11(data)
+#define GET_REG3(data1)	GET_VALUE_BIT_31_27(data1)
 
 #define OP_PARSE_CODE_TABLE_NUM		64U
 #define OP_PARSE_TABLE_INDEX(base_id, sub_id)	( ((base_id) << 2U) | (sub_id) )

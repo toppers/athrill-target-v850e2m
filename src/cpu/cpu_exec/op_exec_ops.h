@@ -4,7 +4,7 @@
 #define _OP_EXEC_OPS_H_
 
 #include "target_cpu.h"
-#include "cpu_common/cpu_ops.h"
+#include "cpu_ops.h"
 
 /*
  * ロード命令
@@ -180,6 +180,48 @@ extern int op_exec_feret_10(TargetCoreType *cpu);
 extern int op_exec_eiret_10(TargetCoreType *cpu);
 extern int op_exec_syscall_10(TargetCoreType *cpu);
 
+
+/*
+ * 浮動小数点用命令
+ */
+extern int op_exec_absf_s_F(TargetCoreType *cpu);
+extern int op_exec_addf_s_F(TargetCoreType *cpu);
+extern int op_exec_addf_d_F(TargetCoreType *cpu);
+extern int op_exec_ceilf_sl_F(TargetCoreType *cpu);
+extern int op_exec_ceilf_sul_F(TargetCoreType *cpu);
+extern int op_exec_ceilf_suw_F(TargetCoreType *cpu);
+extern int op_exec_ceilf_sw_F(TargetCoreType *cpu);
+extern int op_exec_cmovf_s_F(TargetCoreType *cpu);
+extern int op_exec_cmpf_s_F(TargetCoreType *cpu);
+extern int op_exec_cvtf_ds_F(TargetCoreType *cpu);
+extern int op_exec_cvtf_sd_F(TargetCoreType *cpu);
+extern int op_exec_cvtf_ls_F(TargetCoreType *cpu);
+extern int op_exec_cvtf_sl_F(TargetCoreType *cpu);
+extern int op_exec_cvtf_sul_F(TargetCoreType *cpu);
+extern int op_exec_cvtf_suw_F(TargetCoreType *cpu);
+extern int op_exec_cvtf_sw_F(TargetCoreType *cpu);
+extern int op_exec_cvtf_uls_F(TargetCoreType *cpu);
+extern int op_exec_cvtf_uws_F(TargetCoreType *cpu);
+extern int op_exec_cvtf_ws_F(TargetCoreType *cpu);
+extern int op_exec_divf_s_F(TargetCoreType *cpu);
+extern int op_exec_floorf_sl_F(TargetCoreType *cpu);
+extern int op_exec_floorf_sul_F(TargetCoreType *cpu);
+extern int op_exec_floorf_suw_F(TargetCoreType *cpu);
+extern int op_exec_floorf_sw_F(TargetCoreType *cpu);
+extern int op_exec_maxf_s_F(TargetCoreType *cpu);
+extern int op_exec_minf_s_F(TargetCoreType *cpu);
+extern int op_exec_mulf_s_F(TargetCoreType *cpu);
+extern int op_exec_mulf_d_F(TargetCoreType *cpu);
+extern int op_exec_negf_s_F(TargetCoreType *cpu);
+extern int op_exec_recipf_s_F(TargetCoreType *cpu);
+extern int op_exec_rsqrtf_s_F(TargetCoreType *cpu);
+extern int op_exec_sqrtf_s_F(TargetCoreType *cpu);
+extern int op_exec_subf_s_F(TargetCoreType *cpu);
+extern int op_exec_trfsr_F(TargetCoreType *cpu);
+extern int op_exec_trncf_sl_F(TargetCoreType *cpu);
+extern int op_exec_trncf_sul_F(TargetCoreType *cpu);
+extern int op_exec_trncf_suw_F(TargetCoreType *cpu);
+extern int op_exec_trncf_sw_F(TargetCoreType *cpu);
 
 /*
  * ディバッグ機能用命令

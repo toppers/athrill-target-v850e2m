@@ -1,4 +1,4 @@
-#include "cpu_exec/op_exec_ops.h"
+#include "op_exec_ops.h"
 #include "cpu.h"
 #include "bus.h"
 #include "device.h"
@@ -208,11 +208,15 @@ int op_exec_ldsr(TargetCoreType *cpu)
 			return -1;
 		}
 	}
+
 	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: LDSR r%d(0x%x) regID(%d):0x%x\n", cpu->reg.pc, reg2, cpu->reg.r[reg2], regid, *sysreg));
 	*sysreg = cpu->reg.r[reg2];
 	//printf("pu->reg.sys.sysreg[CPU_SYSREG_BSEL]=0x%x\n", cpu->reg.sys.sysreg[CPU_SYSREG_BSEL]);
 	if (cpu->reg.sys.sysreg[CPU_SYSREG_BSEL] == CPU_CONFIG_BSEL_MPU_BNK_SETTING) {
 		cpu_mpu_construct_containers(cpu->core_id);
+	}
+	else if (cpu->reg.sys.sysreg[CPU_SYSREG_BSEL] == CPU_CONFIG_BSEL_FPU_SETTING) {
+		fpu_sync_sysreg(cpu, regid, cpu->reg.sys.current_grp);
 	}
 
 done:	

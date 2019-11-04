@@ -23,14 +23,14 @@ AROBJS		+= $(LIBMROS)
 
 all: $(AROBJS)
 	$(RANLIB) $(AROBJS)
-	$(GCC) -O3 $(LFLAGS) $(AROBJS) -o $(TARGET)  $(LIBS)
+	$(GCC) -O3 $(LFLAGS) $(AROBJS) -o $(TARGET)  $(LIBS) -lm
 	$(CP) $(TARGET) $(INSTALL_DIR)/
 	chmod +x $(INSTALL_DIR)/$(TARGET)
 
 build_all:
 	make -f $(CORE_MKDIR)/Makefile.main all
 	make -f $(CORE_MKDIR)/Makefile.cui all
-	make -f $(CORE_MKDIR)/Makefile.cpu all
+	make -f $(TARGET_MKDIR)/Makefile.cpu all
 	make -f $(TARGET_MKDIR)/Makefile.device all
 	make -f $(CORE_MKDIR)/Makefile.bus all
 	make -f $(CORE_MKDIR)/Makefile.loader all
@@ -49,7 +49,7 @@ $(LIBCUI):
 	make -f $(CORE_MKDIR)/Makefile.cui all
 
 $(LIBCPU): 
-	make -f $(CORE_MKDIR)/Makefile.cpu all
+	make -f $(TARGET_MKDIR)/Makefile.cpu all
 
 $(LIBDEVICE): 
 	make -f $(TARGET_MKDIR)/Makefile.device all
@@ -70,7 +70,7 @@ $(LIBMROS):
 	make -f $(CORE_MKDIR)/Makefile.mros all
 
 clean:
-	make -f $(CORE_MKDIR)/Makefile.cpu clean
+	make -f $(TARGET_MKDIR)/Makefile.cpu clean
 	make -f $(TARGET_MKDIR)/Makefile.device clean
 	make -f $(CORE_MKDIR)/Makefile.bus clean
 	make -f $(CORE_MKDIR)/Makefile.cui clean

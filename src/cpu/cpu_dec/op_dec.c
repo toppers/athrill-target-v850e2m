@@ -1,4 +1,4 @@
-#include "cpu_dec/op_dec.h"
+#include "op_dec.h"
 
 static int OpDecode1(uint16 code[OP_DECODE_MAX], OpDecodedCodeType *decoded_code);
 static int OpDecode2(uint16 code[OP_DECODE_MAX], OpDecodedCodeType *decoded_code);
@@ -14,6 +14,7 @@ static int OpDecode11(uint16 code[OP_DECODE_MAX], OpDecodedCodeType *decoded_cod
 static int OpDecode12(uint16 code[OP_DECODE_MAX], OpDecodedCodeType *decoded_code);
 static int OpDecode13(uint16 code[OP_DECODE_MAX], OpDecodedCodeType *decoded_code);
 static int OpDecode14(uint16 code[OP_DECODE_MAX], OpDecodedCodeType *decoded_code);
+static int OpDecode_f(uint16 code[OP_DECODE_MAX], OpDecodedCodeType *decoded_code);
 OpDecoderType OpDecoder[OP_CODE_FORMAT_NUM] = {
 	{ OpDecode1 },
 	{ OpDecode2 },
@@ -29,6 +30,7 @@ OpDecoderType OpDecoder[OP_CODE_FORMAT_NUM] = {
 	{ OpDecode12 },
 	{ OpDecode13 },
 	{ OpDecode14 },
+	{ OpDecode_f },
 };
 const uint32 OpFormatSize[OP_CODE_FORMAT_NUM] = {
 		2U, /* 1 */
@@ -45,6 +47,7 @@ const uint32 OpFormatSize[OP_CODE_FORMAT_NUM] = {
 		4U, /* 12 */
 		4U, /* 13 */
 		6U, /* 14 */
+		4U, /* f */
 };
 
 
@@ -259,3 +262,22 @@ static int OpDecode14(uint16 code[OP_DECODE_MAX], OpDecodedCodeType *decoded_cod
 	return 0;
 }
 
+static int OpDecode_f(uint16 code[OP_DECODE_MAX], OpDecodedCodeType *decoded_code)
+{
+#if 0
+	typedef struct {
+		uint16 reg2;		/* 15-11 */
+		uint16 opcode;		/* 10-5 */
+		uint16 reg1;		/* 4-0 */
+		uint16 reg3;		/* 31-27 */
+		uint32 subopcode;	/* 26-16 */
+	} OpCodeFormatType_f;
+#endif
+	decoded_code->type_f.reg2		= ( (code[0] >> 11) & 0x001F );
+	decoded_code->type_f.opcode		= ( (code[0] >> 5)  & 0x003F );
+	decoded_code->type_f.reg1		= ( (code[0] >>  0) & 0x001F );
+	decoded_code->type_f.reg3		= ( (code[1] >> 11) & 0x001F );
+	decoded_code->type_f.subopcode	= ( (code[1] >>  0) & 0x03FF );
+
+	return 0;
+}

@@ -2,9 +2,9 @@
 #include "bus.h"
 #include "std_cpu_ops.h"
 #include <stdio.h>
-#include "cpu_common/cpu_ops.h"
-#include "cpu_dec/op_parse.h"
-#include "cpu_exec/op_exec.h"
+#include "cpu_ops.h"
+#include "op_parse.h"
+#include "op_exec.h"
 #include "mpu_types.h"
 #include <sys/time.h>
 #include "std_device_ops.h"

@@ -215,6 +215,21 @@ typedef enum {
 	SYS_REG_DPA5U,
 } SysGrpProcessorProtectPagingBnkRegisterType;
 
+typedef enum {
+	SYS_REG_FPU_RESERVE_0 = 0,
+	SYS_REG_FPU_RESERVE_1,
+	SYS_REG_FPU_RESERVE_2,
+	SYS_REG_FPU_RESERVE_3,
+	SYS_REG_FPU_RESERVE_4,
+	SYS_REG_FPU_RESERVE_5,
+	SYS_REG_FPSR,
+	SYS_REG_FPEPC,
+	SYS_REG_FPST,
+	SYS_REG_FPCC,
+	SYS_REG_FPCFG,
+	SYS_REG_FPEC,
+} SysGrpFpuBnkRegisterType;
+
 #define CPU_REG_UINT_MAX	0xFFFFFFFFULL
 #define CPU_REG_PLUS_MAX	2147483647LL
 #define CPU_REG_MINUS_MAX	-2147483648LL
@@ -248,6 +263,9 @@ static inline uint32 *cpu_get_sysreg(CpuSystemRegisterType *sys, uint32 inx) {
 	else {
 		return &sys->sysreg[inx - CPU_SYSREG_NUM];
 	}
+}
+static inline uint32 *cpu_get_sysreg_fpu(CpuSystemRegisterType *sys, uint32 regid) {
+	return &sys->grp[SYS_GRP_FPU][sys->current_bnk].r[regid];
 }
 
 static inline uint32 cpu_get_psw(CpuSystemRegisterType *sys) {
@@ -344,6 +362,55 @@ static inline uint32 cpu_get_sp(const TargetCoreType *core)
 {
 	return core->reg.r[3];
 }
+
+
+extern void fpu_sync_sysreg(TargetCoreType *cpu, uint32 regid, uint32 selid);
+
+#define SYS_ISSET_BIT(data32p, bitpos)                  ( (*(data32p)) & (1U << (bitpos)) )
+#define SYS_SET_BIT(data32p, bitpos)    \
+do {    \
+        *(data32p) |= (1U << (bitpos)); \
+} while (0)
+#define SYS_CLR_BIT(data32p, bitpos)    \
+do {    \
+        *(data32p) &= ~(1U << (bitpos));        \
+} while (0)
+
+#define SYS_GET_DATA2(data32p, bitpos)                  ( ( (uint8)((*(data32p)) >> (bitpos)) ) & 0x0003 )
+#define SYS_SET_DATA2(data32p, bitpos, data8)   \
+do { \
+        uint32 _org_data = *(data32p);  \
+        uint32 _new_data = _org_data & ~((uint32)(0x0003) << (bitpos)); \
+        _new_data |= ( ((uint32)(data8)) << (bitpos)); \
+        *(data32p) = _new_data;  \
+} while(0)
+
+#define SYS_GET_DATA5(data32p, bitpos)                  ( ( (uint8)((*(data32p)) >> (bitpos)) ) & 0x001F )
+#define SYS_SET_DATA5(data32p, bitpos, data8)   \
+do { \
+        uint32 _org_data = *(data32p);  \
+        uint32 _new_data = _org_data & ~((uint32)(0x001F) << (bitpos)); \
+        _new_data |= ( ((uint32)(data8)) << (bitpos)); \
+        *(data32p) = _new_data;  \
+} while(0)
+
+#define SYS_GET_DATA6(data32p, bitpos)                  ( ( (uint8)((*(data32p)) >> (bitpos)) ) & 0x003F )
+#define SYS_SET_DATA6(data32p, bitpos, data8)   \
+do { \
+        uint32 _org_data = *(data32p);  \
+        uint32 _new_data = _org_data & ~((uint32)(0x003F) << (bitpos)); \
+        _new_data |= ( ((uint32)(data8)) << (bitpos)); \
+        *(data32p) = _new_data;  \
+} while(0)
+
+#define SYS_GET_DATA8(data32p, bitpos)                  ( (uint8)((*(data32p)) >> (bitpos)) )
+#define SYS_SET_DATA8(data32p, bitpos, data8)   \
+do { \
+        uint32 _org_data = *(data32p);  \
+        uint32 _new_data = _org_data & ~((uint32)(0xFFFF) << (bitpos)); \
+        _new_data |= ( ((uint32)(data8)) << (bitpos)); \
+        *(data32p) = _new_data;  \
+} while(0)
 
 
 

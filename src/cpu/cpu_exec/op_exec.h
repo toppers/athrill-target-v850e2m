@@ -2,9 +2,9 @@
 #define _OP_EXEC_H_
 
 #include "target_cpu.h"
-#include "cpu_dec/op_codeid.h"
-#include "cpu_common/cpu_ops.h"
-#include "cpu_exec/op_exec_ops.h"
+#include "op_codeid.h"
+#include "cpu_ops.h"
+#include "op_exec_ops.h"
 
 #define OP_EXEC_TABLE_NUM		OpCodeId_Num
 
@@ -26,6 +26,8 @@ extern OpExecStringType op_exec_string_table[OP_EXEC_TABLE_NUM];
 
 //#define op_exec_add_1 op_exec_add_1
 //#define op_exec_add_2 op_exec_add_2
+#define op_exec_addf_s_F op_exec_addf_s_F
+#define op_exec_addf_d_F op_exec_addf_d_F
 #define op_exec_addi_6 op_exec_addi
 #define op_exec_adf_11 op_exec_adf_11
 #define op_exec_and_1 op_exec_and
@@ -35,16 +37,33 @@ extern OpExecStringType op_exec_string_table[OP_EXEC_TABLE_NUM];
 #define op_exec_bcond_3 op_exec_bcond_3
 #define op_exec_callt_2 NULL /* not supported */
 #define op_exec_caxi_11 op_exec_caxi
+#define op_exec_ceilf_sl_F NULL
+#define op_exec_ceilf_sul_F NULL
+#define op_exec_ceilf_suw_F NULL
+#define op_exec_ceilf_sw_F NULL
 //#define op_exec_clr1_8 op_exec_clr1_8
 //#define op_exec_clr1_9 op_exec_clr1_9
 //#define op_exec_cmov_12 op_exec_cmov_12
+#define op_exec_cmovf_s_F op_exec_cmovf_s_F
 //#define op_exec_cmov_11 op_exec_cmov_11
 //#define op_exec_cmp_1 op_exec_cmp_1
 //#define op_exec_cmp_2 op_exec_cmp_2
+#define op_exec_cmpf_s_F op_exec_cmpf_s_F
 #define op_exec_ctret_10 NULL /* not supported */
+#define op_exec_cvtf_ds_F op_exec_cvtf_ds_F
+#define op_exec_cvtf_ls_F op_exec_cvtf_ls_F
+#define op_exec_cvtf_sd_F op_exec_cvtf_sd_F
+#define op_exec_cvtf_sl_F NULL
+#define op_exec_cvtf_sul_F NULL
+#define op_exec_cvtf_suw_F NULL
+#define op_exec_cvtf_sw_F NULL
+#define op_exec_cvtf_uls_F op_exec_cvtf_uls_F
+#define op_exec_cvtf_uws_F op_exec_cvtf_uws_F
+#define op_exec_cvtf_ws_F op_exec_cvtf_ws_F
 #define op_exec_di_10 op_exec_diei
 #define op_exec_dispose_13 op_exec_dispose
 #define op_exec_div_11 op_exec_div
+#define op_exec_divf_s_F op_exec_divf_s_F
 //#define op_exec_divh_1 op_exec_divh_1
 //#define op_exec_divh_11 op_exec_divh_11
 #define op_exec_divhu_11 op_exec_divhu
@@ -55,6 +74,10 @@ extern OpExecStringType op_exec_string_table[OP_EXEC_TABLE_NUM];
 #define op_exec_eiret_10 op_exec_eiret_10
 #define op_exec_feret_10 op_exec_feret_10
 #define op_exec_fetrap_1 op_exec_fetrap_1
+#define op_exec_floorf_sl_F NULL
+#define op_exec_floorf_sul_F NULL
+#define op_exec_floorf_suw_F NULL
+#define op_exec_floorf_sw_F NULL
 #define op_exec_halt_10 op_exec_halt
 #define op_exec_hsh_12 op_exec_hsh_12
 #define op_exec_hsw_12 op_exec_hsw_12
@@ -78,6 +101,8 @@ extern OpExecStringType op_exec_string_table[OP_EXEC_TABLE_NUM];
 
 #define op_exec_mac_11 op_exec_mac_11
 #define op_exec_macu_11 op_exec_macu_11
+#define op_exec_maxf_s_F op_exec_maxf_s_F
+#define op_exec_minf_s_F op_exec_minf_s_F
 //#define op_exec_mov_1 op_exec_mov_1
 //#define op_exec_mov_2 op_exec_mov_2
 //#define op_exec_mov_6 op_exec_mov_6
@@ -90,6 +115,9 @@ extern OpExecStringType op_exec_string_table[OP_EXEC_TABLE_NUM];
 #define op_exec_mulhi_6 op_exec_mulhi
 #define op_exec_mulu_11 op_exec_mulu
 //#define op_exec_mulu_12 op_exec_mulu_12
+#define op_exec_mulf_s_F op_exec_mulf_s_F
+#define op_exec_negf_s_F op_exec_negf_s_F
+#define op_exec_mulf_d_F op_exec_mulf_d_F
 #define op_exec_nop_1 op_exec_nop
 #define op_exec_not_1 op_exec_not
 //#define op_exec_not1_8 op_exec_not1_8
@@ -97,9 +125,11 @@ extern OpExecStringType op_exec_string_table[OP_EXEC_TABLE_NUM];
 #define op_exec_or_1 op_exec_or
 #define op_exec_ori_6 op_exec_ori
 #define op_exec_prepare_13 op_exec_prepare
+#define op_exec_recipf_s_F NULL
 #define op_exec_reti_10 op_exec_reti
 #define op_exec_rie_1 NULL /* TODO */
 #define op_exec_rie_10 NULL /* TODO */
+#define op_exec_rsqrtf_s_F NULL
 //#define op_exec_sar_2 op_exec_sar_2
 //#define op_exec_sar_9 op_exec_sar_9
 #define op_exec_sar_11 op_exec_sar_11
@@ -130,6 +160,7 @@ extern OpExecStringType op_exec_string_table[OP_EXEC_TABLE_NUM];
 #define op_exec_sld_h_4 op_exec_sldh
 #define op_exec_sld_hu_4 op_exec_sldhu
 #define op_exec_sld_w_4 op_exec_sldw
+#define op_exec_sqrtf_s_F NULL
 #define op_exec_sst_b_4 op_exec_sstb
 #define op_exec_sst_h_4 op_exec_ssth
 #define op_exec_sst_w_4 op_exec_sstw
@@ -141,6 +172,7 @@ extern OpExecStringType op_exec_string_table[OP_EXEC_TABLE_NUM];
 #define op_exec_st_w_7 op_exec_sthw
 #define op_exec_st_w_14 op_exec_st_w_14
 #define op_exec_sub_1 op_exec_sub
+#define op_exec_subf_s_F op_exec_subf_s_F
 #define op_exec_subr_1 op_exec_subr
 #define op_exec_switch_1 op_exec_switch
 #define op_exec_sxb_1 op_exec_sxb
@@ -150,6 +182,11 @@ extern OpExecStringType op_exec_string_table[OP_EXEC_TABLE_NUM];
 #define op_exec_syncp_1 NULL /* not supported */
 #define op_exec_syscall_10 op_exec_syscall_10
 #define op_exec_trap_10 op_exec_trap
+#define op_exec_trfsr_F op_exec_trfsr_F
+#define op_exec_trncf_sl_F NULL
+#define op_exec_trncf_sul_F NULL
+#define op_exec_trncf_suw_F op_exec_trncf_suw_F
+#define op_exec_trncf_sw_F op_exec_trncf_sw_F
 #define op_exec_tst_1 op_exec_tst
 //#define op_exec_tst1_8 op_exec_tst1_8
 //#define op_exec_tst1_9 op_exec_tst1_9

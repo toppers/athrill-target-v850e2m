@@ -72,5 +72,6 @@
  * BSEL プロセッサ保護設定バンク
  */
 #define CPU_CONFIG_BSEL_MPU_BNK_SETTING		0x00001001
+#define CPU_CONFIG_BSEL_FPU_SETTING			0x00002000
 
 #endif /* _CPU_CONFIG_H_ */
