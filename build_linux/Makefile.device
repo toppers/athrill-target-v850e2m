@@ -35,7 +35,11 @@ CFLAGS	:= $(WFLAGS)
 CFLAGS	+= $(IFLAGS)
 
 OBJS	:=	device.o
+ifeq ($(timer32),true)
+OBJS	+=	timer32.o
+else
 OBJS	+=	timer.o
+endif
 OBJS	+=	can.o
 OBJS	+=	vdev.o
 OBJS	+=	serial.o

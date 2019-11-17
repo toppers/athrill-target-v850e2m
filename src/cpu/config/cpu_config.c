@@ -541,6 +541,16 @@ bool cpu_is_halt(CoreIdType core_id)
 {
 	return virtual_cpu.cores[core_id].core.is_halt;
 }
+bool cpu_is_halt_all(void)
+{
+	int core_id;
+	for (core_id = 0; core_id < virtual_cpu.core_id_num; core_id++) {
+		if (virtual_cpu.cores[core_id].core.is_halt == FALSE) {
+			return FALSE;
+		}
+	}
+	return TRUE;
+}
 void cpu_set_current_core(CoreIdType core_id)
 {
 	virtual_cpu.current_core = &virtual_cpu.cores[core_id];
