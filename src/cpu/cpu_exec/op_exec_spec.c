@@ -119,7 +119,7 @@ static bool ldsr_grp_cpu_has_permission(TargetCoreType *cpu, uint32 regid, uint3
 	 */
 	switch (cpu->reg.sys.current_bnk) {
 	case SYS_GRP_CPU_BNK_0:
-		if ((regid == SYS_REG_PSW)) {
+		if (regid == SYS_REG_PSW) {
 			permission = has_permission_psw_change(psw, reg2_data);
 		}
 		break;

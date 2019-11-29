@@ -385,7 +385,7 @@ static int op_parse_base_code_0000_11(uint16 code[OP_DECODE_MAX], OperationCodeT
 	uint16 reg2 = GET_REG2(code[0]);
 	uint32 value = ( (((uint32)code[1]) << 16U) | ((uint32)code[0]) );
 
-	if (( reg2 == 0 )) 
+	if ( reg2 == 0 )
 	{
 		optype->code_id = OpCodeId_JMP_1;
 		optype->format_id = OP_CODE_FORMAT_1;
@@ -412,13 +412,13 @@ static int op_parse_base_code_0001_00(uint16 code[OP_DECODE_MAX], OperationCodeT
 {
 	uint16 reg2 = GET_REG2(code[0]);
 
-	if (( reg2 !=  0 )) 
+	if ( reg2 !=  0 )
 	{
 		optype->code_id = OpCodeId_SATSUBR_1;
 		optype->format_id = OP_CODE_FORMAT_1;
 		return 0;
 	}
-	if (( reg2 == 0 )) 
+	if ( reg2 == 0 )
 	{
 		optype->code_id = OpCodeId_ZXB_1;
 		optype->format_id = OP_CODE_FORMAT_1;
@@ -433,13 +433,13 @@ static int op_parse_base_code_0001_01(uint16 code[OP_DECODE_MAX], OperationCodeT
 {
 	uint16 reg2 = GET_REG2(code[0]);
 
-	if (( reg2 !=  0 )) 
+	if ( reg2 !=  0 )
 	{
 		optype->code_id = OpCodeId_SATSUB_1;
 		optype->format_id = OP_CODE_FORMAT_1;
 		return 0;
 	}
-	if (( reg2 == 0 )) 
+	if ( reg2 == 0 )
 	{
 		optype->code_id = OpCodeId_SXB_1;
 		optype->format_id = OP_CODE_FORMAT_1;
@@ -454,13 +454,13 @@ static int op_parse_base_code_0001_10(uint16 code[OP_DECODE_MAX], OperationCodeT
 {
 	uint16 reg2 = GET_REG2(code[0]);
 
-	if (( reg2 !=  0 )) 
+	if ( reg2 !=  0 )
 	{
 		optype->code_id = OpCodeId_SATADD_1;
 		optype->format_id = OP_CODE_FORMAT_1;
 		return 0;
 	}
-	if (( reg2 == 0 )) 
+	if ( reg2 == 0 )
 	{
 		optype->code_id = OpCodeId_ZXH_1;
 		optype->format_id = OP_CODE_FORMAT_1;
@@ -475,13 +475,13 @@ static int op_parse_base_code_0001_11(uint16 code[OP_DECODE_MAX], OperationCodeT
 {
 	uint16 reg2 = GET_REG2(code[0]);
 
-	if (( reg2 !=  0 )) 
+	if ( reg2 !=  0 )
 	{
 		optype->code_id = OpCodeId_MULH_1;
 		optype->format_id = OP_CODE_FORMAT_1;
 		return 0;
 	}
-	if (( reg2 == 0 )) 
+	if ( reg2 == 0 )
 	{
 		optype->code_id = OpCodeId_SXH_1;
 		optype->format_id = OP_CODE_FORMAT_1;
@@ -608,13 +608,13 @@ static int op_parse_base_code_0100_00(uint16 code[OP_DECODE_MAX], OperationCodeT
 {
 	uint16 reg2 = GET_REG2(code[0]);
 
-	if (( reg2 !=  0 )) 
+	if ( reg2 !=  0 )
 	{
 		optype->code_id = OpCodeId_MOV_2;
 		optype->format_id = OP_CODE_FORMAT_2;
 		return 0;
 	}
-	if (( reg2 == 0 )) 
+	if ( reg2 == 0 )
 	{
 		optype->code_id = OpCodeId_CALLT_2;
 		optype->format_id = OP_CODE_FORMAT_2;
@@ -629,13 +629,13 @@ static int op_parse_base_code_0100_01(uint16 code[OP_DECODE_MAX], OperationCodeT
 {
 	uint16 reg2 = GET_REG2(code[0]);
 
-	if (( reg2 !=  0 )) 
+	if ( reg2 !=  0 )
 	{
 		optype->code_id = OpCodeId_SATADD_2;
 		optype->format_id = OP_CODE_FORMAT_2;
 		return 0;
 	}
-	if (( reg2 == 0 )) 
+	if ( reg2 == 0 )
 	{
 		optype->code_id = OpCodeId_CALLT_2;
 		optype->format_id = OP_CODE_FORMAT_2;
@@ -721,7 +721,7 @@ static int op_parse_base_code_0101_11(uint16 code[OP_DECODE_MAX], OperationCodeT
 	uint16 reg1 = GET_REG1(code[0]);
 	uint16 reg2 = GET_REG2(code[0]);
 
-	if (( reg2 !=  0 )) 
+	if ( reg2 !=  0 )
 	{
 		optype->code_id = OpCodeId_MULH_2;
 		optype->format_id = OP_CODE_FORMAT_2;
@@ -1126,13 +1126,13 @@ static int op_parse_base_code_1100_01(uint16 code[OP_DECODE_MAX], OperationCodeT
 {
 	uint16 reg2 = GET_REG2(code[0]);
 
-	if (( reg2 !=  0 )) 
+	if ( reg2 !=  0 )
 	{
 		optype->code_id = OpCodeId_MOVEA_6;
 		optype->format_id = OP_CODE_FORMAT_6;
 		return 0;
 	}
-	if (( reg2 == 0 )) 
+	if ( reg2 == 0 )
 	{
 		optype->code_id = OpCodeId_MOV_6;
 		optype->format_id = OP_CODE_FORMAT_6;
@@ -1147,13 +1147,13 @@ static int op_parse_base_code_1100_10(uint16 code[OP_DECODE_MAX], OperationCodeT
 {
 	uint16 reg2 = GET_REG2(code[0]);
 
-	if (( reg2 !=  0 )) 
+	if ( reg2 !=  0 )
 	{
 		optype->code_id = OpCodeId_MOVHI_6;
 		optype->format_id = OP_CODE_FORMAT_6;
 		return 0;
 	}
-	if (( reg2 == 0 )) 
+	if ( reg2 == 0 )
 	{
 		optype->code_id = OpCodeId_DISPOSE_13;
 		optype->format_id = OP_CODE_FORMAT_13;
@@ -1168,13 +1168,13 @@ static int op_parse_base_code_1100_11(uint16 code[OP_DECODE_MAX], OperationCodeT
 {
 	uint16 reg2 = GET_REG2(code[0]);
 
-	if (( reg2 !=  0 )) 
+	if ( reg2 !=  0 )
 	{
 		optype->code_id = OpCodeId_SATSUBI_6;
 		optype->format_id = OP_CODE_FORMAT_6;
 		return 0;
 	}
-	if (( reg2 == 0 )) 
+	if ( reg2 == 0 )
 	{
 		optype->code_id = OpCodeId_DISPOSE_13;
 		optype->format_id = OP_CODE_FORMAT_13;
@@ -1232,7 +1232,7 @@ static int op_parse_base_code_1101_11(uint16 code[OP_DECODE_MAX], OperationCodeT
 	uint16 reg2 = GET_REG2(code[0]);
 	uint32 value = ( (((uint32)code[1]) << 16U) | ((uint32)code[0]) );
 
-	if (( reg2 !=  0 )) 
+	if ( reg2 !=  0 )
 	{
 		optype->code_id = OpCodeId_MULHI_6;
 		optype->format_id = OP_CODE_FORMAT_6;

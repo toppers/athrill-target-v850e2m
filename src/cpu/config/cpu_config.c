@@ -225,7 +225,7 @@ bool cpu_illegal_access(CoreIdType core_id)
 	uint32 fepc = cpu_get_current_core_pc();
 	uint32 fepsw = cpu_get_psw(&virtual_cpu.cores[core_id].core.reg.sys);
 	uint32 feic = 0x0;
-	uint32 handler_code;
+	uint32 handler_code = 0x0030;
 	uint32 ecr;
 	uint32 *factor_sysreg;
 	uint32 *setting_sysreg;
@@ -730,7 +730,7 @@ static uint32 *get_cpu_register_addr(MpuAddressRegionType *region, TargetCoreTyp
 	uint32 inx = (addr - CPU_CONFIG_DEBUG_REGISTER_ADDR) / sizeof(uint32);
 
 	//printf("get_cpu_register_addr:inx=%u\n", inx);
-	if (inx >= 0 && inx <= 31) {
+	if (inx <= 31) {
 		return (uint32*)&core->reg.r[inx];
 	}
 	else if (addr == CPU_CONFIG_ADDR_PEID) {
@@ -769,11 +769,11 @@ static Std_ReturnType cpu_put_data32(MpuAddressRegionType *region, CoreIdType co
 	else if (addr == CPU_CONFIG_ADDR_PEID) {
 		return STD_E_SEGV;
 	}
-	else if ((addr == CPU_CONFIG_ADDR_MIR_0)) {
+	else if (addr == CPU_CONFIG_ADDR_MIR_0) {
 		intc_cpu_trigger_interrupt(core_id, CPU_CONFIG_ADDR_MIR_0_INTNO);
 		return STD_E_OK;
 	}
-	else if ((addr == CPU_CONFIG_ADDR_MIR_1)) {
+	else if (addr == CPU_CONFIG_ADDR_MIR_1) {
 		intc_cpu_trigger_interrupt(core_id, CPU_CONFIG_ADDR_MIR_1_INTNO);
 		return STD_E_OK;
 	}
