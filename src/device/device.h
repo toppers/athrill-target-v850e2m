@@ -14,7 +14,7 @@ extern void device_init_intc(CpuType *cpu, MpuAddressRegionType *region);
 extern void device_init_timer(MpuAddressRegionType *region);
 extern void device_init_serial(MpuAddressRegionType *region);
 extern void device_init_can(MpuAddressRegionType *region);
-extern void device_init_vdev(MpuAddressRegionType *region);
+
 
 /*
  * デバイスクロック供給
@@ -22,7 +22,6 @@ extern void device_init_vdev(MpuAddressRegionType *region);
 extern void device_supply_clock_intc(DeviceClockType *dev_clock);
 extern void device_supply_clock_timer(DeviceClockType *dev_clock);
 extern void device_supply_clock_serial(DeviceClockType *dev_clock);
-extern void device_supply_clock_vdev(DeviceClockType *dev_clock);
 
 /*
  * 割込み関数
@@ -45,5 +44,23 @@ extern int device_io_read32(MpuAddressRegionType *region, uint32 addr, uint32 *d
  */
 extern void intc_clr_nmi(TargetCoreType *cpu);
 extern void intc_clr_currlvl_ispr(CoreIdType core_id);
+typedef enum {
+	DevRegisterIo_Read = 0,
+	DevRegisterIo_Write,
+} DevRegisterIoType;
+
+typedef struct {
+	uint32 coreId;
+	uint32 address;
+	uint32 size;
+} DevRegisterIoArgType;
+
+typedef struct {
+	uint32	start_address;			//byte
+	uint32	size;					//byte
+	void (*io) (DevRegisterIoType io_type, DevRegisterIoArgType *arg);
+} DevRegisterMappingType;
+extern void dev_register_mapping_write_data(uint32 coreId, uint32 table_num, DevRegisterMappingType *table, uint32 address, uint32 size);
+extern void dev_register_mapping_read_data(uint32 coreId, uint32 table_num, DevRegisterMappingType *table, uint32 address, uint32 size);
 
 #endif /* _DEVICE_H_ */

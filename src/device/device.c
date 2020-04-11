@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include "std_device_ops.h"
 #include "athrill_mpthread.h"
+#include "vdev/vdev_private.h"
 
 #ifdef CONFIG_STAT_PERF
 ProfStatType cpuemu_dev_timer_prof;
@@ -54,6 +55,7 @@ static void device_init_clock(MpuAddressRegionType *region)
 }
 
 static uint32 enable_vdev = 0;
+static void (*device_supply_clock_vdev_func) (DeviceClockType *) = NULL;
 
 void device_init(CpuType *cpu, DeviceClockType *dev_clock)
 {
@@ -82,7 +84,21 @@ void device_init(CpuType *cpu, DeviceClockType *dev_clock)
 	}
 	cpuemu_get_devcfg_value("DEBUG_FUNC_ENABLE_VDEV", &enable_vdev);
 	if (enable_vdev != 0) {
-		device_init_vdev(&mpu_address_map.map[MPU_ADDRESS_REGION_INX_VDEV]);
+		char *sync_type;
+		VdevIoOperationType op_type = VdevIoOperation_UDP;
+		if (cpuemu_get_devcfg_string("DEBUG_FUNC_VDEV_SIMSYNC_TYPE", &sync_type) == STD_E_OK) {
+			if (strncmp(sync_type, "MMAP", 4) == 0) {
+				op_type = VdevIoOperation_MMAP;
+				device_supply_clock_vdev_func = device_supply_clock_vdev_mmap;
+			}
+			else {
+				device_supply_clock_vdev_func = device_supply_clock_vdev_udp;
+			}
+		}
+		else {
+			device_supply_clock_vdev_func = device_supply_clock_vdev_udp;
+		}
+		device_init_vdev(&mpu_address_map.map[MPU_ADDRESS_REGION_INX_VDEV], op_type);
 	}
 
 	return;
@@ -103,7 +119,7 @@ void device_supply_clock(DeviceClockType *dev_clock)
 
 	if (enable_vdev == TRUE) {
 		CPUEMU_DEV_INTR_PROF_START();
-		device_supply_clock_vdev(dev_clock);
+		device_supply_clock_vdev_func(dev_clock);
 		CPUEMU_DEV_INTR_PROF_END();
 	}
 
@@ -150,3 +166,54 @@ void device_raise_int(uint16 intno)
 }
 
 
+static DevRegisterMappingType *search_map(uint32 table_num, DevRegisterMappingType *table, uint32 address, uint32 size)
+{
+	DevRegisterMappingType *map;
+	int i;
+	uint32 end_addr;
+
+
+	for (i = 0; i < table_num; i++) {
+		map = &table[i];
+		end_addr = map->start_address + map->size;
+		if (address < map->start_address) {
+			continue;
+		}
+		else if (address >= end_addr) {
+			continue;
+		}
+		return map;
+	}
+
+	return NULL;
+}
+
+void dev_register_mapping_write_data(uint32 coreId, uint32 table_num, DevRegisterMappingType *table, uint32 address, uint32 size)
+{
+	DevRegisterIoArgType arg;
+	DevRegisterMappingType *map = search_map(table_num, table, address, size);
+	if (map == NULL) {
+		printf("ERROR:Device can not WRITE HIT address:0x%x %u\n", address, size);
+		return;
+	}
+	arg.coreId = coreId;
+	arg.address = address;
+	arg.size = size;
+	map->io(DevRegisterIo_Write, &arg);
+	return;
+}
+
+void dev_register_mapping_read_data(uint32 coreId, uint32 table_num, DevRegisterMappingType *table, uint32 address, uint32 size)
+{
+	DevRegisterIoArgType arg;
+	DevRegisterMappingType *map = search_map(table_num, table, address, size);
+	if (map == NULL) {
+		printf("ERROR:Device can not READ HIT address:0x%x %u\n", address, size);
+		return;
+	}
+	arg.coreId = coreId;
+	arg.address = address;
+	arg.size = size;
+	map->io(DevRegisterIo_Read, &arg);
+	return;
+}
