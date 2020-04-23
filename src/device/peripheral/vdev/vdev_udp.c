@@ -62,7 +62,16 @@ void device_init_vdev_udp(MpuAddressRegionType *region)
 
 	err = udp_comm_create_ipaddr(&vdev_control.config, &vdev_control.comm, vdev_control.local_ipaddr);
 	ASSERT(err == STD_E_OK);
-
+	//initialize udp write buffer header
+	{
+		VdevTxDataHeadType *tx_headp = (VdevTxDataHeadType*)&vdev_control.comm.write_data.buffer[0];
+		memset((void*)tx_headp, 0, VDEV_TX_DATA_HEAD_SIZE);
+		memcpy((void*)tx_headp->header, VDEV_TX_DATA_HEAD_HEADER, strlen(VDEV_TX_DATA_HEAD_HEADER));
+		tx_headp->version = VDEV_TX_DATA_HEAD_VERSION;
+		tx_headp->ext_off = VDEV_TX_DATA_HEAD_EXT_OFF;
+		tx_headp->ext_size = VDEV_TX_DATA_HEAD_EXT_SIZE;
+		vdev_control.comm.write_data.len = VDEV_TX_DATA_COMM_SIZE;
+	}
 	mpthread_init();
 
 	err = mpthread_register(&vdev_thrid, &vdev_op);
@@ -108,6 +117,38 @@ static Std_ReturnType vdev_thread_do_init(MpthrIdType id)
 	return STD_E_OK;
 }
 
+static Std_ReturnType vdev_udp_packet_check(const char *p)
+{
+	const uint32 *p_int = (const uint32 *)&vdev_control.comm.read_data.buffer[0];
+#if 0
+	printf("HEADER:%c%c%c%c\n", p[0], p[1], p[2], p[3]);
+	printf("version:0x%x\n", p_int[1]);
+	printf("reserve[0]:0x%x\n", p_int[2]);
+	printf("reserve[1]:0x%x\n", p_int[3]);
+	printf("unity_time[0]:0x%x\n", p_int[4]);
+	printf("unity_time[1]:0x%x\n", p_int[5]);
+	printf("ext_off:0x%x\n", p_int[6]);
+	printf("ext_size:0x%x\n", p_int[7]);
+#endif
+	if (strncmp(p, VDEV_RX_DATA_HEAD_HEADER, 4) != 0) {
+		printf("ERROR: INVALID HEADER:%c%c%c%c\n", p[0], p[1], p[2], p[3]);
+		return STD_E_INVALID;
+	}
+	if (p_int[1] != VDEV_RX_DATA_HEAD_VERSION) {
+		printf("ERROR: INVALID VERSION:0x%x\n", p_int[1]);
+		return STD_E_INVALID;
+	}
+	if (p_int[6] != VDEV_RX_DATA_HEAD_EXT_OFF) {
+		printf("ERROR: INVALID EXT_OFF:0x%x\n", p_int[6]);
+		return STD_E_INVALID;
+	}
+	if (p_int[7] != VDEV_RX_DATA_HEAD_EXT_SIZE) {
+		printf("ERROR: INVALID EXT_SIZE:0x%x\n", p_int[7]);
+		return STD_E_INVALID;
+	}
+	return STD_E_OK;
+}
+
 static Std_ReturnType vdev_thread_do_proc(MpthrIdType id)
 {
 	Std_ReturnType err;
@@ -119,9 +160,12 @@ static Std_ReturnType vdev_thread_do_proc(MpthrIdType id)
 		if (err != STD_E_OK) {
 			continue;
 		}
+		if (vdev_udp_packet_check((const char*)&vdev_control.comm.read_data.buffer[0]) != STD_E_OK) {
+			continue;
+		}
 		//gettimeofday(&unity_notify_time, NULL);
 		memcpy(&vdev_control.region->data[off], &vdev_control.comm.read_data.buffer[0], vdev_control.comm.read_data.len);
-		memcpy((void*)&curr_stime, &vdev_control.comm.read_data.buffer[VDEV_SIM_TIME(VDEV_SIM_INX_ME)], 8U);
+		memcpy((void*)&curr_stime, &vdev_control.comm.read_data.buffer[VDEV_RX_SIM_TIME(VDEV_SIM_INX_ME)], 8U);
 
 		//unity_interval_vtime = curr_stime - vdev_udp_control.vdev_sim_time[VDEV_SIM_INX_YOU];
 		//vdev_calc_predicted_virtual_time(vdev_udp_control.vdev_sim_time[VDEV_SIM_INX_YOU], curr_stime);
@@ -142,19 +186,19 @@ static Std_ReturnType vdev_thread_do_proc(MpthrIdType id)
 
 static Std_ReturnType vdev_udp_get_data8(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint8 *data)
 {
-	uint32 off = (addr - region->start);
+	uint32 off = (addr - region->start) + VDEV_RX_DATA_BODY_OFF;
 	*data = *((uint8*)(&region->data[off]));
 	return STD_E_OK;
 }
 static Std_ReturnType vdev_udp_get_data16(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint16 *data)
 {
-	uint32 off = (addr - region->start);
+	uint32 off = (addr - region->start) + VDEV_RX_DATA_BODY_OFF;
 	*data = *((uint16*)(&region->data[off]));
 	return STD_E_OK;
 }
 static Std_ReturnType vdev_udp_get_data32(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint32 *data)
 {
-	uint32 off = (addr - region->start);
+	uint32 off = (addr - region->start) + VDEV_RX_DATA_BODY_OFF;
 	*data = *((uint32*)(&region->data[off]));
 	return STD_E_OK;
 }
@@ -166,10 +210,9 @@ static Std_ReturnType vdev_udp_put_data8(MpuAddressRegionType *region, CoreIdTyp
 	if (addr == VDEV_TX_FLAG(0)) {
 		uint32 tx_off = VDEV_TX_DATA_BASE - region->start;
 		Std_ReturnType err;
-		memcpy(&vdev_control.comm.write_data.buffer[0], &region->data[tx_off], UDP_BUFFER_LEN);
-		memcpy(&vdev_control.comm.write_data.buffer[VDEV_SIM_TIME(VDEV_SIM_INX_ME)],  (void*)&vdev_control.vdev_sim_time[VDEV_SIM_INX_ME], 8U);
-		memcpy(&vdev_control.comm.write_data.buffer[VDEV_SIM_TIME(VDEV_SIM_INX_YOU)], (void*)&vdev_control.vdev_sim_time[VDEV_SIM_INX_YOU], 8U);
-		vdev_control.comm.write_data.len = UDP_BUFFER_LEN;
+		memcpy(&vdev_control.comm.write_data.buffer[VDEV_TX_DATA_BODY_OFF], &region->data[tx_off + VDEV_TX_DATA_BODY_OFF], VDEV_TX_DATA_BODY_SIZE);
+		memcpy(&vdev_control.comm.write_data.buffer[VDEV_TX_SIM_TIME(VDEV_SIM_INX_ME)],  (void*)&vdev_control.vdev_sim_time[VDEV_SIM_INX_ME], 8U);
+		memcpy(&vdev_control.comm.write_data.buffer[VDEV_TX_SIM_TIME(VDEV_SIM_INX_YOU)], (void*)&vdev_control.vdev_sim_time[VDEV_SIM_INX_YOU], 8U);
 		//printf("sim_time=%llu\n", vdev_udp_control.vdev_sim_time[VDEV_SIM_INX_ME]);
 		err = udp_comm_remote_write(&vdev_control.comm, vdev_control.remote_ipaddr);
 		if (err != STD_E_OK) {
@@ -183,19 +226,19 @@ static Std_ReturnType vdev_udp_put_data8(MpuAddressRegionType *region, CoreIdTyp
 }
 static Std_ReturnType vdev_udp_put_data16(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint16 data)
 {
-	uint32 off = (addr - region->start);
+	uint32 off = (addr - region->start) + VDEV_TX_DATA_BODY_OFF;
 	*((uint16*)(&region->data[off])) = data;
 	return STD_E_OK;
 }
 static Std_ReturnType vdev_udp_put_data32(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint32 data)
 {
-	uint32 off = (addr - region->start);
+	uint32 off = (addr - region->start) + VDEV_TX_DATA_BODY_OFF;
 	*((uint32*)(&region->data[off])) = data;
 	return STD_E_OK;
 }
 static Std_ReturnType vdev_udp_get_pointer(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint8 **data)
 {
-	uint32 off = (addr - region->start);
+	uint32 off = (addr - region->start) + VDEV_TX_DATA_BODY_OFF;
 	*data = &region->data[off];
 	return STD_E_OK;
 }

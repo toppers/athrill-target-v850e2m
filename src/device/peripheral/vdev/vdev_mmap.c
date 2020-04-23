@@ -49,7 +49,7 @@ void device_supply_clock_vdev_mmap(DeviceClockType *dev_clock)
 	uint64 unity_sim_time;
 
 	uint64 curr_stime;
-	memcpy((void*)&curr_stime, &vdev_control.rx_data[VDEV_SIM_TIME(VDEV_SIM_INX_ME)], 8U);
+	memcpy((void*)&curr_stime, &vdev_control.rx_data[VDEV_RX_SIM_TIME(VDEV_SIM_INX_ME)], 8U);
 	vdev_control.vdev_sim_time[VDEV_SIM_INX_YOU] = curr_stime;
 
 #if 1
@@ -74,8 +74,8 @@ void device_supply_clock_vdev_mmap(DeviceClockType *dev_clock)
 			dev_clock->min_intr_interval = interval;
 		}
 	}
-	memcpy(&vdev_control.tx_data[VDEV_SIM_TIME(VDEV_SIM_INX_ME)],  (void*)&vdev_control.vdev_sim_time[VDEV_SIM_INX_ME], 8U);
-	memcpy(&vdev_control.tx_data[VDEV_SIM_TIME(VDEV_SIM_INX_YOU)], (void*)&vdev_control.vdev_sim_time[VDEV_SIM_INX_YOU], 8U);
+	memcpy(&vdev_control.tx_data[VDEV_TX_SIM_TIME(VDEV_SIM_INX_ME)],  (void*)&vdev_control.vdev_sim_time[VDEV_SIM_INX_ME], 8U);
+	memcpy(&vdev_control.tx_data[VDEV_TX_SIM_TIME(VDEV_SIM_INX_YOU)], (void*)&vdev_control.vdev_sim_time[VDEV_SIM_INX_YOU], 8U);
 	return;
 }
 
