@@ -204,7 +204,7 @@ static Std_ReturnType vdev_udp_get_data32(MpuAddressRegionType *region, CoreIdTy
 }
 static Std_ReturnType vdev_udp_put_data8(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint8 data)
 {
-	uint32 off = (addr - region->start);
+	uint32 off = (addr - region->start) + VDEV_TX_DATA_BODY_OFF;
 	*((uint8*)(&region->data[off])) = data;
 
 	if (addr == VDEV_TX_FLAG(0)) {
