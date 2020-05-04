@@ -223,6 +223,11 @@ extern int op_exec_trncf_sul_F(TargetCoreType *cpu);
 extern int op_exec_trncf_suw_F(TargetCoreType *cpu);
 extern int op_exec_trncf_sw_F(TargetCoreType *cpu);
 
+extern int op_exec_maddf_s_F(TargetCoreType *cpu);
+extern int op_exec_msubf_s_F(TargetCoreType *cpu);
+extern int op_exec_nmaddf_s_F(TargetCoreType *cpu);
+extern int op_exec_nmsubf_s_F(TargetCoreType *cpu);
+
 /*
  * ディバッグ機能用命令
  */

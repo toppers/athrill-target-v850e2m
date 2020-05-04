@@ -1560,3 +1560,25 @@ void fpu_sync_sysreg(TargetCoreType *cpu, uint32 regid, uint32 selid)
     }
     return;
 }
+
+int op_exec_maddf_s_F(TargetCoreType *cpu)
+{
+	printf("ERROR: not supported:%s\n", __FUNCTION__);
+	return -1;
+}
+int op_exec_msubf_s_F(TargetCoreType *cpu)
+{
+	printf("ERROR: not supported:%s\n", __FUNCTION__);
+	return -1;
+}
+int op_exec_nmaddf_s_F(TargetCoreType *cpu)
+{
+	printf("ERROR: not supported:%s\n", __FUNCTION__);
+	return -1;
+}
+int op_exec_nmsubf_s_F(TargetCoreType *cpu)
+{
+	printf("ERROR: not supported:%s\n", __FUNCTION__);
+	return -1;
+}
+

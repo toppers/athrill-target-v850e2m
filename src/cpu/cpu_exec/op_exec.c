@@ -78,6 +78,7 @@ OpExecType op_exec_table[OP_EXEC_TABLE_NUM] = {
 	{ 3, op_exec_ld_w_14 },		/* OpCodeId_LD_W_14 */
 	{ 3, op_exec_mac_11 },		/* OpCodeId_MAC_11 */
 	{ 3, op_exec_macu_11 },		/* OpCodeId_MACU_11 */
+	{ 7, op_exec_maddf_s_F },		/* OpCodeId_MADDF_S_F */
 	{ 7, op_exec_maxf_s_F },		/* OpCodeId_MAXF_S_F */
 	{ 7, op_exec_minf_s_F },		/* OpCodeId_MINF_S_F */
 	{ 1, op_exec_mov_1 },		/* OpCodeId_MOV_1 */
@@ -85,6 +86,7 @@ OpExecType op_exec_table[OP_EXEC_TABLE_NUM] = {
 	{ 1, op_exec_mov_6 },		/* OpCodeId_MOV_6 */
 	{ 1, op_exec_movea_6 },		/* OpCodeId_MOVEA_6 */
 	{ 1, op_exec_movhi_6 },		/* OpCodeId_MOVHI_6 */
+	{ 7, op_exec_msubf_s_F },		/* OpCodeId_MSUBF_S_F */
 	{ 3, op_exec_mul_11 },		/* OpCodeId_MUL_11 */
 	{ 3, op_exec_mul_12 },		/* OpCodeId_MUL_12 */
 	{ 8, op_exec_mulf_d_F },		/* OpCodeId_MULF_D_F */
@@ -95,6 +97,8 @@ OpExecType op_exec_table[OP_EXEC_TABLE_NUM] = {
 	{ 3, op_exec_mulu_11 },		/* OpCodeId_MULU_11 */
 	{ 3, op_exec_mulu_12 },		/* OpCodeId_MULU_12 */
 	{ 7, op_exec_negf_s_F },		/* OpCodeId_NEGF_S_F */
+	{ 7, op_exec_nmaddf_s_F },		/* OpCodeId_NMADDF_S_F */
+	{ 7, op_exec_nmsubf_s_F },		/* OpCodeId_NMSUBF_S_F */
 	{ 1, op_exec_nop_1 },		/* OpCodeId_NOP_1 */
 	{ 1, op_exec_not_1 },		/* OpCodeId_NOT_1 */
 	{ 4, op_exec_not1_8 },		/* OpCodeId_NOT1_8 */

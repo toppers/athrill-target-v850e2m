@@ -2331,42 +2331,106 @@ static int op_parse_extend_code_1001_11(uint16 code[OP_DECODE_MAX], OperationCod
 
 static int op_parse_extend_code_1010_00(uint16 code[OP_DECODE_MAX], OperationCodeType *optype)
 {
-	return -1;
+	if (TRUE) 
+	{
+		optype->code_id = OpCodeId_MADDF_S_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
+	else {
+		return -1;
+	}
 }
 
 static int op_parse_extend_code_1010_01(uint16 code[OP_DECODE_MAX], OperationCodeType *optype)
 {
-	return -1;
+	if (TRUE) 
+	{
+		optype->code_id = OpCodeId_MSUBF_S_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
+	else {
+		return -1;
+	}
 }
 
 static int op_parse_extend_code_1010_10(uint16 code[OP_DECODE_MAX], OperationCodeType *optype)
 {
-	return -1;
+	if (TRUE) 
+	{
+		optype->code_id = OpCodeId_NMADDF_S_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
+	else {
+		return -1;
+	}
 }
 
 static int op_parse_extend_code_1010_11(uint16 code[OP_DECODE_MAX], OperationCodeType *optype)
 {
-	return -1;
+	if (TRUE) 
+	{
+		optype->code_id = OpCodeId_NMSUBF_S_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
+	else {
+		return -1;
+	}
 }
 
 static int op_parse_extend_code_1011_00(uint16 code[OP_DECODE_MAX], OperationCodeType *optype)
 {
-	return -1;
+	if (TRUE) 
+	{
+		optype->code_id = OpCodeId_MADDF_S_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
+	else {
+		return -1;
+	}
 }
 
 static int op_parse_extend_code_1011_01(uint16 code[OP_DECODE_MAX], OperationCodeType *optype)
 {
-	return -1;
+	if (TRUE) 
+	{
+		optype->code_id = OpCodeId_MSUBF_S_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
+	else {
+		return -1;
+	}
 }
 
 static int op_parse_extend_code_1011_10(uint16 code[OP_DECODE_MAX], OperationCodeType *optype)
 {
-	return -1;
+	if (TRUE) 
+	{
+		optype->code_id = OpCodeId_NMADDF_S_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
+	else {
+		return -1;
+	}
 }
 
 static int op_parse_extend_code_1011_11(uint16 code[OP_DECODE_MAX], OperationCodeType *optype)
 {
-	return -1;
+	if (TRUE) 
+	{
+		optype->code_id = OpCodeId_NMSUBF_S_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
+	else {
+		return -1;
+	}
 }
 
 static int op_parse_extend_code_1100_00(uint16 code[OP_DECODE_MAX], OperationCodeType *optype)
