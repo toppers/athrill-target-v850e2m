@@ -1582,3 +1582,158 @@ int op_exec_nmsubf_s_F(TargetCoreType *cpu)
 	return -1;
 }
 
+int op_exec_absf_d_F(TargetCoreType *cpu)
+{
+	printf("ERROR: not supported:%s\n", __FUNCTION__);
+	return -1;
+}
+int op_exec_ceilf_dl_F(TargetCoreType *cpu)
+{
+	printf("ERROR: not supported:%s\n", __FUNCTION__);
+	return -1;
+}
+int op_exec_ceilf_dul_F(TargetCoreType *cpu)
+{
+	printf("ERROR: not supported:%s\n", __FUNCTION__);
+	return -1;
+}
+int op_exec_ceilf_duw_F(TargetCoreType *cpu)
+{
+	printf("ERROR: not supported:%s\n", __FUNCTION__);
+	return -1;
+}
+int op_exec_ceilf_dw_F(TargetCoreType *cpu)
+{
+	printf("ERROR: not supported:%s\n", __FUNCTION__);
+	return -1;
+}
+int op_exec_cmovf_d_F(TargetCoreType *cpu)
+{
+	printf("ERROR: not supported:%s\n", __FUNCTION__);
+	return -1;
+}
+int op_exec_cmpf_d_F(TargetCoreType *cpu)
+{
+	printf("ERROR: not supported:%s\n", __FUNCTION__);
+	return -1;
+}
+int op_exec_cvtf_dl_F(TargetCoreType *cpu)
+{
+	printf("ERROR: not supported:%s\n", __FUNCTION__);
+	return -1;
+}
+int op_exec_cvtf_dul_F(TargetCoreType *cpu)
+{
+	printf("ERROR: not supported:%s\n", __FUNCTION__);
+	return -1;
+}
+int op_exec_cvtf_duw_F(TargetCoreType *cpu)
+{
+	printf("ERROR: not supported:%s\n", __FUNCTION__);
+	return -1;
+}
+int op_exec_cvtf_dw_F(TargetCoreType *cpu)
+{
+	printf("ERROR: not supported:%s\n", __FUNCTION__);
+	return -1;
+}
+int op_exec_cvtf_ld_F(TargetCoreType *cpu)
+{
+	printf("ERROR: not supported:%s\n", __FUNCTION__);
+	return -1;
+}
+int op_exec_cvtf_uld_F(TargetCoreType *cpu)
+{
+	printf("ERROR: not supported:%s\n", __FUNCTION__);
+	return -1;
+}
+int op_exec_cvtf_uwd_F(TargetCoreType *cpu)
+{
+	printf("ERROR: not supported:%s\n", __FUNCTION__);
+	return -1;
+}
+int op_exec_cvtf_wd_F(TargetCoreType *cpu)
+{
+	printf("ERROR: not supported:%s\n", __FUNCTION__);
+	return -1;
+}
+int op_exec_divf_d_F(TargetCoreType *cpu)
+{
+	printf("ERROR: not supported:%s\n", __FUNCTION__);
+	return -1;
+}
+int op_exec_floorf_dl_F(TargetCoreType *cpu)
+{
+	printf("ERROR: not supported:%s\n", __FUNCTION__);
+	return -1;
+}
+int op_exec_floorf_dul_F(TargetCoreType *cpu)
+{
+	printf("ERROR: not supported:%s\n", __FUNCTION__);
+	return -1;
+}
+int op_exec_floorf_duw_F(TargetCoreType *cpu)
+{
+	printf("ERROR: not supported:%s\n", __FUNCTION__);
+	return -1;
+}
+int op_exec_floorf_dw_F(TargetCoreType *cpu)
+{
+	printf("ERROR: not supported:%s\n", __FUNCTION__);
+	return -1;
+}
+int op_exec_maxf_d_F(TargetCoreType *cpu)
+{
+	printf("ERROR: not supported:%s\n", __FUNCTION__);
+	return -1;
+}
+int op_exec_minf_d_F(TargetCoreType *cpu)
+{
+	printf("ERROR: not supported:%s\n", __FUNCTION__);
+	return -1;
+}
+int op_exec_negf_d_F(TargetCoreType *cpu)
+{
+	printf("ERROR: not supported:%s\n", __FUNCTION__);
+	return -1;
+}
+int op_exec_recipf_d_F(TargetCoreType *cpu)
+{
+	printf("ERROR: not supported:%s\n", __FUNCTION__);
+	return -1;
+}
+int op_exec_rsqrtf_d_F(TargetCoreType *cpu)
+{
+	printf("ERROR: not supported:%s\n", __FUNCTION__);
+	return -1;
+}
+int op_exec_sqrtf_d_F(TargetCoreType *cpu)
+{
+	printf("ERROR: not supported:%s\n", __FUNCTION__);
+	return -1;
+}
+int op_exec_subf_d_F(TargetCoreType *cpu)
+{
+	printf("ERROR: not supported:%s\n", __FUNCTION__);
+	return -1;
+}
+int op_exec_trncf_dl_F(TargetCoreType *cpu)
+{
+	printf("ERROR: not supported:%s\n", __FUNCTION__);
+	return -1;
+}
+int op_exec_trncf_dul_F(TargetCoreType *cpu)
+{
+	printf("ERROR: not supported:%s\n", __FUNCTION__);
+	return -1;
+}
+int op_exec_trncf_duw_F(TargetCoreType *cpu)
+{
+	printf("ERROR: not supported:%s\n", __FUNCTION__);
+	return -1;
+}
+int op_exec_trncf_dw_F(TargetCoreType *cpu)
+{
+	printf("ERROR: not supported:%s\n", __FUNCTION__);
+	return -1;
+}
