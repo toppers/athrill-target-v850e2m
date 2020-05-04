@@ -1563,23 +1563,214 @@ void fpu_sync_sysreg(TargetCoreType *cpu, uint32 regid, uint32 selid)
 
 int op_exec_maddf_s_F(TargetCoreType *cpu)
 {
-	printf("ERROR: not supported:%s\n", __FUNCTION__);
-	return -1;
+    FpuConfigSettingType fpu_config;
+    FloatExceptionType ex;
+	uint32 reg1 = cpu->decoded_code->type_f.reg1;
+	uint32 reg2 = cpu->decoded_code->type_f.reg2;
+	uint32 reg3 = cpu->decoded_code->type_f.reg3;
+    FloatBinaryDataType reg1_data;
+    FloatBinaryDataType reg2_data;
+    FloatBinaryDataType reg3_data;
+    FloatBinaryDataType reg4_data;
+    FloatBinaryDataType result_data;
+    uint16 op_code = cpu->decoded_code->type_f.opcode;
+    uint32 subopcode = cpu->decoded_code->type_f.subopcode;
+    /* detect reg4 */
+    uint32 reg4 = ((subopcode & 0xe) | ((subopcode >> 7) & 1));
+
+	if (reg1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	if (reg2 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	if (reg3 >= CPU_GREG_NUM) {
+		return -1;
+	}
+    if ( reg4 >= CPU_GREG_NUM ) {
+        return -1;
+    }
+	reg1_data.binary = cpu->reg.r[reg1];
+	reg2_data.binary = cpu->reg.r[reg2];
+	reg3_data.binary = cpu->reg.r[reg3];
+
+    // TODO: Full NaN/finite operation
+    prepare_float_op(cpu, &ex, &fpu_config);
+    {
+        set_subnormal_operand(cpu, &fpu_config, &reg1_data);
+        set_subnormal_operand(cpu, &fpu_config, &reg2_data);
+        set_subnormal_operand(cpu, &fpu_config, &reg3_data);
+        result_data.data = reg2_data.data * reg1_data.data + reg3_data.data;
+        set_subnormal_result(cpu, &fpu_config, &result_data);
+    }
+    end_float_op(cpu, &ex);
+
+	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: MADD.S_F r%d(%f),r%d(%f),r%d(%f) r%d:%f\n", 
+        cpu->reg.pc, reg1, reg1_data.data, reg2, reg2_data.data, reg3, reg3_data.data, reg4, result_data.data));
+	cpu->reg.r[reg4] = result_data.binary;
+
+	cpu->reg.pc += 4;
+    
+    return 0;
 }
 int op_exec_msubf_s_F(TargetCoreType *cpu)
 {
-	printf("ERROR: not supported:%s\n", __FUNCTION__);
-	return -1;
+    FpuConfigSettingType fpu_config;
+    FloatExceptionType ex;
+	uint32 reg1 = cpu->decoded_code->type_f.reg1;
+	uint32 reg2 = cpu->decoded_code->type_f.reg2;
+	uint32 reg3 = cpu->decoded_code->type_f.reg3;
+    FloatBinaryDataType reg1_data;
+    FloatBinaryDataType reg2_data;
+    FloatBinaryDataType reg3_data;
+    FloatBinaryDataType reg4_data;
+    FloatBinaryDataType result_data;
+    uint16 op_code = cpu->decoded_code->type_f.opcode;
+    uint32 subopcode = cpu->decoded_code->type_f.subopcode;
+    /* detect reg4 */
+    uint32 reg4 = ((subopcode & 0xe) | ((subopcode >> 7) & 1));
+
+	if (reg1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	if (reg2 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	if (reg3 >= CPU_GREG_NUM) {
+		return -1;
+	}
+    if ( reg4 >= CPU_GREG_NUM ) {
+        return -1;
+    }
+	reg1_data.binary = cpu->reg.r[reg1];
+	reg2_data.binary = cpu->reg.r[reg2];
+	reg3_data.binary = cpu->reg.r[reg3];
+
+    // TODO: Full NaN/finite operation
+    prepare_float_op(cpu, &ex, &fpu_config);
+    {
+        set_subnormal_operand(cpu, &fpu_config, &reg1_data);
+        set_subnormal_operand(cpu, &fpu_config, &reg2_data);
+        set_subnormal_operand(cpu, &fpu_config, &reg3_data);
+        result_data.data = reg2_data.data * reg1_data.data - reg3_data.data;
+        set_subnormal_result(cpu, &fpu_config, &result_data);
+    }
+    end_float_op(cpu, &ex);
+
+	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: MSUB.S_F r%d(%f),r%d(%f),r%d(%f) r%d:%f\n", 
+        cpu->reg.pc, reg1, reg1_data.data, reg2, reg2_data.data, reg3, reg3_data.data, reg4, result_data.data));
+	cpu->reg.r[reg4] = result_data.binary;
+
+	cpu->reg.pc += 4;
+    
+    return 0;
 }
 int op_exec_nmaddf_s_F(TargetCoreType *cpu)
 {
-	printf("ERROR: not supported:%s\n", __FUNCTION__);
-	return -1;
+    FpuConfigSettingType fpu_config;
+    FloatExceptionType ex;
+	uint32 reg1 = cpu->decoded_code->type_f.reg1;
+	uint32 reg2 = cpu->decoded_code->type_f.reg2;
+	uint32 reg3 = cpu->decoded_code->type_f.reg3;
+    FloatBinaryDataType reg1_data;
+    FloatBinaryDataType reg2_data;
+    FloatBinaryDataType reg3_data;
+    FloatBinaryDataType reg4_data;
+    FloatBinaryDataType result_data;
+    uint16 op_code = cpu->decoded_code->type_f.opcode;
+    uint32 subopcode = cpu->decoded_code->type_f.subopcode;
+    /* detect reg4 */
+    uint32 reg4 = ((subopcode & 0xe) | ((subopcode >> 7) & 1));
+
+	if (reg1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	if (reg2 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	if (reg3 >= CPU_GREG_NUM) {
+		return -1;
+	}
+    if ( reg4 >= CPU_GREG_NUM ) {
+        return -1;
+    }
+	reg1_data.binary = cpu->reg.r[reg1];
+	reg2_data.binary = cpu->reg.r[reg2];
+	reg3_data.binary = cpu->reg.r[reg3];
+
+    // TODO: Full NaN/finite operation
+    prepare_float_op(cpu, &ex, &fpu_config);
+    {
+        set_subnormal_operand(cpu, &fpu_config, &reg1_data);
+        set_subnormal_operand(cpu, &fpu_config, &reg2_data);
+        set_subnormal_operand(cpu, &fpu_config, &reg3_data);
+        result_data.data = -(reg2_data.data * reg1_data.data + reg3_data.data);
+        set_subnormal_result(cpu, &fpu_config, &result_data);
+    }
+    end_float_op(cpu, &ex);
+
+	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: NMADD.S_F r%d(%f),r%d(%f),r%d(%f) r%d:%f\n", 
+        cpu->reg.pc, reg1, reg1_data.data, reg2, reg2_data.data, reg3, reg3_data.data, reg4, result_data.data));
+
+	cpu->reg.r[reg4] = result_data.binary;
+
+	cpu->reg.pc += 4;
+    
+    return 0;
+
 }
 int op_exec_nmsubf_s_F(TargetCoreType *cpu)
 {
-	printf("ERROR: not supported:%s\n", __FUNCTION__);
-	return -1;
+    FpuConfigSettingType fpu_config;
+    FloatExceptionType ex;
+	uint32 reg1 = cpu->decoded_code->type_f.reg1;
+	uint32 reg2 = cpu->decoded_code->type_f.reg2;
+	uint32 reg3 = cpu->decoded_code->type_f.reg3;
+    FloatBinaryDataType reg1_data;
+    FloatBinaryDataType reg2_data;
+    FloatBinaryDataType reg3_data;
+    FloatBinaryDataType reg4_data;
+    FloatBinaryDataType result_data;
+    uint16 op_code = cpu->decoded_code->type_f.opcode;
+    uint32 subopcode = cpu->decoded_code->type_f.subopcode;
+    /* detect reg4 */
+    uint32 reg4 = ((subopcode & 0xe) | ((subopcode >> 7) & 1));
+
+	if (reg1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	if (reg2 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	if (reg3 >= CPU_GREG_NUM) {
+		return -1;
+	}
+    if ( reg4 >= CPU_GREG_NUM ) {
+        return -1;
+    }
+	reg1_data.binary = cpu->reg.r[reg1];
+	reg2_data.binary = cpu->reg.r[reg2];
+	reg3_data.binary = cpu->reg.r[reg3];
+
+    // TODO: Full NaN/finite operation
+    prepare_float_op(cpu, &ex, &fpu_config);
+    {
+        set_subnormal_operand(cpu, &fpu_config, &reg1_data);
+        set_subnormal_operand(cpu, &fpu_config, &reg2_data);
+        set_subnormal_operand(cpu, &fpu_config, &reg3_data);
+        result_data.data = -(reg2_data.data * reg1_data.data - reg3_data.data);
+        set_subnormal_result(cpu, &fpu_config, &result_data);
+    }
+    end_float_op(cpu, &ex);
+
+	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: MSUB.S_F r%d(%f),r%d(%f),r%d(%f) r%d:%f\n", 
+        cpu->reg.pc, reg1, reg1_data.data, reg2, reg2_data.data, reg3, reg3_data.data, reg4, result_data.data));
+	cpu->reg.r[reg4] = result_data.binary;
+
+	cpu->reg.pc += 4;
+    
+    return 0;
+
 }
 
 int op_exec_absf_d_F(TargetCoreType *cpu)
