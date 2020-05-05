@@ -1571,9 +1571,7 @@ int op_exec_maddf_s_F(TargetCoreType *cpu)
     FloatBinaryDataType reg1_data;
     FloatBinaryDataType reg2_data;
     FloatBinaryDataType reg3_data;
-    FloatBinaryDataType reg4_data;
     FloatBinaryDataType result_data;
-    uint16 op_code = cpu->decoded_code->type_f.opcode;
     uint32 subopcode = cpu->decoded_code->type_f.subopcode;
     /* detect reg4 */
     uint32 reg4 = ((subopcode & 0xe) | ((subopcode >> 7) & 1));
@@ -1623,9 +1621,7 @@ int op_exec_msubf_s_F(TargetCoreType *cpu)
     FloatBinaryDataType reg1_data;
     FloatBinaryDataType reg2_data;
     FloatBinaryDataType reg3_data;
-    FloatBinaryDataType reg4_data;
     FloatBinaryDataType result_data;
-    uint16 op_code = cpu->decoded_code->type_f.opcode;
     uint32 subopcode = cpu->decoded_code->type_f.subopcode;
     /* detect reg4 */
     uint32 reg4 = ((subopcode & 0xe) | ((subopcode >> 7) & 1));
@@ -1675,9 +1671,7 @@ int op_exec_nmaddf_s_F(TargetCoreType *cpu)
     FloatBinaryDataType reg1_data;
     FloatBinaryDataType reg2_data;
     FloatBinaryDataType reg3_data;
-    FloatBinaryDataType reg4_data;
     FloatBinaryDataType result_data;
-    uint16 op_code = cpu->decoded_code->type_f.opcode;
     uint32 subopcode = cpu->decoded_code->type_f.subopcode;
     /* detect reg4 */
     uint32 reg4 = ((subopcode & 0xe) | ((subopcode >> 7) & 1));
@@ -1729,9 +1723,7 @@ int op_exec_nmsubf_s_F(TargetCoreType *cpu)
     FloatBinaryDataType reg1_data;
     FloatBinaryDataType reg2_data;
     FloatBinaryDataType reg3_data;
-    FloatBinaryDataType reg4_data;
     FloatBinaryDataType result_data;
-    uint16 op_code = cpu->decoded_code->type_f.opcode;
     uint32 subopcode = cpu->decoded_code->type_f.subopcode;
     /* detect reg4 */
     uint32 reg4 = ((subopcode & 0xe) | ((subopcode >> 7) & 1));
@@ -1766,7 +1758,6 @@ int op_exec_nmsubf_s_F(TargetCoreType *cpu)
 	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: MSUB.S_F r%d(%f),r%d(%f),r%d(%f) r%d:%f\n", 
         cpu->reg.pc, reg1, reg1_data.data, reg2, reg2_data.data, reg3, reg3_data.data, reg4, result_data.data));
 	cpu->reg.r[reg4] = result_data.binary;
-
 	cpu->reg.pc += 4;
     
     return 0;
@@ -1775,23 +1766,174 @@ int op_exec_nmsubf_s_F(TargetCoreType *cpu)
 
 int op_exec_absf_d_F(TargetCoreType *cpu)
 {
-	printf("ERROR: not supported:%s\n", __FUNCTION__);
-	return -1;
+    FpuConfigSettingType fpu_config;
+    FloatExceptionType ex;
+	uint32 reg2_0 = cpu->decoded_code->type_f.reg2;
+	uint32 reg2_1 = cpu->decoded_code->type_f.reg2 + 1;
+	uint32 reg3_0 = cpu->decoded_code->type_f.reg3;
+	uint32 reg3_1 = cpu->decoded_code->type_f.reg3 + 1;
+    DoubleBinaryDataType reg2_data;
+    DoubleBinaryDataType result_data;
+
+	if (reg2_1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	if (reg3_1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+    reg2_data.binary[0] = cpu->reg.r[reg2_0];
+	reg2_data.binary[1] = cpu->reg.r[reg2_1];
+
+    prepare_float_op(cpu, &ex, &fpu_config);
+    {
+        set_subnormal_operand_double(cpu, &fpu_config, &reg2_data);
+        result_data.data = reg2_data.data;
+        DOUBLE_SIGN_BIT_CLR(result_data);
+        set_subnormal_result_double(cpu, &fpu_config, &result_data);
+    }
+    end_float_op(cpu, &ex);
+	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: ABSF_D r%d(%lf) : r%d :%lf\n",
+        cpu->reg.pc, reg2_0, reg2_data.data, reg3_0,result_data.data));
+//	printf( "0x%x: ABSF_D r%d(%lf) r%d(%lf) :%lf\n", cpu->reg.pc, reg2_0, reg2_data.data, reg3_0, reg3_data.data,result_data.data);
+	cpu->reg.r[reg3_0] = result_data.binary[0];
+	cpu->reg.r[reg3_1] = result_data.binary[1];
+	cpu->reg.pc += 4;
+
+	return 0;
 }
 int op_exec_ceilf_dl_F(TargetCoreType *cpu)
 {
-	printf("ERROR: not supported:%s\n", __FUNCTION__);
-	return -1;
+    FpuConfigSettingType fpu_config;
+    FloatExceptionType ex;
+	uint32 reg2_0 = cpu->decoded_code->type_f.reg2;
+	uint32 reg2_1 = cpu->decoded_code->type_f.reg2 + 1;
+	uint32 reg3_0 = cpu->decoded_code->type_f.reg3;
+	uint32 reg3_1 = cpu->decoded_code->type_f.reg3 + 1;
+    DoubleBinaryDataType reg2_data;
+    sint64 result_data;
+
+	if (reg2_1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	if (reg3_1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+    reg2_data.binary[0] = cpu->reg.r[reg2_0];
+	reg2_data.binary[1] = cpu->reg.r[reg2_1];
+    // TODO:Overflow
+    prepare_float_op(cpu, &ex, &fpu_config);
+    {
+        set_subnormal_operand_double(cpu, &fpu_config, &reg2_data);
+        result_data = (sint64)reg2_data.data;
+    }
+    end_float_op(cpu, &ex);
+
+	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: CEILF.DL r%d(%lf) : r%d :%lld\n",
+        cpu->reg.pc, reg2_0, reg2_data.data, reg3_0,result_data));
+	printf( "0x%x: CEILF.DL r%d(%lf) r%d :%lld\n",cpu->reg.pc, reg2_0, reg2_data.data, reg3_0,result_data);
+	cpu->reg.r[reg3_0] = (uint32)(result_data>>32);
+	cpu->reg.r[reg3_1] = (uint32)(result_data & 0xffffffff);
+	cpu->reg.pc += 4;
+
+	return 0;
 }
 int op_exec_ceilf_dul_F(TargetCoreType *cpu)
 {
-	printf("ERROR: not supported:%s\n", __FUNCTION__);
-	return -1;
+    // double float -> unsigned 64
+    FpuConfigSettingType fpu_config;
+    FloatExceptionType ex;
+	uint32 reg2_0 = cpu->decoded_code->type_f.reg2;
+	uint32 reg2_1 = cpu->decoded_code->type_f.reg2 + 1;
+	uint32 reg3_0 = cpu->decoded_code->type_f.reg3;
+	uint32 reg3_1 = cpu->decoded_code->type_f.reg3 + 1;
+    DoubleBinaryDataType reg2_data;
+    uint64 result_data;
+
+	if (reg2_1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	if (reg3_1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+    reg2_data.binary[0] = cpu->reg.r[reg2_0];
+	reg2_data.binary[1] = cpu->reg.r[reg2_1];
+
+    prepare_float_op(cpu, &ex, &fpu_config);
+    {
+
+        uint64 result;
+        bool is_invalid = TRUE;
+        if (DOUBLE_IS_NAN(reg2_data) || DOUBLE_IS_INF(reg2_data)) {
+            if (DOUBLE_IS_PLUS(reg2_data) && DOUBLE_IS_INF(reg2_data)) {
+                result = (uint64)ULONG_MAX;
+            }
+            else {
+                result = (uint64)0;
+            }
+        } else if ( trunc(reg2_data.data) < 0 ) {
+            result = (uint64)0;
+        } else if ( trunc(reg2_data.data) > (uint64)ULONG_MAX) {
+            result = (uint64)ULONG_MAX;
+        } else {
+            result = trunc(reg2_data.data);
+            is_invalid = FALSE;
+        }
+        if (is_invalid) {
+            sys_set_fpst_xc(&cpu->reg, sys_get_fpst_xc(&cpu->reg) | SYS_FPSR_EXPR_V);
+            sys_set_fpst_xp(&cpu->reg, sys_get_fpst_xp(&cpu->reg) | SYS_FPSR_EXPR_V);
+        }
+        result_data  = (uint64)result;
+
+    }
+    end_float_op(cpu, &ex);
+
+
+	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: CEILF.DUL r%d(%lf) : r%d :%llu\n",
+        cpu->reg.pc, reg2_0, reg2_data.data, reg3_0,result_data));
+	printf( "0x%x: CEILF.DUL r%d(%lf) r%d :%llu\n",  cpu->reg.pc, reg2_0, reg2_data.data, reg3_0,result_data);
+	cpu->reg.r[reg3_0] = (uint32)(result_data>>32);
+	cpu->reg.r[reg3_1] = (uint32)(result_data & 0xffffffff);
+	cpu->reg.pc += 4;
+
+	return 0;
 }
+
 int op_exec_ceilf_duw_F(TargetCoreType *cpu)
 {
-	printf("ERROR: not supported:%s\n", __FUNCTION__);
-	return -1;
+    FpuConfigSettingType fpu_config;
+    FloatExceptionType ex;
+   	uint32 reg2_0 = cpu->decoded_code->type_f.reg2;
+	uint32 reg2_1 = cpu->decoded_code->type_f.reg2 + 1;
+	uint32 reg3 = cpu->decoded_code->type_f.reg3;
+    DoubleBinaryDataType reg2_data;
+    sint32 result_data;
+    sint32 reg3_data;
+
+	if (reg2_1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+    if (reg3 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	reg2_data.binary[0] = cpu->reg.r[reg2_0];
+	reg2_data.binary[1] = cpu->reg.r[reg2_1];
+	reg3_data = cpu->reg.r[reg3];
+
+    prepare_float_op(cpu, &ex, &fpu_config);
+    {
+        set_subnormal_operand_double(cpu, &fpu_config, &reg2_data);
+        result_data = (sint32)trunc(reg2_data.data);
+    }
+
+	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: CEILF.DW r%d(%lf),r%d(%d):%d\n", 
+        cpu->reg.pc, reg2_0, reg2_data.data, reg3, reg3_data, result_data));
+	printf("0x%x: CEILF.DW r%d(%lf),r%d(%d):%d\n", 
+        cpu->reg.pc, reg2_0, reg2_data.data, reg3, reg3_data, result_data);
+
+    cpu->reg.r[reg3] = result_data;
+	cpu->reg.pc += 4;
+    return 0;
+
 }
 int op_exec_ceilf_dw_F(TargetCoreType *cpu)
 {
@@ -1800,58 +1942,472 @@ int op_exec_ceilf_dw_F(TargetCoreType *cpu)
 }
 int op_exec_cmovf_d_F(TargetCoreType *cpu)
 {
-	printf("ERROR: not supported:%s\n", __FUNCTION__);
-	return -1;
+    uint32 reg1_0 = cpu->decoded_code->type_f.reg1;
+	uint32 reg1_1 = cpu->decoded_code->type_f.reg1 + 1;
+	uint32 reg2_0 = cpu->decoded_code->type_f.reg2;
+	uint32 reg2_1 = cpu->decoded_code->type_f.reg2 + 1;
+	uint32 reg3_0 = cpu->decoded_code->type_f.reg3;
+	uint32 reg3_1 = cpu->decoded_code->type_f.reg3 + 1;
+    uint32 fcbit = ( (cpu->decoded_code->type_f.subopcode & 0x0000000F) >> 1U );
+    DoubleBinaryDataType reg1_data;
+    DoubleBinaryDataType reg2_data;
+    DoubleBinaryDataType reg3_data;
+    DoubleBinaryDataType result_data;
+    uint8 data;
+
+	if (reg1_1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	if (reg2_1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	if (reg3_1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	reg1_data.binary[0] = cpu->reg.r[reg1_0];
+	reg1_data.binary[1] = cpu->reg.r[reg1_1];
+	reg2_data.binary[0] = cpu->reg.r[reg2_0];
+	reg2_data.binary[1] = cpu->reg.r[reg2_1];
+	reg3_data.binary[0] = cpu->reg.r[reg3_0];
+	reg3_data.binary[1] = cpu->reg.r[reg3_1];
+
+    data = sys_get_fpsr_cc(&cpu->reg);
+    if ((data & (1U << (uint8)fcbit)) != 0) {
+        result_data.data = reg1_data.data;
+    }
+    else {
+        result_data.data = reg2_data.data;
+    }
+
+	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: CMOVF_D fcbit(%u) r%d(%lf),r%d(%lf),r%d(%lf):%lf\n", 
+        cpu->reg.pc, fcbit, reg1_0, reg1_data.data, reg2_0, reg2_data.data, reg3_0, reg3_data.data, result_data.data));
+//    printf("0x%x: CMOVF_D fcbit(%u) r%d(%lf),r%d(%lf),r%d(%lf):%lf\n",  cpu->reg.pc, fcbit, reg1_0, reg1_data.data, reg2_0, reg2_data.data, reg3_0, reg3_data.data, result_data.data);
+	cpu->reg.r[reg3_0] = result_data.binary[0];
+	cpu->reg.r[reg3_1] = result_data.binary[1];
+
+
+	cpu->reg.pc += 4;
+    return 0;
 }
 int op_exec_cmpf_d_F(TargetCoreType *cpu)
 {
-	printf("ERROR: not supported:%s\n", __FUNCTION__);
-	return -1;
+	uint32 reg1_0 = cpu->decoded_code->type_f.reg1;
+	uint32 reg1_1 = cpu->decoded_code->type_f.reg1 + 1;
+	uint32 reg2_0 = cpu->decoded_code->type_f.reg2;
+	uint32 reg2_1 = cpu->decoded_code->type_f.reg2 + 1;
+	uint32 fcond = cpu->decoded_code->type_f.reg3;
+    uint32 fcbit = ( (cpu->decoded_code->type_f.subopcode & 0x0000000F) >> 1U );
+    DoubleBinaryDataType reg1_data;
+    DoubleBinaryDataType reg2_data;
+    bool result_less;
+    bool result_equal;
+    bool result_unordered;
+    uint32 result_data;
+    uint8 data;
+
+	if (reg1_1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	if (reg2_1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+
+  	reg1_data.binary[0] = cpu->reg.r[reg1_0];
+	reg1_data.binary[1] = cpu->reg.r[reg1_1];
+	reg2_data.binary[0] = cpu->reg.r[reg2_0];
+	reg2_data.binary[1] = cpu->reg.r[reg2_1];
+
+    /*
+    * if isNaN(reg1) or isNaN(reg2) then
+    * result.less ← 0
+    * result.equal ← 0
+    * result.unordered ← 1
+    * if fcond[3] == 1 then
+    * 無効演算例外を検出
+    * endif
+    * else
+    * result.less ← reg2 < reg1
+    * result.equal ← reg2 == reg1
+    * result.unordered ← 0
+    * endif
+    * FPSR.CCn ← (fcond[2] & result.less) | (fcond[1] & result.equal) |
+    * (fcond[0] & result.unordered)
+    */
+    if (DOUBLE_IS_NAN(reg1_data) || DOUBLE_IS_NAN(reg2_data)) {
+        result_less = FALSE;
+        result_equal = FALSE;
+        result_unordered = TRUE;
+        if ((fcond & 0x00000008) != 0) {
+            sys_set_fpst_xc(&cpu->reg, sys_get_fpst_xc(&cpu->reg) | SYS_FPSR_EXPR_V);
+            sys_set_fpst_xp(&cpu->reg, sys_get_fpst_xp(&cpu->reg) | SYS_FPSR_EXPR_V);
+        }
+    }
+    else {
+        result_less = (reg2_data.data < reg1_data.data);
+        result_equal = (reg2_data.data == reg1_data.data);
+        result_unordered = FALSE;
+    }
+    result_data =   (result_less << 2U) |
+                    (result_equal << 1U) |
+                    (result_unordered << 0U);
+    data = sys_get_fpsr_cc(&cpu->reg);
+    if ((result_data & (fcond & 0x00000007)) != 0) {
+        data |= (1U << (uint8)fcbit);
+    }
+    else {
+        data &= ~(1U << (uint8)fcbit);
+    }
+    sys_set_fpsr_cc(&cpu->reg,  data);
+
+	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: CMPF_D r%d(%lf),r%d(%lf),fcond(0x%x), fcbit(%d):0x%x\n", 
+        cpu->reg.pc, reg1_0, reg1_data.data, reg2_0, reg2_data.data, fcond, fcbit, data));
+//	printf("0x%x: CMPF_D r%d(%lf),r%d(%lf),fcond(0x%x), fcbit(%d):0x%x\n",  cpu->reg.pc, reg1_0, reg1_data.data, reg2_0, reg2_data.data, fcond, fcbit, data);
+
+	cpu->reg.pc += 4;
+    return 0;
 }
 int op_exec_cvtf_dl_F(TargetCoreType *cpu)
 {
-	printf("ERROR: not supported:%s\n", __FUNCTION__);
-	return -1;
+    FpuConfigSettingType fpu_config;
+    FloatExceptionType ex;
+	uint32 reg2_0 = cpu->decoded_code->type_f.reg2;
+	uint32 reg2_1 = cpu->decoded_code->type_f.reg2 + 1;
+	uint32 reg3_0 = cpu->decoded_code->type_f.reg3;
+	uint32 reg3_1 = cpu->decoded_code->type_f.reg3 + 1;
+    DoubleBinaryDataType reg2_data;
+    sint64 result_data;
+
+	if (reg2_1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	if (reg3_1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	reg2_data.binary[0] = cpu->reg.r[reg2_0];
+	reg2_data.binary[1] = cpu->reg.r[reg2_1];
+
+
+    prepare_float_op(cpu, &ex, &fpu_config);
+    {
+        set_subnormal_operand_double(cpu, &fpu_config, &reg2_data);
+        result_data = (sint64)reg2_data.data;
+    }
+    end_float_op(cpu, &ex);   
+
+	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: CVTF.DL r%d(%lf),r%d:%lld\n", 
+        cpu->reg.pc, reg2_0, reg2_data.data, reg3_0, result_data));
+    printf( "0x%x: CVTF.DL r%d(%lf),r%d:%lld\n", cpu->reg.pc, reg2_0, reg2_data.data, reg3_0, result_data);
+
+    cpu->reg.r[reg3_0] = (uint32)(result_data >> 32);
+    cpu->reg.r[reg3_1] = (uint32)(result_data & 0xffffffff);
+	cpu->reg.pc += 4;
+    return 0;
+
 }
 int op_exec_cvtf_dul_F(TargetCoreType *cpu)
 {
-	printf("ERROR: not supported:%s\n", __FUNCTION__);
-	return -1;
+    FpuConfigSettingType fpu_config;
+    FloatExceptionType ex;
+	uint32 reg2_0 = cpu->decoded_code->type_f.reg2;
+	uint32 reg2_1 = cpu->decoded_code->type_f.reg2 + 1;
+	uint32 reg3_0 = cpu->decoded_code->type_f.reg3;
+	uint32 reg3_1 = cpu->decoded_code->type_f.reg3 + 1;
+    DoubleBinaryDataType reg2_data;
+    uint64 result_data;
+
+	if (reg2_1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	if (reg3_1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	reg2_data.binary[0] = cpu->reg.r[reg2_0];
+	reg2_data.binary[1] = cpu->reg.r[reg2_1];
+
+
+    prepare_float_op(cpu, &ex, &fpu_config);
+    {
+        set_subnormal_operand_double(cpu, &fpu_config, &reg2_data);
+        result_data = (uint64)reg2_data.data;
+    }
+    end_float_op(cpu, &ex);   
+
+	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: CVTF.DUL r%d(%lf),r%d:%llu\n", 
+        cpu->reg.pc, reg2_0, reg2_data.data, reg3_0, result_data));
+	printf("0x%x: CVTF.DUL r%d(%lf),r%d:%llu\n",  cpu->reg.pc, reg2_0, reg2_data.data, reg3_0, result_data);
+
+    cpu->reg.r[reg3_0] = (uint32)(result_data >> 32);
+    cpu->reg.r[reg3_1] = (uint32)(result_data & 0xffffffff);
+	cpu->reg.pc += 4;
+    return 0;
 }
+
 int op_exec_cvtf_duw_F(TargetCoreType *cpu)
 {
-	printf("ERROR: not supported:%s\n", __FUNCTION__);
-	return -1;
+    FpuConfigSettingType fpu_config;
+    FloatExceptionType ex;
+	uint32 reg2_0 = cpu->decoded_code->type_f.reg2;
+	uint32 reg2_1 = cpu->decoded_code->type_f.reg2 + 1;
+	uint32 reg3   = cpu->decoded_code->type_f.reg3;
+    DoubleBinaryDataType reg2_data;
+    uint32 result_data;
+
+	if (reg2_1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	if (reg3 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	reg2_data.binary[0] = cpu->reg.r[reg2_0];
+	reg2_data.binary[1] = cpu->reg.r[reg2_1];
+
+    // TODO:Overflow / Nan
+    prepare_float_op(cpu, &ex, &fpu_config);
+    {
+        set_subnormal_operand_double(cpu, &fpu_config, &reg2_data);
+        result_data = (uint32)reg2_data.data;
+    }
+    end_float_op(cpu, &ex);   
+
+	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: CVTF.DUW r%d(%lf),r%d:%u\n", 
+        cpu->reg.pc, reg2_0, reg2_data.data, reg3, result_data));
+    printf("0x%x: CVTF.DUW r%d(%lf),r%d:%u\n",  cpu->reg.pc, reg2_0, reg2_data.data, reg3, result_data);
+
+    cpu->reg.r[reg3] = (uint32)result_data;
+	cpu->reg.pc += 4;
+    return 0;
 }
 int op_exec_cvtf_dw_F(TargetCoreType *cpu)
 {
-	printf("ERROR: not supported:%s\n", __FUNCTION__);
-	return -1;
+    FpuConfigSettingType fpu_config;
+    FloatExceptionType ex;
+	uint32 reg2_0 = cpu->decoded_code->type_f.reg2;
+	uint32 reg2_1 = cpu->decoded_code->type_f.reg2 + 1;
+	uint32 reg3   = cpu->decoded_code->type_f.reg3;
+    DoubleBinaryDataType reg2_data;
+    sint32 result_data;
+
+	if (reg2_1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	if (reg3 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	reg2_data.binary[0] = cpu->reg.r[reg2_0];
+	reg2_data.binary[1] = cpu->reg.r[reg2_1];
+
+    prepare_float_op(cpu, &ex, &fpu_config);
+    {
+        set_subnormal_operand_double(cpu, &fpu_config, &reg2_data);
+        result_data = (sint32)reg2_data.data;
+    }
+    end_float_op(cpu, &ex);   
+
+	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: CVTF.DUW r%d(%lf),r%d:%d\n", 
+        cpu->reg.pc, reg2_0, reg2_data.data, reg3, result_data));
+    printf("0x%x: CVTF.DUW r%d(%lf),r%d:%d\n",  cpu->reg.pc, reg2_0, reg2_data.data, reg3, result_data);
+
+    cpu->reg.r[reg3] = (sint32)result_data;
+	cpu->reg.pc += 4;
+    return 0;
+
 }
 int op_exec_cvtf_ld_F(TargetCoreType *cpu)
 {
-	printf("ERROR: not supported:%s\n", __FUNCTION__);
-	return -1;
+    FpuConfigSettingType fpu_config;
+    FloatExceptionType ex;
+	uint32 reg2_0 = cpu->decoded_code->type_f.reg2;
+	uint32 reg2_1 = cpu->decoded_code->type_f.reg2 + 1;
+	uint32 reg3_0 = cpu->decoded_code->type_f.reg3;
+	uint32 reg3_1 = cpu->decoded_code->type_f.reg3 + 1;
+    sint64 reg2_data;
+    DoubleBinaryDataType result_data;
+
+	if (reg2_1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	if (reg3_1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	reg2_data = (uint64)((uint64)(cpu->reg.r[reg2_0])<<32 | cpu->reg.r[reg2_1]);
+
+    prepare_float_op(cpu, &ex, &fpu_config);
+    {
+        result_data.data = (double)reg2_data;
+        set_subnormal_result_double(cpu, &fpu_config, &result_data);
+    }
+    end_float_op(cpu, &ex);   
+
+	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: CVTF.LD r%d(%lld),r%d:%lf\n", 
+        cpu->reg.pc, reg2_0, reg2_data, reg3_0, result_data.data));
+//    printf("0x%x: CVTF.LD r%d(%lld),r%d:%lf\n", cpu->reg.pc, reg2_0, reg2_data, reg3_0, result_data.data);
+
+    cpu->reg.r[reg3_0] = (uint32)result_data.binary[0];
+    cpu->reg.r[reg3_1] = (uint32)result_data.binary[1];
+
+	cpu->reg.pc += 4;
+    return 0;
 }
 int op_exec_cvtf_uld_F(TargetCoreType *cpu)
 {
+    FpuConfigSettingType fpu_config;
+    FloatExceptionType ex;
+	uint32 reg2_0 = cpu->decoded_code->type_f.reg2;
+	uint32 reg2_1 = cpu->decoded_code->type_f.reg2 + 1;
+	uint32 reg3_0 = cpu->decoded_code->type_f.reg3;
+	uint32 reg3_1 = cpu->decoded_code->type_f.reg3 + 1;
+    uint64 reg2_data;
+    DoubleBinaryDataType result_data;
+
+	if (reg2_1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	if (reg3_1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	reg2_data = (uint64)((uint64)(cpu->reg.r[reg2_0])<<32 | cpu->reg.r[reg2_1]);
+
+    prepare_float_op(cpu, &ex, &fpu_config);
+    {
+        result_data.data = (double)reg2_data;
+        set_subnormal_result_double(cpu, &fpu_config, &result_data);
+    }
+    end_float_op(cpu, &ex);   
+
+	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: CVTF.ULD r%d(%llu),r%d:%lf\n", 
+        cpu->reg.pc, reg2_0, reg2_data, reg3_0, result_data.data));
+    printf("0x%x: CVTF.ULD r%d(%llu),r%d:%lf\n", cpu->reg.pc, reg2_0, reg2_data, reg3_0, result_data.data);
+
+    cpu->reg.r[reg3_0] = (uint32)result_data.binary[0];
+    cpu->reg.r[reg3_1] = (uint32)result_data.binary[1];
+
+	cpu->reg.pc += 4;
+    return 0;
+
 	printf("ERROR: not supported:%s\n", __FUNCTION__);
 	return -1;
 }
 int op_exec_cvtf_uwd_F(TargetCoreType *cpu)
 {
-	printf("ERROR: not supported:%s\n", __FUNCTION__);
-	return -1;
+    FpuConfigSettingType fpu_config;
+    FloatExceptionType ex;
+	uint32 reg2   = cpu->decoded_code->type_f.reg2;
+	uint32 reg3_0 = cpu->decoded_code->type_f.reg3;
+	uint32 reg3_1 = cpu->decoded_code->type_f.reg3 + 1;
+    uint32  reg2_data;
+    DoubleBinaryDataType reg3_data;
+    DoubleBinaryDataType result_data;
+
+	if (reg2 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	if (reg3_1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	reg2_data          = (uint32)cpu->reg.r[reg2];
+	reg3_data.binary[0] = cpu->reg.r[reg3_0];
+	reg3_data.binary[1] = cpu->reg.r[reg3_1];
+
+    prepare_float_op(cpu, &ex, &fpu_config);
+    {
+        result_data.data = (double)reg2_data;
+        set_subnormal_result_double(cpu, &fpu_config, &result_data);
+    }
+    end_float_op(cpu, &ex);
+
+	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: CVTF.UWD r%d(%u),r%d(%lf):%lf\n",
+        cpu->reg.pc, reg2,reg2_data, reg3_0, reg3_data.data,result_data.data));
+	printf("0x%x: CVTF.UWD r%d(%u),r%d(%lf):%lf\n", cpu->reg.pc, reg2,reg2_data, reg3_0, reg3_data.data, result_data.data);
+	cpu->reg.r[reg3_0] = (uint32)result_data.binary[0];
+	cpu->reg.r[reg3_1] = (uint32)result_data.binary[1];
+	cpu->reg.pc += 4;
+    return 0;
 }
 int op_exec_cvtf_wd_F(TargetCoreType *cpu)
 {
-	printf("ERROR: not supported:%s\n", __FUNCTION__);
-	return -1;
+    FpuConfigSettingType fpu_config;
+    FloatExceptionType ex;
+	uint32 reg2   = cpu->decoded_code->type_f.reg2;
+	uint32 reg3_0 = cpu->decoded_code->type_f.reg3;
+	uint32 reg3_1 = cpu->decoded_code->type_f.reg3 + 1;
+    sint32  reg2_data;
+    DoubleBinaryDataType reg3_data;
+    DoubleBinaryDataType result_data;
+
+	if (reg2 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	if (reg3_1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	reg2_data          = cpu->reg.r[reg2];
+	reg3_data.binary[0] = cpu->reg.r[reg3_0];
+	reg3_data.binary[1] = cpu->reg.r[reg3_1];
+
+    prepare_float_op(cpu, &ex, &fpu_config);
+    {
+        result_data.data = (double)reg2_data;
+        set_subnormal_result_double(cpu, &fpu_config, &result_data);
+    }
+    end_float_op(cpu, &ex);
+
+	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: CVTF.WD r%d(%d),r%d(%lf):%lf\n",
+        cpu->reg.pc, reg2,reg2_data, reg3_0, reg3_data.data,result_data.data));
+//	printf("0x%x: CVTF.WD r%d(%d),r%d(%lf):%lf\n", cpu->reg.pc, reg2,reg2_data, reg3_0, reg3_data.data, result_data.data);
+	cpu->reg.r[reg3_0] = result_data.binary[0];
+	cpu->reg.r[reg3_1] = result_data.binary[1];
+	cpu->reg.pc += 4;
+    return 0;
 }
 int op_exec_divf_d_F(TargetCoreType *cpu)
 {
-	printf("ERROR: not supported:%s\n", __FUNCTION__);
-	return -1;
+        FpuConfigSettingType fpu_config;
+    FloatExceptionType ex;
+	uint32 reg1_0 = cpu->decoded_code->type_f.reg1;
+	uint32 reg1_1 = cpu->decoded_code->type_f.reg1 + 1;
+	uint32 reg2_0 = cpu->decoded_code->type_f.reg2;
+	uint32 reg2_1 = cpu->decoded_code->type_f.reg2 + 1;
+	uint32 reg3_0 = cpu->decoded_code->type_f.reg3;
+	uint32 reg3_1 = cpu->decoded_code->type_f.reg3 + 1;
+    DoubleBinaryDataType reg1_data;
+    DoubleBinaryDataType reg2_data;
+    DoubleBinaryDataType reg3_data;
+    DoubleBinaryDataType result_data;
+
+	if (reg1_1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	if (reg2_1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	if (reg3_1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	reg1_data.binary[0] = cpu->reg.r[reg1_0];
+	reg1_data.binary[1] = cpu->reg.r[reg1_1];
+	reg2_data.binary[0] = cpu->reg.r[reg2_0];
+	reg2_data.binary[1] = cpu->reg.r[reg2_1];
+	reg3_data.binary[0] = cpu->reg.r[reg3_0];
+	reg3_data.binary[1] = cpu->reg.r[reg3_1];
+
+    prepare_float_op(cpu, &ex, &fpu_config);
+    {
+        set_subnormal_operand_double(cpu, &fpu_config, &reg1_data);
+        set_subnormal_operand_double(cpu, &fpu_config, &reg2_data);
+        result_data.data = reg2_data.data / reg1_data.data;
+        set_subnormal_result_double(cpu, &fpu_config, &result_data);
+    }
+    end_float_op(cpu, &ex);
+
+	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: DIVF_D r%d(%lf),r%d(%lf),r%d(%lf):%lf\n",
+        cpu->reg.pc, reg1_0, reg1_data.data, reg2_0, reg2_data.data, reg3_0, reg3_data.data, result_data.data));
+//	printf("0x%x: DIVF_D r%d(%lf),r%d(%lf),r%d(%lf):%lf\n", cpu->reg.pc, reg1_0, reg1_data.data, reg2_0, reg2_data.data, reg3_0, reg3_data.data, result_data.data);
+
+	cpu->reg.r[reg3_0] = result_data.binary[0];
+	cpu->reg.r[reg3_1] = result_data.binary[1];
+
+	cpu->reg.pc += 4;
+    return 0;
 }
 int op_exec_floorf_dl_F(TargetCoreType *cpu)
 {
@@ -1875,23 +2431,283 @@ int op_exec_floorf_dw_F(TargetCoreType *cpu)
 }
 int op_exec_maxf_d_F(TargetCoreType *cpu)
 {
-	printf("ERROR: not supported:%s\n", __FUNCTION__);
-	return -1;
+    FpuConfigSettingType fpu_config;
+    FloatExceptionType ex;
+	uint32 reg1_0 = cpu->decoded_code->type_f.reg1;
+	uint32 reg1_1 = cpu->decoded_code->type_f.reg1 + 1;
+	uint32 reg2_0 = cpu->decoded_code->type_f.reg2;
+	uint32 reg2_1 = cpu->decoded_code->type_f.reg2 + 1;
+	uint32 reg3_0 = cpu->decoded_code->type_f.reg3;
+	uint32 reg3_1 = cpu->decoded_code->type_f.reg3 + 1;
+
+    DoubleBinaryDataType reg1_data;
+    DoubleBinaryDataType reg2_data;
+    DoubleBinaryDataType result_data;
+
+	if (reg1_1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	if (reg2_1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	reg1_data.binary[0] = cpu->reg.r[reg1_0];
+	reg1_data.binary[1] = cpu->reg.r[reg1_1];
+	reg2_data.binary[0] = cpu->reg.r[reg2_0];
+	reg2_data.binary[1] = cpu->reg.r[reg2_1];
+ 
+    prepare_float_op(cpu, &ex, &fpu_config);
+    {
+        DoubleBinaryDataType result;
+        bool is_invalid = FALSE;
+        if ( double_is_snan(reg1_data) || double_is_snan(reg2_data)){
+            double_get_qnan(&result);
+            is_invalid = TRUE;
+        } else if ( double_is_qnan(reg1_data) || double_is_qnan(reg2_data)) {
+            double_get_qnan(&result);
+        } else {
+            if ( reg1_data.data > reg2_data.data ) {
+                result = reg1_data;
+            } else {
+                result = reg2_data;
+            }
+        }
+        if (is_invalid) {
+            sys_set_fpst_xc(&cpu->reg, sys_get_fpst_xc(&cpu->reg) | SYS_FPSR_EXPR_V);
+            sys_set_fpst_xp(&cpu->reg, sys_get_fpst_xp(&cpu->reg) | SYS_FPSR_EXPR_V);
+        }
+        result_data = result;
+    }
+    end_float_op(cpu, &ex);
+
+	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: MAXF.D r%d(%lf),r%d(%ff) r%d:%lf\n", 
+        cpu->reg.pc, reg1_0, reg1_data.data, reg2_0, reg2_data.data, reg3_0, result_data.data));
+	printf( "0x%x: MAXF.D r%d(%lf),r%d(%ff) r%d:%lf\n", cpu->reg.pc, reg1_0, reg1_data.data, reg2_0, reg2_data.data, reg3_0, result_data.data);
+
+	cpu->reg.r[reg3_0] = result_data.binary[0];
+	cpu->reg.r[reg3_1] = result_data.binary[1];
+    cpu->reg.pc += 4;
+    return 0;
+
+	
 }
 int op_exec_minf_d_F(TargetCoreType *cpu)
 {
-	printf("ERROR: not supported:%s\n", __FUNCTION__);
-	return -1;
+	uint32 reg1_0 = cpu->decoded_code->type_f.reg1;
+	uint32 reg1_1 = cpu->decoded_code->type_f.reg1 + 1;
+	uint32 reg2_0 = cpu->decoded_code->type_f.reg2;
+	uint32 reg2_1 = cpu->decoded_code->type_f.reg2 + 1;
+	uint32 reg3_0 = cpu->decoded_code->type_f.reg3;
+	uint32 reg3_1 = cpu->decoded_code->type_f.reg3 + 1;
+    DoubleBinaryDataType reg1_data;
+    DoubleBinaryDataType reg2_data;
+    DoubleBinaryDataType reg3_data;
+    DoubleBinaryDataType result_data;
+
+	if (reg1_1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	if (reg2_1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	if (reg3_1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	reg1_data.binary[0] = cpu->reg.r[reg1_0];
+	reg1_data.binary[1] = cpu->reg.r[reg1_1];
+	reg2_data.binary[0] = cpu->reg.r[reg2_0];
+	reg2_data.binary[1] = cpu->reg.r[reg2_1];
+	reg3_data.binary[0] = cpu->reg.r[reg3_0];
+	reg3_data.binary[1] = cpu->reg.r[reg3_1];
+
+    if (double_is_snan(reg1_data) || double_is_snan(reg2_data)) {
+        sys_set_fpst_xc(&cpu->reg, sys_get_fpst_xc(&cpu->reg) | SYS_FPSR_EXPR_V);
+        sys_set_fpst_xp(&cpu->reg, sys_get_fpst_xp(&cpu->reg) | SYS_FPSR_EXPR_V);
+        double_get_qnan(&result_data);
+    }
+    else {
+        if (reg1_data.data < reg2_data.data) {
+            result_data.data = reg1_data.data;
+        }
+        else {
+            result_data.data = reg2_data.data;
+        }
+    }
+
+	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: MIN_D r%d(%lf),r%d(%lf),r%d(%lf):%lf\n", 
+        cpu->reg.pc, reg1_0, reg1_data.data, reg2_0, reg2_data.data, reg3_0, reg3_data.data, result_data.data));
+	printf("0x%x: MIN_D r%d(%lf),r%d(%lf),r%d(%lf):%lf\n", cpu->reg.pc, reg1_0, reg1_data.data, reg2_0, reg2_data.data, reg3_0, reg3_data.data, result_data.data);
+
+	cpu->reg.r[reg3_0] = result_data.binary[0];
+	cpu->reg.r[reg3_1] = result_data.binary[1];
+
+	cpu->reg.pc += 4;
+    return 0;
 }
 int op_exec_negf_d_F(TargetCoreType *cpu)
 {
-	printf("ERROR: not supported:%s\n", __FUNCTION__);
-	return -1;
+    FpuConfigSettingType fpu_config;
+    FloatExceptionType ex;
+	uint32 reg2_0 = cpu->decoded_code->type_f.reg2;
+	uint32 reg2_1 = cpu->decoded_code->type_f.reg2 + 1;
+	uint32 reg3_0 = cpu->decoded_code->type_f.reg3;
+	uint32 reg3_1 = cpu->decoded_code->type_f.reg3 + 1;
+    DoubleBinaryDataType reg2_data; 
+    DoubleBinaryDataType reg3_data; 
+    DoubleBinaryDataType result_data;
+
+	if (reg2_1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	if (reg3_1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	reg2_data.binary[0] = cpu->reg.r[reg2_0];
+	reg2_data.binary[1] = cpu->reg.r[reg2_1];
+	reg3_data.binary[0] = cpu->reg.r[reg3_0];
+	reg3_data.binary[1] = cpu->reg.r[reg3_1];
+
+    prepare_float_op(cpu, &ex, &fpu_config);
+    {
+        if ( double_is_qnan(reg2_data) ) {
+            double_get_qnan(&result_data);
+        } else if ( double_is_snan(reg2_data) ) {
+            double_get_snan(&result_data);
+            sys_set_fpst_xc(&cpu->reg, sys_get_fpst_xc(&cpu->reg) | SYS_FPSR_EXPR_V);
+            sys_set_fpst_xp(&cpu->reg, sys_get_fpst_xp(&cpu->reg) | SYS_FPSR_EXPR_V);
+        } else {
+            result_data = reg2_data;
+            DOUBLE_SET_SIGN_REVERSE(result_data);
+        }
+    }
+    end_float_op(cpu, &ex);
+    DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: NEGF.D r%d(%lf),r%d(%lf):%lf\n", 
+        cpu->reg.pc, reg2_0, reg2_data.data, reg3_0, reg3_data.data, result_data.data));
+//    printf("0x%x: NEGF.D r%d(%lf),r%d(%lf):%lf\n", cpu->reg.pc, reg2_0, reg2_data.data, reg3_0, reg3_data.data, result_data.data);
+    
+    cpu->reg.r[reg3_0] = result_data.binary[0];
+	cpu->reg.r[reg3_1] = result_data.binary[1];
+	cpu->reg.pc += 4;
+    return 0;
 }
+int op_exec_recipf_s_F(TargetCoreType *cpu)
+{
+    FpuConfigSettingType fpu_config;
+    FloatExceptionType ex;
+	uint32 reg2 = cpu->decoded_code->type_f.reg2;
+	uint32 reg3 = cpu->decoded_code->type_f.reg3;
+    FloatBinaryDataType reg2_data;
+    FloatBinaryDataType reg3_data;
+    FloatBinaryDataType result_data;
+
+	if (reg2 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	if (reg3 >= CPU_GREG_NUM) {
+		return -1;
+	}
+
+	reg2_data.binary = cpu->reg.r[reg2];
+	reg3_data.binary = cpu->reg.r[reg3];
+
+    prepare_float_op(cpu, &ex, &fpu_config);
+    {
+        if ( float_is_qnan(reg2_data)) {
+            float_get_qnan(&result_data);
+        } else if ( float_is_snan(reg2_data)) {
+            float_get_snan(&result_data);
+            sys_set_fpst_xc(&cpu->reg, sys_get_fpst_xc(&cpu->reg) | SYS_FPSR_EXPR_V);
+            sys_set_fpst_xp(&cpu->reg, sys_get_fpst_xp(&cpu->reg) | SYS_FPSR_EXPR_V);
+        } else if ( FLOAT_IS_INF(reg2_data) ) {
+            result_data.data = 0;
+            if ( FLOAT_IS_MINUS(reg2_data)){
+                // returns minus 0
+                FLOAT_SIGN_BIT_SET(reg2_data);
+            }
+        } else if ( FLOAT_IS_ZERO(reg2_data) ) {
+            result_data.data = INFINITY;
+            if ( FLOAT_IS_MINUS(reg2_data)){
+                // returns minus inifite
+                FLOAT_SIGN_BIT_SET(reg2_data);
+            }
+            sys_set_fpst_xc(&cpu->reg, sys_get_fpst_xc(&cpu->reg) | SYS_FPSR_EXPR_Z);
+            sys_set_fpst_xp(&cpu->reg, sys_get_fpst_xp(&cpu->reg) | SYS_FPSR_EXPR_Z);
+        } else {
+            result_data.data = (float)1/reg2_data.data;
+        }
+    }
+    end_float_op(cpu, &ex);
+	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: RECIPF.S r%d(%f),r%d(%f):%f\n", 
+        cpu->reg.pc, reg2, reg2_data.data, reg3, reg3_data.data, result_data.data));
+	printf("0x%x: RECIPF.S r%d(%f),r%d(%f):%f\n", cpu->reg.pc, reg2, reg2_data.data, reg3, reg3_data.data, result_data.data);
+
+	cpu->reg.r[reg3] = result_data.binary;
+
+	cpu->reg.pc += 4;
+    return 0;
+
+}
+
 int op_exec_recipf_d_F(TargetCoreType *cpu)
 {
-	printf("ERROR: not supported:%s\n", __FUNCTION__);
-	return -1;
+    FpuConfigSettingType fpu_config;
+    FloatExceptionType ex;
+    uint32 reg2_0 = cpu->decoded_code->type_f.reg2;
+	uint32 reg2_1 = cpu->decoded_code->type_f.reg2 + 1;
+	uint32 reg3_0 = cpu->decoded_code->type_f.reg3;
+	uint32 reg3_1 = cpu->decoded_code->type_f.reg3 + 1;
+    DoubleBinaryDataType reg2_data;
+    DoubleBinaryDataType reg3_data;
+    DoubleBinaryDataType result_data;
+
+	if (reg2_1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	if (reg3_1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+
+	reg2_data.binary[0] = cpu->reg.r[reg2_0];
+	reg2_data.binary[1] = cpu->reg.r[reg2_1];
+	reg3_data.binary[0] = cpu->reg.r[reg3_0];
+	reg3_data.binary[1] = cpu->reg.r[reg3_1];
+
+    prepare_float_op(cpu, &ex, &fpu_config);
+    {
+        if ( double_is_qnan(reg2_data)) {
+            double_get_qnan(&result_data);
+        } else if ( double_is_snan(reg2_data)) {
+            double_get_snan(&result_data);
+            sys_set_fpst_xc(&cpu->reg, sys_get_fpst_xc(&cpu->reg) | SYS_FPSR_EXPR_V);
+            sys_set_fpst_xp(&cpu->reg, sys_get_fpst_xp(&cpu->reg) | SYS_FPSR_EXPR_V);
+        } else if ( DOUBLE_IS_INF(reg2_data) ) {
+            result_data.data = 0;
+            if ( DOUBLE_IS_MINUS(reg2_data)){
+                // returns minus 0
+                DOUBLE_SIGN_BIT_SET(reg2_data);
+            }
+        } else if ( DOUBLE_IS_ZERO(reg2_data) ) {
+            result_data.data = (double)INFINITY;
+            if ( DOUBLE_IS_MINUS(reg2_data)){
+                // returns minus inifite
+                DOUBLE_SIGN_BIT_SET(reg2_data);
+            }
+            sys_set_fpst_xc(&cpu->reg, sys_get_fpst_xc(&cpu->reg) | SYS_FPSR_EXPR_Z);
+            sys_set_fpst_xp(&cpu->reg, sys_get_fpst_xp(&cpu->reg) | SYS_FPSR_EXPR_Z);
+        } else {
+            result_data.data = (double)1/reg2_data.data;
+        }
+    }
+    end_float_op(cpu, &ex);
+	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: RECIPF.D r%d(%lf),r%d(%fl):%lf\n", 
+        cpu->reg.pc, reg2_0, reg2_data.data, reg3_0, reg3_data.data, result_data.data));
+	printf("0x%x: RECIPF.D r%d(%lf),r%d(%lf):%lf\n", cpu->reg.pc, reg2_0, reg2_data.data, reg3_0, reg3_data.data, result_data.data);
+
+	cpu->reg.r[reg3_0] = result_data.binary[0];
+	cpu->reg.r[reg3_1] = result_data.binary[1];
+	cpu->reg.pc += 4;
+
+    return 0;
+
 }
 int op_exec_rsqrtf_d_F(TargetCoreType *cpu)
 {
@@ -1905,26 +2721,355 @@ int op_exec_sqrtf_d_F(TargetCoreType *cpu)
 }
 int op_exec_subf_d_F(TargetCoreType *cpu)
 {
-	printf("ERROR: not supported:%s\n", __FUNCTION__);
-	return -1;
+    FpuConfigSettingType fpu_config;
+    FloatExceptionType ex;
+	uint32 reg1_0 = cpu->decoded_code->type_f.reg1;
+	uint32 reg1_1 = cpu->decoded_code->type_f.reg1 + 1;
+	uint32 reg2_0 = cpu->decoded_code->type_f.reg2;
+	uint32 reg2_1 = cpu->decoded_code->type_f.reg2 + 1;
+	uint32 reg3_0 = cpu->decoded_code->type_f.reg3;
+	uint32 reg3_1 = cpu->decoded_code->type_f.reg3 + 1;
+    DoubleBinaryDataType reg1_data;
+    DoubleBinaryDataType reg2_data;
+    DoubleBinaryDataType reg3_data;
+    DoubleBinaryDataType result_data;
+
+	if (reg1_1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	if (reg2_1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	if (reg3_1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	reg1_data.binary[0] = cpu->reg.r[reg1_0];
+	reg1_data.binary[1] = cpu->reg.r[reg1_1];
+	reg2_data.binary[0] = cpu->reg.r[reg2_0];
+	reg2_data.binary[1] = cpu->reg.r[reg2_1];
+	reg3_data.binary[0] = cpu->reg.r[reg3_0];
+	reg3_data.binary[1] = cpu->reg.r[reg3_1];
+
+    prepare_float_op(cpu, &ex, &fpu_config);
+    {
+        set_subnormal_operand_double(cpu, &fpu_config, &reg1_data);
+        set_subnormal_operand_double(cpu, &fpu_config, &reg2_data);
+        result_data.data = reg2_data.data - reg1_data.data;
+        set_subnormal_result_double(cpu, &fpu_config, &result_data);
+    }
+    end_float_op(cpu, &ex);
+
+	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: SUBF_D r%d(%lf),r%d(%lf),r%d(%lf):%lf\n",
+        cpu->reg.pc, reg1_0, reg1_data.data, reg2_0, reg2_data.data, reg3_0, reg3_data.data, result_data.data));
+//	printf("0x%x: SUBF_D r%d(%lf),r%d(%lf),r%d(%lf):%lf\n",cpu->reg.pc, reg1_0, reg1_data.data, reg2_0, reg2_data.data, reg3_0, reg3_data.data, result_data.data);
+
+	cpu->reg.r[reg3_0] = result_data.binary[0];
+	cpu->reg.r[reg3_1] = result_data.binary[1];
+
+	cpu->reg.pc += 4;
+    return 0;
+
 }
 int op_exec_trncf_dl_F(TargetCoreType *cpu)
 {
-	printf("ERROR: not supported:%s\n", __FUNCTION__);
-	return -1;
+    FpuConfigSettingType fpu_config;
+    FloatExceptionType ex;
+	uint32 reg2_0 = cpu->decoded_code->type_f.reg2;
+	uint32 reg2_1 = cpu->decoded_code->type_f.reg2 + 1;
+	uint32 reg3_0 = cpu->decoded_code->type_f.reg3;
+	uint32 reg3_1 = cpu->decoded_code->type_f.reg3 + 1;
+    DoubleBinaryDataType reg2_data;
+    sint64 result_data;
+
+	if (reg2_1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	if (reg3_1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+    reg2_data.binary[0] = cpu->reg.r[reg2_0];
+	reg2_data.binary[1] = cpu->reg.r[reg2_1];
+    // TODO:Overflow
+    prepare_float_op(cpu, &ex, &fpu_config);
+    {
+        sint64 result;
+        bool is_invalid = FALSE;
+        if (DOUBLE_IS_NAN(reg2_data) || DOUBLE_IS_INF(reg2_data)) {
+            if (DOUBLE_IS_PLUS(reg2_data)) {
+                result = (sint64)LONG_MAX;
+            }
+            else {
+                result = (sint64)( -((sint64)LONG_MAX) );
+            }
+            is_invalid = TRUE;
+        }
+        else {
+            result = (sint64)trunc(reg2_data.data);
+            if ( result < ((sint64)( -((sint64)LONG_MAX))) ) {
+                result = (sint64)( -((sint64)LONG_MAX) );
+                is_invalid = TRUE;
+            } 
+            else if (result > ((sint64)LONG_MAX)) {
+                result = (sint64)LONG_MAX;
+                is_invalid = TRUE;
+            }
+        }
+        if (is_invalid) {
+            sys_set_fpst_xc(&cpu->reg, sys_get_fpst_xc(&cpu->reg) | SYS_FPSR_EXPR_V);
+            sys_set_fpst_xp(&cpu->reg, sys_get_fpst_xp(&cpu->reg) | SYS_FPSR_EXPR_V);
+        }
+        result_data = (sint64)result;
+    }
+    end_float_op(cpu, &ex);
+
+	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: TRNCF.DL r%d(%lf) : r%d :%lld\n",
+        cpu->reg.pc, reg2_0, reg2_data.data, reg3_0,result_data));
+//	printf( "0x%x: TRNCF.DL r%d(%lf) r%d :%lld\n", cpu->reg.pc, reg2_0, reg2_data.data, reg3_0,result_data);
+	cpu->reg.r[reg3_0] = (uint32)(result_data>>32);
+	cpu->reg.r[reg3_1] = (uint32)(result_data & 0xffffffff);
+	cpu->reg.pc += 4;
+
+	return 0;
+
 }
 int op_exec_trncf_dul_F(TargetCoreType *cpu)
 {
-	printf("ERROR: not supported:%s\n", __FUNCTION__);
-	return -1;
+    // Double floating to unsingned long word
+    FpuConfigSettingType fpu_config;
+    FloatExceptionType ex;
+	uint32 reg2_0 = cpu->decoded_code->type_f.reg2;
+	uint32 reg2_1 = cpu->decoded_code->type_f.reg2 + 1;
+	uint32 reg3_0 = cpu->decoded_code->type_f.reg3;
+	uint32 reg3_1 = cpu->decoded_code->type_f.reg3 + 1;
+    DoubleBinaryDataType reg2_data;
+    uint64 result_data;
+
+	if (reg2_1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	if (reg3_1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+    reg2_data.binary[0] = cpu->reg.r[reg2_0];
+	reg2_data.binary[1] = cpu->reg.r[reg2_1];
+ 
+    prepare_float_op(cpu, &ex, &fpu_config);
+    {
+        uint64 result;
+        bool is_invalid = TRUE;
+        if (DOUBLE_IS_NAN(reg2_data)) {
+            result = 0;
+        } else if ( DOUBLE_IS_INF(reg2_data)) {
+            if (DOUBLE_IS_PLUS(reg2_data)) {
+                result = (uint64)ULONG_MAX;
+            } else {
+                result = 0;
+            }
+        } else if ( reg2_data.data < 0 ) {
+            result = 0;
+        } else if ( reg2_data.data > (uint64)ULONG_MAX) {
+            result = (uint64)ULONG_MAX;
+        } else {
+            result = (uint64)trunc(reg2_data.data);
+            is_invalid = FALSE;
+        }
+        if (is_invalid) {
+            sys_set_fpst_xc(&cpu->reg, sys_get_fpst_xc(&cpu->reg) | SYS_FPSR_EXPR_V);
+            sys_set_fpst_xp(&cpu->reg, sys_get_fpst_xp(&cpu->reg) | SYS_FPSR_EXPR_V);
+        }
+        result_data = (uint64)result;
+    }
+    end_float_op(cpu, &ex);
+
+	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: TRNCF.DUL r%d(%lf) : r%d :%llu\n",
+        cpu->reg.pc, reg2_0, reg2_data.data, reg3_0,result_data));
+//	printf( "0x%x: TRNCF.DUL r%d(%lf) r%d :%llu\n", cpu->reg.pc, reg2_0, reg2_data.data, reg3_0,result_data);
+	cpu->reg.r[reg3_0] = (uint32)(result_data>>32);
+	cpu->reg.r[reg3_1] = (uint32)(result_data & 0xffffffff);
+	cpu->reg.pc += 4;
+
+	return 0;
 }
 int op_exec_trncf_duw_F(TargetCoreType *cpu)
 {
-	printf("ERROR: not supported:%s\n", __FUNCTION__);
-	return -1;
+    // Double floating to unsingned long word
+    FpuConfigSettingType fpu_config;
+    FloatExceptionType ex;
+	uint32 reg2_0 = cpu->decoded_code->type_f.reg2;
+	uint32 reg2_1 = cpu->decoded_code->type_f.reg2 + 1;
+	uint32 reg3   = cpu->decoded_code->type_f.reg3;
+    DoubleBinaryDataType reg2_data;
+    uint32 result_data;
+
+	if (reg2_1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	if (reg3 >= CPU_GREG_NUM) {
+		return -1;
+	}
+    reg2_data.binary[0] = cpu->reg.r[reg2_0];
+	reg2_data.binary[1] = cpu->reg.r[reg2_1];
+ 
+    prepare_float_op(cpu, &ex, &fpu_config);
+    {
+        set_subnormal_operand_double(cpu, &fpu_config, &reg2_data);
+        result_data = (uint32)reg2_data.data;
+    }
+    end_float_op(cpu, &ex);
+
+	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: TRNCF.DUW r%d(%lf) : r%d :%u\n",
+        cpu->reg.pc, reg2_0, reg2_data.data, reg3,result_data));
+    printf("0x%x: TRNCF.DW r%d(%lf) : r%d :%u\n", cpu->reg.pc, reg2_0, reg2_data.data, reg3,result_data);
+	cpu->reg.r[reg3] = (uint32)(result_data);
+	cpu->reg.pc += 4;
+
+	return 0;
+
 }
 int op_exec_trncf_dw_F(TargetCoreType *cpu)
 {
-	printf("ERROR: not supported:%s\n", __FUNCTION__);
-	return -1;
+    // Double floating to unsingned long word
+    FpuConfigSettingType fpu_config;
+    FloatExceptionType ex;
+	uint32 reg2_0 = cpu->decoded_code->type_f.reg2;
+	uint32 reg2_1 = cpu->decoded_code->type_f.reg2 + 1;
+	uint32 reg3   = cpu->decoded_code->type_f.reg3;
+    DoubleBinaryDataType reg2_data;
+    sint32 result_data;
+
+	if (reg2_1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	if (reg3 >= CPU_GREG_NUM) {
+		return -1;
+	}
+    reg2_data.binary[0] = cpu->reg.r[reg2_0];
+	reg2_data.binary[1] = cpu->reg.r[reg2_1];
+ 
+    prepare_float_op(cpu, &ex, &fpu_config);
+    {
+        set_subnormal_operand_double(cpu, &fpu_config, &reg2_data);
+        result_data = (sint32)reg2_data.data;
+    }
+    end_float_op(cpu, &ex);
+
+	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: TRNCF.DW r%d(%lf) : r%d :%d\n",
+        cpu->reg.pc, reg2_0, reg2_data.data, reg3,result_data));
+//    printf("0x%x: TRNCF.DW r%d(%lf) : r%d :%d\n", cpu->reg.pc, reg2_0, reg2_data.data, reg3,result_data);
+	cpu->reg.r[reg3] = (uint32)(result_data);
+	cpu->reg.pc += 4;
+
+	return 0;
+}
+
+int op_exec_trncf_sl_F(TargetCoreType *cpu)
+{
+    // single floating to 64bit fixed-point
+
+    FpuConfigSettingType fpu_config;
+    FloatExceptionType ex;
+	uint32 reg2 = cpu->decoded_code->type_f.reg2;
+	uint32 reg3_0 = cpu->decoded_code->type_f.reg3;
+	uint32 reg3_1 = cpu->decoded_code->type_f.reg3 + 1;
+    FloatBinaryDataType reg2_data;
+    sint64 result_data;
+
+	if (reg2 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	if (reg3_1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+    reg2_data.binary = cpu->reg.r[reg2];
+    
+    prepare_float_op(cpu, &ex, &fpu_config);
+    {
+        bool is_invalid = TRUE;
+        sint64 result;
+        if (FLOAT_IS_NAN(reg2_data) ) {
+            result = (sint64)-LONG_MAX;
+        } else if (FLOAT_IS_INF(reg2_data) ) {
+            result = (sint64)LONG_MAX;
+        } else {
+            result = (sint64)truncf(reg2_data.data);
+            is_invalid = FALSE;
+        }
+        if (is_invalid) {
+            sys_set_fpst_xc(&cpu->reg, sys_get_fpst_xc(&cpu->reg) | SYS_FPSR_EXPR_V);
+            sys_set_fpst_xp(&cpu->reg, sys_get_fpst_xp(&cpu->reg) | SYS_FPSR_EXPR_V);
+        }
+        result_data = (sint64)result;
+    }
+    end_float_op(cpu, &ex);
+
+	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: TRNCF.SL r%d(%f) r%d :%lld\n",
+        cpu->reg.pc, reg2, reg2_data.data, reg3_0,result_data));
+//	printf( "0x%x: TRNCF.SL r%d(%f) r%d :%lld\n", cpu->reg.pc, reg2, reg2_data.data, reg3_0,result_data);
+	cpu->reg.r[reg3_0] = (uint32)(result_data>>32);
+	cpu->reg.r[reg3_1] = (uint32)(result_data & 0xffffffff);
+	cpu->reg.pc += 4;
+
+	return 0;
+
+}
+
+int op_exec_trncf_sul_F(TargetCoreType *cpu)
+{
+    // single floating to unsigned 64bit fixed
+
+    FpuConfigSettingType fpu_config;
+    FloatExceptionType ex;
+	uint32 reg2 = cpu->decoded_code->type_f.reg2;
+	uint32 reg3_0 = cpu->decoded_code->type_f.reg3;
+	uint32 reg3_1 = cpu->decoded_code->type_f.reg3 + 1;
+    FloatBinaryDataType reg2_data;
+    uint64 result_data;
+
+	if (reg2 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	if (reg3_1 >= CPU_GREG_NUM) {
+		return -1;
+	}
+    reg2_data.binary = cpu->reg.r[reg2];
+    
+    prepare_float_op(cpu, &ex, &fpu_config);
+    {
+        bool is_invalid = TRUE;
+        uint64 result;
+        if (FLOAT_IS_NAN(reg2_data) ) {
+            result = 0;
+        } else if (FLOAT_IS_INF(reg2_data) ) {
+            if ( FLOAT_IS_PLUS(reg2_data)) {
+                result = (uint64)ULONG_MAX;
+            } else {   
+                result = 0;
+            }
+        } else {
+            if ( reg2_data.data < 0 ) {
+                result = 0;
+            } else if ( reg2_data.data > (uint64)ULONG_MAX) {
+                result = (uint64)ULONG_MAX;
+            } else {
+                result = (uint64)truncf(reg2_data.data);
+                is_invalid = FALSE;
+            }
+        }
+        if (is_invalid) {
+            sys_set_fpst_xc(&cpu->reg, sys_get_fpst_xc(&cpu->reg) | SYS_FPSR_EXPR_V);
+            sys_set_fpst_xp(&cpu->reg, sys_get_fpst_xp(&cpu->reg) | SYS_FPSR_EXPR_V);
+        }
+        result_data = (uint64)result;
+    }
+    end_float_op(cpu, &ex);
+
+	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: TRNCF.SUL r%d(%f) r%d :%llu\n",
+        cpu->reg.pc, reg2, reg2_data.data, reg3_0,result_data));
+//	printf( "0x%x: TRNCF.SUL r%d(%f) r%d :%llu\n", cpu->reg.pc, reg2, reg2_data.data, reg3_0,result_data);
+	cpu->reg.r[reg3_0] = (uint32)(result_data>>32);
+	cpu->reg.r[reg3_1] = (uint32)(result_data & 0xffffffff);
+	cpu->reg.pc += 4;
+
+	return 0;
+
 }

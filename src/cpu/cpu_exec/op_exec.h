@@ -125,7 +125,7 @@ extern OpExecStringType op_exec_string_table[OP_EXEC_TABLE_NUM];
 #define op_exec_or_1 op_exec_or
 #define op_exec_ori_6 op_exec_ori
 #define op_exec_prepare_13 op_exec_prepare
-#define op_exec_recipf_s_F NULL
+//#define op_exec_recipf_s_F NULL
 #define op_exec_reti_10 op_exec_reti
 #define op_exec_rie_1 NULL /* TODO */
 #define op_exec_rie_10 NULL /* TODO */
@@ -183,8 +183,8 @@ extern OpExecStringType op_exec_string_table[OP_EXEC_TABLE_NUM];
 #define op_exec_syscall_10 op_exec_syscall_10
 #define op_exec_trap_10 op_exec_trap
 #define op_exec_trfsr_F op_exec_trfsr_F
-#define op_exec_trncf_sl_F NULL
-#define op_exec_trncf_sul_F NULL
+// #define op_exec_trncf_sl_F NULL
+// #define op_exec_trncf_sul_F NULL
 #define op_exec_trncf_suw_F op_exec_trncf_suw_F
 #define op_exec_trncf_sw_F op_exec_trncf_sw_F
 #define op_exec_tst_1 op_exec_tst
