@@ -1830,7 +1830,7 @@ int op_exec_ceilf_dl_F(TargetCoreType *cpu)
 
 	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: CEILF.DL r%d(%lf) : r%d :%lld\n",
         cpu->reg.pc, reg2_0, reg2_data.data, reg3_0,result_data));
-	printf( "0x%x: CEILF.DL r%d(%lf) r%d :%lld\n",cpu->reg.pc, reg2_0, reg2_data.data, reg3_0,result_data);
+//	printf( "0x%x: CEILF.DL r%d(%lf) r%d :%lld\n",cpu->reg.pc, reg2_0, reg2_data.data, reg3_0,result_data);
 	cpu->reg.r[reg3_0] = (uint32)(result_data>>32);
 	cpu->reg.r[reg3_1] = (uint32)(result_data & 0xffffffff);
 	cpu->reg.pc += 4;
@@ -1890,7 +1890,7 @@ int op_exec_ceilf_dul_F(TargetCoreType *cpu)
 
 	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: CEILF.DUL r%d(%lf) : r%d :%llu\n",
         cpu->reg.pc, reg2_0, reg2_data.data, reg3_0,result_data));
-	printf( "0x%x: CEILF.DUL r%d(%lf) r%d :%llu\n",  cpu->reg.pc, reg2_0, reg2_data.data, reg3_0,result_data);
+//	printf( "0x%x: CEILF.DUL r%d(%lf) r%d :%llu\n",  cpu->reg.pc, reg2_0, reg2_data.data, reg3_0,result_data);
 	cpu->reg.r[reg3_0] = (uint32)(result_data>>32);
 	cpu->reg.r[reg3_1] = (uint32)(result_data & 0xffffffff);
 	cpu->reg.pc += 4;
@@ -1927,8 +1927,7 @@ int op_exec_ceilf_duw_F(TargetCoreType *cpu)
 
 	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: CEILF.DW r%d(%lf),r%d(%d):%d\n", 
         cpu->reg.pc, reg2_0, reg2_data.data, reg3, reg3_data, result_data));
-	printf("0x%x: CEILF.DW r%d(%lf),r%d(%d):%d\n", 
-        cpu->reg.pc, reg2_0, reg2_data.data, reg3, reg3_data, result_data);
+//	printf("0x%x: CEILF.DW r%d(%lf),r%d(%d):%d\n",     cpu->reg.pc, reg2_0, reg2_data.data, reg3, reg3_data, result_data);
 
     cpu->reg.r[reg3] = result_data;
 	cpu->reg.pc += 4;
@@ -2096,7 +2095,7 @@ int op_exec_cvtf_dl_F(TargetCoreType *cpu)
 
 	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: CVTF.DL r%d(%lf),r%d:%lld\n", 
         cpu->reg.pc, reg2_0, reg2_data.data, reg3_0, result_data));
-    printf( "0x%x: CVTF.DL r%d(%lf),r%d:%lld\n", cpu->reg.pc, reg2_0, reg2_data.data, reg3_0, result_data);
+//    printf( "0x%x: CVTF.DL r%d(%lf),r%d:%lld\n", cpu->reg.pc, reg2_0, reg2_data.data, reg3_0, result_data);
 
     cpu->reg.r[reg3_0] = (uint32)(result_data >> 32);
     cpu->reg.r[reg3_1] = (uint32)(result_data & 0xffffffff);
@@ -2134,7 +2133,7 @@ int op_exec_cvtf_dul_F(TargetCoreType *cpu)
 
 	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: CVTF.DUL r%d(%lf),r%d:%llu\n", 
         cpu->reg.pc, reg2_0, reg2_data.data, reg3_0, result_data));
-	printf("0x%x: CVTF.DUL r%d(%lf),r%d:%llu\n",  cpu->reg.pc, reg2_0, reg2_data.data, reg3_0, result_data);
+//	printf("0x%x: CVTF.DUL r%d(%lf),r%d:%llu\n",  cpu->reg.pc, reg2_0, reg2_data.data, reg3_0, result_data);
 
     cpu->reg.r[reg3_0] = (uint32)(result_data >> 32);
     cpu->reg.r[reg3_1] = (uint32)(result_data & 0xffffffff);
@@ -2171,7 +2170,7 @@ int op_exec_cvtf_duw_F(TargetCoreType *cpu)
 
 	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: CVTF.DUW r%d(%lf),r%d:%u\n", 
         cpu->reg.pc, reg2_0, reg2_data.data, reg3, result_data));
-    printf("0x%x: CVTF.DUW r%d(%lf),r%d:%u\n",  cpu->reg.pc, reg2_0, reg2_data.data, reg3, result_data);
+//    printf("0x%x: CVTF.DUW r%d(%lf),r%d:%u\n",  cpu->reg.pc, reg2_0, reg2_data.data, reg3, result_data);
 
     cpu->reg.r[reg3] = (uint32)result_data;
 	cpu->reg.pc += 4;
@@ -2205,7 +2204,7 @@ int op_exec_cvtf_dw_F(TargetCoreType *cpu)
 
 	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: CVTF.DUW r%d(%lf),r%d:%d\n", 
         cpu->reg.pc, reg2_0, reg2_data.data, reg3, result_data));
-    printf("0x%x: CVTF.DUW r%d(%lf),r%d:%d\n",  cpu->reg.pc, reg2_0, reg2_data.data, reg3, result_data);
+//    printf("0x%x: CVTF.DUW r%d(%lf),r%d:%d\n",  cpu->reg.pc, reg2_0, reg2_data.data, reg3, result_data);
 
     cpu->reg.r[reg3] = (sint32)result_data;
 	cpu->reg.pc += 4;
@@ -2276,7 +2275,7 @@ int op_exec_cvtf_uld_F(TargetCoreType *cpu)
 
 	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: CVTF.ULD r%d(%llu),r%d:%lf\n", 
         cpu->reg.pc, reg2_0, reg2_data, reg3_0, result_data.data));
-    printf("0x%x: CVTF.ULD r%d(%llu),r%d:%lf\n", cpu->reg.pc, reg2_0, reg2_data, reg3_0, result_data.data);
+//    printf("0x%x: CVTF.ULD r%d(%llu),r%d:%lf\n", cpu->reg.pc, reg2_0, reg2_data, reg3_0, result_data.data);
 
     cpu->reg.r[reg3_0] = (uint32)result_data.binary[0];
     cpu->reg.r[reg3_1] = (uint32)result_data.binary[1];
@@ -2284,8 +2283,6 @@ int op_exec_cvtf_uld_F(TargetCoreType *cpu)
 	cpu->reg.pc += 4;
     return 0;
 
-	printf("ERROR: not supported:%s\n", __FUNCTION__);
-	return -1;
 }
 int op_exec_cvtf_uwd_F(TargetCoreType *cpu)
 {
@@ -2317,7 +2314,7 @@ int op_exec_cvtf_uwd_F(TargetCoreType *cpu)
 
 	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: CVTF.UWD r%d(%u),r%d(%lf):%lf\n",
         cpu->reg.pc, reg2,reg2_data, reg3_0, reg3_data.data,result_data.data));
-	printf("0x%x: CVTF.UWD r%d(%u),r%d(%lf):%lf\n", cpu->reg.pc, reg2,reg2_data, reg3_0, reg3_data.data, result_data.data);
+//	printf("0x%x: CVTF.UWD r%d(%u),r%d(%lf):%lf\n", cpu->reg.pc, reg2,reg2_data, reg3_0, reg3_data.data, result_data.data);
 	cpu->reg.r[reg3_0] = (uint32)result_data.binary[0];
 	cpu->reg.r[reg3_1] = (uint32)result_data.binary[1];
 	cpu->reg.pc += 4;
@@ -2481,7 +2478,7 @@ int op_exec_maxf_d_F(TargetCoreType *cpu)
 
 	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: MAXF.D r%d(%lf),r%d(%ff) r%d:%lf\n", 
         cpu->reg.pc, reg1_0, reg1_data.data, reg2_0, reg2_data.data, reg3_0, result_data.data));
-	printf( "0x%x: MAXF.D r%d(%lf),r%d(%ff) r%d:%lf\n", cpu->reg.pc, reg1_0, reg1_data.data, reg2_0, reg2_data.data, reg3_0, result_data.data);
+//	printf( "0x%x: MAXF.D r%d(%lf),r%d(%ff) r%d:%lf\n", cpu->reg.pc, reg1_0, reg1_data.data, reg2_0, reg2_data.data, reg3_0, result_data.data);
 
 	cpu->reg.r[reg3_0] = result_data.binary[0];
 	cpu->reg.r[reg3_1] = result_data.binary[1];
@@ -2535,7 +2532,7 @@ int op_exec_minf_d_F(TargetCoreType *cpu)
 
 	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: MIN_D r%d(%lf),r%d(%lf),r%d(%lf):%lf\n", 
         cpu->reg.pc, reg1_0, reg1_data.data, reg2_0, reg2_data.data, reg3_0, reg3_data.data, result_data.data));
-	printf("0x%x: MIN_D r%d(%lf),r%d(%lf),r%d(%lf):%lf\n", cpu->reg.pc, reg1_0, reg1_data.data, reg2_0, reg2_data.data, reg3_0, reg3_data.data, result_data.data);
+//	printf("0x%x: MIN_D r%d(%lf),r%d(%lf),r%d(%lf):%lf\n", cpu->reg.pc, reg1_0, reg1_data.data, reg2_0, reg2_data.data, reg3_0, reg3_data.data, result_data.data);
 
 	cpu->reg.r[reg3_0] = result_data.binary[0];
 	cpu->reg.r[reg3_1] = result_data.binary[1];
@@ -2638,7 +2635,7 @@ int op_exec_recipf_s_F(TargetCoreType *cpu)
     end_float_op(cpu, &ex);
 	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: RECIPF.S r%d(%f),r%d(%f):%f\n", 
         cpu->reg.pc, reg2, reg2_data.data, reg3, reg3_data.data, result_data.data));
-	printf("0x%x: RECIPF.S r%d(%f),r%d(%f):%f\n", cpu->reg.pc, reg2, reg2_data.data, reg3, reg3_data.data, result_data.data);
+//	printf("0x%x: RECIPF.S r%d(%f),r%d(%f):%f\n", cpu->reg.pc, reg2, reg2_data.data, reg3, reg3_data.data, result_data.data);
 
 	cpu->reg.r[reg3] = result_data.binary;
 
@@ -2700,7 +2697,7 @@ int op_exec_recipf_d_F(TargetCoreType *cpu)
     end_float_op(cpu, &ex);
 	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: RECIPF.D r%d(%lf),r%d(%fl):%lf\n", 
         cpu->reg.pc, reg2_0, reg2_data.data, reg3_0, reg3_data.data, result_data.data));
-	printf("0x%x: RECIPF.D r%d(%lf),r%d(%lf):%lf\n", cpu->reg.pc, reg2_0, reg2_data.data, reg3_0, reg3_data.data, result_data.data);
+//	printf("0x%x: RECIPF.D r%d(%lf),r%d(%lf):%lf\n", cpu->reg.pc, reg2_0, reg2_data.data, reg3_0, reg3_data.data, result_data.data);
 
 	cpu->reg.r[reg3_0] = result_data.binary[0];
 	cpu->reg.r[reg3_1] = result_data.binary[1];
@@ -2919,7 +2916,7 @@ int op_exec_trncf_duw_F(TargetCoreType *cpu)
 
 	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: TRNCF.DUW r%d(%lf) : r%d :%u\n",
         cpu->reg.pc, reg2_0, reg2_data.data, reg3,result_data));
-    printf("0x%x: TRNCF.DW r%d(%lf) : r%d :%u\n", cpu->reg.pc, reg2_0, reg2_data.data, reg3,result_data);
+//    printf("0x%x: TRNCF.DW r%d(%lf) : r%d :%u\n", cpu->reg.pc, reg2_0, reg2_data.data, reg3,result_data);
 	cpu->reg.r[reg3] = (uint32)(result_data);
 	cpu->reg.pc += 4;
 
