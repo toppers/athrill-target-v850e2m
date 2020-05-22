@@ -24,6 +24,7 @@ extern ProfStatType op_exec_stat_table[OP_EXEC_TABLE_NUM];
 extern OpExecStringType op_exec_string_table[OP_EXEC_TABLE_NUM];
 #endif /* CONFIG_CALC_PERFORMANCE */
 
+#define op_exec_ctret_10 NULL
 //#define op_exec_add_1 op_exec_add_1
 //#define op_exec_add_2 op_exec_add_2
 #define op_exec_addf_s_F op_exec_addf_s_F
@@ -37,10 +38,6 @@ extern OpExecStringType op_exec_string_table[OP_EXEC_TABLE_NUM];
 #define op_exec_bcond_3 op_exec_bcond_3
 #define op_exec_callt_2 NULL /* not supported */
 #define op_exec_caxi_11 op_exec_caxi
-#define op_exec_ceilf_sl_F NULL
-#define op_exec_ceilf_sul_F NULL
-#define op_exec_ceilf_suw_F NULL
-#define op_exec_ceilf_sw_F NULL
 //#define op_exec_clr1_8 op_exec_clr1_8
 //#define op_exec_clr1_9 op_exec_clr1_9
 //#define op_exec_cmov_12 op_exec_cmov_12
@@ -49,14 +46,9 @@ extern OpExecStringType op_exec_string_table[OP_EXEC_TABLE_NUM];
 //#define op_exec_cmp_1 op_exec_cmp_1
 //#define op_exec_cmp_2 op_exec_cmp_2
 #define op_exec_cmpf_s_F op_exec_cmpf_s_F
-#define op_exec_ctret_10 NULL /* not supported */
 #define op_exec_cvtf_ds_F op_exec_cvtf_ds_F
 #define op_exec_cvtf_ls_F op_exec_cvtf_ls_F
 #define op_exec_cvtf_sd_F op_exec_cvtf_sd_F
-#define op_exec_cvtf_sl_F NULL
-#define op_exec_cvtf_sul_F NULL
-#define op_exec_cvtf_suw_F NULL
-#define op_exec_cvtf_sw_F NULL
 #define op_exec_cvtf_uls_F op_exec_cvtf_uls_F
 #define op_exec_cvtf_uws_F op_exec_cvtf_uws_F
 #define op_exec_cvtf_ws_F op_exec_cvtf_ws_F
@@ -74,10 +66,6 @@ extern OpExecStringType op_exec_string_table[OP_EXEC_TABLE_NUM];
 #define op_exec_eiret_10 op_exec_eiret_10
 #define op_exec_feret_10 op_exec_feret_10
 #define op_exec_fetrap_1 op_exec_fetrap_1
-#define op_exec_floorf_sl_F NULL
-#define op_exec_floorf_sul_F NULL
-#define op_exec_floorf_suw_F NULL
-#define op_exec_floorf_sw_F NULL
 #define op_exec_halt_10 op_exec_halt
 #define op_exec_hsh_12 op_exec_hsh_12
 #define op_exec_hsw_12 op_exec_hsw_12
@@ -129,8 +117,6 @@ extern OpExecStringType op_exec_string_table[OP_EXEC_TABLE_NUM];
 #define op_exec_reti_10 op_exec_reti
 #define op_exec_rie_1 NULL /* TODO */
 #define op_exec_rie_10 NULL /* TODO */
-#define op_exec_rsqrtf_s_F NULL
-//#define op_exec_sar_2 op_exec_sar_2
 //#define op_exec_sar_9 op_exec_sar_9
 #define op_exec_sar_11 op_exec_sar_11
 #define op_exec_sasf_9 op_exec_sasf_9
@@ -160,7 +146,6 @@ extern OpExecStringType op_exec_string_table[OP_EXEC_TABLE_NUM];
 #define op_exec_sld_h_4 op_exec_sldh
 #define op_exec_sld_hu_4 op_exec_sldhu
 #define op_exec_sld_w_4 op_exec_sldw
-#define op_exec_sqrtf_s_F NULL
 #define op_exec_sst_b_4 op_exec_sstb
 #define op_exec_sst_h_4 op_exec_ssth
 #define op_exec_sst_w_4 op_exec_sstw
