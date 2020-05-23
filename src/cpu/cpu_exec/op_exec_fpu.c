@@ -3199,11 +3199,79 @@ int op_exec_floorf_sw_F(TargetCoreType *cpu)
 }
 int op_exec_rsqrtf_s_F(TargetCoreType *cpu)
 {
-	printf("ERROR: not supported:%s\n", __FUNCTION__);
-	return -1;
+    FpuConfigSettingType fpu_config;
+    FloatExceptionType ex;
+	uint32 reg2 = cpu->decoded_code->type_f.reg2;
+	uint32 reg3 = cpu->decoded_code->type_f.reg3;
+    FloatBinaryDataType reg2_data;
+    FloatBinaryDataType reg3_data;
+    FloatBinaryDataType result_data;
+
+	if (reg2 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	if (reg3 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	reg2_data.binary = cpu->reg.r[reg2];
+	reg3_data.binary = cpu->reg.r[reg3];
+
+    prepare_float_op(cpu, &ex, &fpu_config);
+    {
+        set_subnormal_operand(cpu, &fpu_config, &reg2_data);
+        result_data.data = (float)1/sqrt(reg2_data.data);
+        set_subnormal_result(cpu, &fpu_config, &result_data);
+    }
+    end_float_op(cpu, &ex);
+
+
+	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: RSQRTF.S r%d(%f),r%d(%f):%f\n", 
+        cpu->reg.pc, reg2, reg2_data.data, reg3, reg3_data.data, result_data.data));
+	cpu->reg.r[reg3] = result_data.binary;
+
+//    printf("0x%x: RSQRTF.S r%d(%f),r%d(%f):%f\n", cpu->reg.pc, reg2, reg2_data.data, reg3, reg3_data.data, result_data.data);
+
+	cpu->reg.pc += 4;
+    return 0;
+
+
 }
 int op_exec_sqrtf_s_F(TargetCoreType *cpu)
 {
-	printf("ERROR: not supported:%s\n", __FUNCTION__);
-	return -1;
+    FpuConfigSettingType fpu_config;
+    FloatExceptionType ex;
+	uint32 reg2 = cpu->decoded_code->type_f.reg2;
+	uint32 reg3 = cpu->decoded_code->type_f.reg3;
+    FloatBinaryDataType reg2_data;
+    FloatBinaryDataType reg3_data;
+    FloatBinaryDataType result_data;
+
+	if (reg2 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	if (reg3 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	reg2_data.binary = cpu->reg.r[reg2];
+	reg3_data.binary = cpu->reg.r[reg3];
+
+    prepare_float_op(cpu, &ex, &fpu_config);
+    {
+        set_subnormal_operand(cpu, &fpu_config, &reg2_data);
+        result_data.data = (float)sqrtf(reg2_data.data);
+        set_subnormal_result(cpu, &fpu_config, &result_data);
+    }
+    end_float_op(cpu, &ex);
+
+
+	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: SQRTF.S r%d(%f),r%d(%f):%f\n", 
+        cpu->reg.pc, reg2, reg2_data.data, reg3, reg3_data.data, result_data.data));
+	cpu->reg.r[reg3] = result_data.binary;
+
+    //printf("0x%x: SQRTF.S r%d(%f),r%d(%f):%f\n",         cpu->reg.pc, reg2, reg2_data.data, reg3, reg3_data.data, result_data.data);
+
+	cpu->reg.pc += 4;
+    return 0;
+
+
 }
