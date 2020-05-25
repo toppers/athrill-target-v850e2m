@@ -3195,10 +3195,9 @@ int op_exec_floorf_sl_F(TargetCoreType *cpu)
 	if (reg3 >= CPU_GREG_NUM) {
 		return -1;
 	}
-    printf("0x%x: FLOORF.S r%d(%f),r%d(%f):%f\n",         cpu->reg.pc, reg2, reg2_data.data, reg3, reg3_data.data, result_data.data);
+
 	reg2_data.binary = cpu->reg.r[reg2];
 	reg3_data.binary = cpu->reg.r[reg3];
-    printf("0x%x: FLOORF.S r%d(%f),r%d(%f):%f\n",         cpu->reg.pc, reg2, reg2_data.data, reg3, reg3_data.data, result_data.data);
 
     prepare_float_op(cpu, &ex, &fpu_config);
     {
@@ -3245,10 +3244,9 @@ int op_exec_floorf_sw_F(TargetCoreType *cpu)
 	if (reg3 >= CPU_GREG_NUM) {
 		return -1;
 	}
-    printf("### 1 0x%x: FLOORF.SW r%d(%f),r%d(%f):%f\n", cpu->reg.pc, reg2, reg2_data.data, reg3, reg3_data.data, result_data.data);
+
 	reg2_data.binary = cpu->reg.r[reg2];
 	reg3_data.binary = cpu->reg.r[reg3];
-    printf("### 2 0x%x: FLOORF.SW r%d(%f),r%d(%f):%f\n", cpu->reg.pc, reg2, reg2_data.data, reg3, reg3_data.data, result_data.data);
 
     prepare_float_op(cpu, &ex, &fpu_config);
     {
@@ -3257,15 +3255,15 @@ int op_exec_floorf_sw_F(TargetCoreType *cpu)
         set_subnormal_result(cpu, &fpu_config, &result_data);
     }
     end_float_op(cpu, &ex);
+
 	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: FLOORF.SW r%d(%f),r%d(%f):%f\n", 
         cpu->reg.pc, reg2, reg2_data.data, reg3, reg3_data.data, result_data.data));
 	cpu->reg.r[reg3] = result_data.binary;
 
-    printf("0x%x: FLOORF.SW r%d(%f),r%d(%f):%f\n", cpu->reg.pc, reg2, reg2_data.data, reg3, reg3_data.data, result_data.data);
+    //printf("0x%x: FLOORF.SW r%d(%f),r%d(%f):%f\n", cpu->reg.pc, reg2, reg2_data.data, reg3, reg3_data.data, result_data.data);
 
 	cpu->reg.pc += 4;
     return 0;
-
 }
 int op_exec_rsqrtf_s_F(TargetCoreType *cpu)
 {
