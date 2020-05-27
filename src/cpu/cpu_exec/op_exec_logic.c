@@ -149,7 +149,7 @@ int op_exec_xor(TargetCoreType *cpu)
 int op_exec_sxh(TargetCoreType *cpu)
 {
 	uint32 reg1 = cpu->decoded_code->type1.reg1;
-	uint16 tmp;
+	sint16 tmp;
 
 	if (reg1 >= CPU_GREG_NUM) {
 		return -1;
@@ -165,7 +165,7 @@ int op_exec_sxh(TargetCoreType *cpu)
 int op_exec_sxb(TargetCoreType *cpu)
 {
 	uint32 reg1 = cpu->decoded_code->type1.reg1;
-	uint8 tmp;
+	sint8 tmp;
 
 	if (reg1 >= CPU_GREG_NUM) {
 		return -1;
