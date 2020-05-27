@@ -3220,8 +3220,66 @@ int op_exec_floorf_sl_F(TargetCoreType *cpu)
 }
 int op_exec_floorf_sul_F(TargetCoreType *cpu)
 {
-	printf("ERROR: not supported:%s\n", __FUNCTION__);
-	return -1;
+    FpuConfigSettingType fpu_config;
+    FloatExceptionType ex;
+	uint32 reg2 = cpu->decoded_code->type_f.reg2;
+	uint32 reg3 = cpu->decoded_code->type_f.reg3;
+	uint32 reg3_0 = cpu->decoded_code->type_f.reg3;
+	uint32 reg3_1 = cpu->decoded_code->type_f.reg3 + 1;
+    FloatBinaryDataType reg2_data;
+    FloatBinaryDataType reg3_data;
+	uint64 result_data;
+
+	if (reg2 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	if (reg3 >= CPU_GREG_NUM) {
+		return -1;
+	}
+
+	reg2_data.binary = cpu->reg.r[reg2];
+	reg3_data.binary = cpu->reg.r[reg3];
+
+    // TODO: Overflow and check
+	prepare_float_op(cpu, &ex, &fpu_config);
+    {
+        bool is_invalid = TRUE;
+        uint64 result;
+        if (FLOAT_IS_NAN(reg2_data) ) {
+            result = 0;
+        } else if (FLOAT_IS_INF(reg2_data) ) {
+            if ( FLOAT_IS_PLUS(reg2_data)) {
+                result = (uint64)ULONG_MAX;
+            } else {   
+                result = 0;
+            }
+        } else {
+            if ( reg2_data.data < 0 ) {
+                result = 0;
+            } else if ( reg2_data.data > (uint64)ULONG_MAX) {
+                result = (uint64)ULONG_MAX;
+            } else {
+                result = (uint64)floorf(reg2_data.data);
+                is_invalid = FALSE;
+            }
+        }
+        if (is_invalid) {
+            sys_set_fpst_xc(&cpu->reg, sys_get_fpst_xc(&cpu->reg) | SYS_FPSR_EXPR_V);
+            sys_set_fpst_xp(&cpu->reg, sys_get_fpst_xp(&cpu->reg) | SYS_FPSR_EXPR_V);
+        }
+    }
+    end_float_op(cpu, &ex);
+
+	cpu->reg.r[reg3_0] = (uint32)(result_data>>32);
+	cpu->reg.r[reg3_1] = (uint32)(result_data & 0xffffffff);
+
+	//DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: FLOORF.S r%d(%f),r%d(%f):%f\n", 
+    //    cpu->reg.pc, reg2, reg2_data.data, reg3, reg3_data.data, result_data.data));
+	
+    //printf("0x%x: FLOORF.S r%d(%f),r%d(%f):%f\n",         cpu->reg.pc, reg2, reg2_data.data, reg3, reg3_data.data, result_data.data);
+
+	cpu->reg.pc += 4;
+    return 0;
 }
 int op_exec_floorf_suw_F(TargetCoreType *cpu)
 {
@@ -3268,6 +3326,7 @@ int op_exec_floorf_suw_F(TargetCoreType *cpu)
         if (is_invalid) {
             sys_set_fpst_xc(&cpu->reg, sys_get_fpst_xc(&cpu->reg) | SYS_FPSR_EXPR_V);
             sys_set_fpst_xp(&cpu->reg, sys_get_fpst_xp(&cpu->reg) | SYS_FPSR_EXPR_V);
+        	result_data.binary = (uint32)result;
         }
 		else {
         	set_subnormal_operand(cpu, &fpu_config, &reg2_data);
@@ -3281,11 +3340,11 @@ int op_exec_floorf_suw_F(TargetCoreType *cpu)
 	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: FLOORF.SUW r%d(%f),r%d(%f):%u\n", 
         cpu->reg.pc, reg2, reg2_data.data, reg3, reg3_data.data, (uint32)result_data.binary));
 	cpu->reg.r[reg3] = result_data.binary;
+    
+	printf("0x%x: FLOORF.SUW r%d(%f),r%d(%f):%f\n", cpu->reg.pc, reg2, reg2_data.data, reg3, reg3_data.data, (uint32)result_data.data);
 
 	cpu->reg.pc += 4;
     return 0;
-
-/* */
 }
 int op_exec_floorf_sw_F(TargetCoreType *cpu)
 {
