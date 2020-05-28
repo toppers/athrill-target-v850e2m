@@ -3179,23 +3179,200 @@ int op_exec_cvtf_sul_F(TargetCoreType *cpu)
 }
 int op_exec_floorf_sl_F(TargetCoreType *cpu)
 {
-	printf("ERROR: not supported:%s\n", __FUNCTION__);
-	return -1;
+    FpuConfigSettingType fpu_config;
+    FloatExceptionType ex;
+	uint32 reg2 = cpu->decoded_code->type_f.reg2;
+	uint32 reg3 = cpu->decoded_code->type_f.reg3;
+	uint32 reg3_0 = cpu->decoded_code->type_f.reg3;
+	uint32 reg3_1 = cpu->decoded_code->type_f.reg3 + 1;
+    FloatBinaryDataType reg2_data;
+    FloatBinaryDataType reg3_data;
+	DoubleBinaryDataType result_data;
+
+	if (reg2 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	if (reg3 >= CPU_GREG_NUM) {
+		return -1;
+	}
+
+	reg2_data.binary = cpu->reg.r[reg2];
+	reg3_data.binary = cpu->reg.r[reg3];
+
+    prepare_float_op(cpu, &ex, &fpu_config);
+    {
+        set_subnormal_operand(cpu, &fpu_config, &reg2_data);
+        result_data.data = (float)floorf(reg2_data.data);
+        set_subnormal_result_double(cpu, &fpu_config, &result_data);
+    }
+    end_float_op(cpu, &ex);
+
+	cpu->reg.r[reg3_0] = result_data.binary[0];
+	cpu->reg.r[reg3_1] = result_data.binary[1];
+
+	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: FLOORF.S r%d(%f),r%d(%f):%f\n", 
+        cpu->reg.pc, reg2, reg2_data.data, reg3, reg3_data.data, result_data.data));
+	cpu->reg.pc += 4;
+    return 0;
 }
 int op_exec_floorf_sul_F(TargetCoreType *cpu)
 {
-	printf("ERROR: not supported:%s\n", __FUNCTION__);
-	return -1;
+    FpuConfigSettingType fpu_config;
+    FloatExceptionType ex;
+	uint32 reg2 = cpu->decoded_code->type_f.reg2;
+	uint32 reg3 = cpu->decoded_code->type_f.reg3;
+	uint32 reg3_0 = cpu->decoded_code->type_f.reg3;
+	uint32 reg3_1 = cpu->decoded_code->type_f.reg3 + 1;
+    FloatBinaryDataType reg2_data;
+    FloatBinaryDataType reg3_data;
+	uint64 result_data;
+
+	if (reg2 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	if (reg3 >= CPU_GREG_NUM) {
+		return -1;
+	}
+
+	reg2_data.binary = cpu->reg.r[reg2];
+	//reg3_data.binary = cpu->reg.r[reg3];
+
+    // TODO: Overflow and check
+	prepare_float_op(cpu, &ex, &fpu_config);
+    {
+        bool is_invalid = TRUE;
+        uint64 result;
+        if (FLOAT_IS_NAN(reg2_data) ) {
+            result = 0;
+        } else if (FLOAT_IS_INF(reg2_data) ) {
+            if ( FLOAT_IS_PLUS(reg2_data)) {
+                result = (uint64)ULONG_MAX;
+            } else {   
+                result = 0;
+            }
+        } else {
+            if ( reg2_data.data < 0 ) {
+                result = 0;
+            } else if ( reg2_data.data > (uint64)ULONG_MAX) {
+                result = (uint64)ULONG_MAX;
+            } else {
+                float result_ = floorf(reg2_data.data);
+                result = (uint64)floorf(reg2_data.data);
+                is_invalid = FALSE;
+            }
+        }
+        if (is_invalid) {
+            sys_set_fpst_xc(&cpu->reg, sys_get_fpst_xc(&cpu->reg) | SYS_FPSR_EXPR_V);
+            sys_set_fpst_xp(&cpu->reg, sys_get_fpst_xp(&cpu->reg) | SYS_FPSR_EXPR_V);
+        }
+        result_data = (uint64)result;
+    }
+    end_float_op(cpu, &ex);
+
+	//DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: FLOORF.SUL r%d(%f) r%d :%llu\n", cpu->reg.pc, reg2, reg2_data.data, reg3_0,result_data));
+  //printf( "0x%x: FLOORF.SUL r%d(%f) r%d :%llu\n", cpu->reg.pc, reg2, reg2_data.data, reg3_0,result_data);
+	cpu->reg.r[reg3_0] = (uint32)(result_data>>32);
+	cpu->reg.r[reg3_1] = (uint32)(result_data & 0xffffffff);
+	printf( "0x%x: FLOORF.SUL r%d(%f) r%d :%llu\n", cpu->reg.pc, reg2, reg2_data.data, reg3_0,result_data);
+
+	cpu->reg.pc += 4;
+    return 0;
 }
 int op_exec_floorf_suw_F(TargetCoreType *cpu)
 {
-	printf("ERROR: not supported:%s\n", __FUNCTION__);
-	return -1;
+    FpuConfigSettingType fpu_config;
+    FloatExceptionType ex;
+	uint32 reg2 = cpu->decoded_code->type_f.reg2;
+	uint32 reg3 = cpu->decoded_code->type_f.reg3;
+    FloatBinaryDataType reg2_data;
+    FloatBinaryDataType reg3_data;
+    FloatBinaryDataType result_data;
+
+	if (reg2 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	if (reg3 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	reg2_data.binary = cpu->reg.r[reg2];
+	reg3_data.binary = cpu->reg.r[reg3];
+
+	// TODO :Overflow error check
+    prepare_float_op(cpu, &ex, &fpu_config);
+    {
+        uint64 result;
+        bool is_invalid = FALSE;
+        if (FLOAT_IS_NAN(reg2_data) || FLOAT_IS_INF(reg2_data)) {
+            if (FLOAT_IS_PLUS(reg2_data)) {
+                result = (uint64)UINT_MAX;
+            }
+            else {
+                result = 0;
+            }
+            is_invalid = TRUE;
+        }
+        else {
+            result = (uint64)floorf(reg2_data.data);
+            if (result > ((uint64)UINT_MAX)) {
+                result = (uint64)UINT_MAX;
+                is_invalid = TRUE;
+            }
+        }
+        if (is_invalid) {
+            sys_set_fpst_xc(&cpu->reg, sys_get_fpst_xc(&cpu->reg) | SYS_FPSR_EXPR_V);
+            sys_set_fpst_xp(&cpu->reg, sys_get_fpst_xp(&cpu->reg) | SYS_FPSR_EXPR_V);
+        	result_data.binary = (uint32)result;
+        }
+       	result_data.binary = (uint32)result;
+
+    }
+    end_float_op(cpu, &ex);
+
+	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: FLOORF.SUW r%d(%f),r%d(%f):%u\n", 
+        cpu->reg.pc, reg2, reg2_data.data, reg3, reg3_data.data, (uint32)result_data.binary));
+	cpu->reg.r[reg3] = result_data.binary;
+    
+	//printf("0x%x: FLOORF.SUW r%d(%f),r%d(%f):%f\n", cpu->reg.pc, reg2, reg2_data.data, reg3, reg3_data.data, (uint32)result_data.data);
+
+	cpu->reg.pc += 4;
+    return 0;
 }
 int op_exec_floorf_sw_F(TargetCoreType *cpu)
 {
-	printf("ERROR: not supported:%s\n", __FUNCTION__);
-	return -1;
+    FpuConfigSettingType fpu_config;
+    FloatExceptionType ex;
+	uint32 reg2 = cpu->decoded_code->type_f.reg2;
+	uint32 reg3 = cpu->decoded_code->type_f.reg3;
+    FloatBinaryDataType reg2_data;
+    FloatBinaryDataType reg3_data;
+	FloatBinaryDataType result_data;
+
+	if (reg2 >= CPU_GREG_NUM) {
+		return -1;
+	}
+	if (reg3 >= CPU_GREG_NUM) {
+		return -1;
+	}
+
+	reg2_data.binary = cpu->reg.r[reg2];
+	reg3_data.binary = cpu->reg.r[reg3];
+
+    prepare_float_op(cpu, &ex, &fpu_config);
+    {
+        set_subnormal_operand(cpu, &fpu_config, &reg2_data);
+        result_data.data = (float)floorf(reg2_data.data);
+        set_subnormal_result(cpu, &fpu_config, &result_data);
+    }
+    end_float_op(cpu, &ex);
+
+	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: FLOORF.SW r%d(%f),r%d(%f):%f\n", 
+        cpu->reg.pc, reg2, reg2_data.data, reg3, reg3_data.data, result_data.data));
+	cpu->reg.r[reg3] = result_data.binary;
+
+    //printf("0x%x: FLOORF.SW r%d(%f),r%d(%f):%f\n", cpu->reg.pc, reg2, reg2_data.data, reg3, reg3_data.data, result_data.data);
+
+	cpu->reg.pc += 4;
+    return 0;
 }
 int op_exec_rsqrtf_s_F(TargetCoreType *cpu)
 {
