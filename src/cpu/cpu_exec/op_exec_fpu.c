@@ -1574,7 +1574,7 @@ int op_exec_maddf_s_F(TargetCoreType *cpu)
     FloatBinaryDataType result_data;
     uint32 subopcode = cpu->decoded_code->type_f.subopcode;
     /* detect reg4 */
-    uint32 reg4 = ((subopcode & 0xe) | ((subopcode >> 7) & 1));
+    uint32 reg4 = ((subopcode & 0x1e) | ((subopcode >> 7) & 1));
 
 	if (reg1 >= CPU_GREG_NUM) {
 		return -1;
@@ -1626,7 +1626,7 @@ int op_exec_msubf_s_F(TargetCoreType *cpu)
     FloatBinaryDataType result_data;
     uint32 subopcode = cpu->decoded_code->type_f.subopcode;
     /* detect reg4 */
-    uint32 reg4 = ((subopcode & 0xe) | ((subopcode >> 7) & 1));
+    uint32 reg4 = ((subopcode & 0x1e) | ((subopcode >> 7) & 1));
 
 	if (reg1 >= CPU_GREG_NUM) {
 		return -1;
@@ -1676,7 +1676,7 @@ int op_exec_nmaddf_s_F(TargetCoreType *cpu)
     FloatBinaryDataType result_data;
     uint32 subopcode = cpu->decoded_code->type_f.subopcode;
     /* detect reg4 */
-    uint32 reg4 = ((subopcode & 0xe) | ((subopcode >> 7) & 1));
+    uint32 reg4 = ((subopcode & 0x1e) | ((subopcode >> 7) & 1));
 
 	if (reg1 >= CPU_GREG_NUM) {
 		return -1;
@@ -1728,7 +1728,7 @@ int op_exec_nmsubf_s_F(TargetCoreType *cpu)
     FloatBinaryDataType result_data;
     uint32 subopcode = cpu->decoded_code->type_f.subopcode;
     /* detect reg4 */
-    uint32 reg4 = ((subopcode & 0xe) | ((subopcode >> 7) & 1));
+    uint32 reg4 = ((subopcode & 0x1e) | ((subopcode >> 7) & 1));
 
 	if (reg1 >= CPU_GREG_NUM) {
 		return -1;
