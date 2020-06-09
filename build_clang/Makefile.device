@@ -12,6 +12,7 @@ IFLAGS	+= -I$(CORE_DIR)/device/peripheral/mros-dev/mros-athrill/api
 IFLAGS	+= -I$(CORE_DIR)/device/peripheral/mros-dev/mros-athrill/device
 IFLAGS	+= -I$(CORE_DIR)/device/peripheral/mros-dev/mros-athrill/target/os
 IFLAGS	+= -I$(CORE_DIR)/device/peripheral/mros-dev/mros-src/os/target/os_asp
+IFLAGS	+= -I$(CORE_DIR)/device/peripheral/serial/fifo
 IFLAGS	+= -I$(APLDIR)/include
 IFLAGS	+= -I$(TARGET_DIR)/cpu
 IFLAGS	+= -I$(TARGET_DIR)/device
@@ -21,6 +22,7 @@ IFLAGS	+= -I$(TARGET_DIR)/device/peripheral/inc
 IFLAGS	+= -I$(TARGET_DIR)/cpu/config
 
 VPATH	:=	$(CORE_DIR)/device/peripheral
+VPATH	+=	$(CORE_DIR)/device/peripheral/serial/fifo
 VPATH	+=	$(TARGET_DIR)/device
 VPATH	+=	$(TARGET_DIR)/device/intc
 VPATH	+=	$(TARGET_DIR)/device/peripheral
@@ -42,6 +44,8 @@ OBJS	+=	timer.o
 endif
 OBJS	+=	can.o
 OBJS	+=	vdev.o
+OBJS	+=	vdev_mmap.o
+OBJS	+=	vdev_udp.o
 OBJS	+=	serial.o
 OBJS	+=	dbg_target_serial.o
 OBJS	+=	dbg_target_cpu.o
@@ -49,6 +53,7 @@ OBJS	+=	intc.o
 OBJS	+=	athrill_device.o
 OBJS	+=	athrill_syscall_device.o
 OBJS	+=	athrill_mpthread.o
+OBJS	+= serial_fifo.o
 
 all:	$(LIBTARGET)
 
