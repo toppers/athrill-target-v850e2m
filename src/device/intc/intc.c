@@ -133,7 +133,11 @@ void device_supply_clock_intc(DeviceClockType *dev_clock)
 	uint32 coreId;
 	int core_id_num = CPU_CONFIG_GET_CORE_ID_NUM();
 
+#ifndef CPUEMU_CLOCK_BUG_FIX
 	dev_clock->clock++;
+#else
+#endif /* CPUEMU_CLOCK_BUG_FIX */
+
 	for (coreId = 0; coreId < core_id_num; coreId++) {
 		if (intc_control.work[coreId].current_intno != -1) {
 			dev_clock->intclock++;
