@@ -156,11 +156,18 @@ static Std_ReturnType vdev_thread_do_proc(MpthrIdType id)
 	uint64 curr_stime;
 
 	while (1) {
-		err = udp_comm_read(&vdev_control.comm);
-		if (err != STD_E_OK) {
+		struct timeval timeout = { 0, 10*1000}; // 10msec
+		err = udp_comm_read_with_timeout(&vdev_control.comm,&timeout);
+		//		err = udp_comm_read(&vdev_control.comm);
+		if (err == STD_E_TIMEOUT ) {
+			err = udp_comm_remote_write(&vdev_control.comm, vdev_control.remote_ipaddr);
+			if (err != STD_E_OK) {
+				printf("WARNING: vdevput_data8: udp send error=%d\n", err);
+			}
 			continue;
-		}
-		if (vdev_udp_packet_check((const char*)&vdev_control.comm.read_data.buffer[0]) != STD_E_OK) {
+		} else if (err != STD_E_OK) {
+			continue;
+		} else if (vdev_udp_packet_check((const char*)&vdev_control.comm.read_data.buffer[0]) != STD_E_OK) {
 			continue;
 		}
 		//gettimeofday(&unity_notify_time, NULL);
@@ -208,16 +215,18 @@ static Std_ReturnType vdev_udp_put_data8(MpuAddressRegionType *region, CoreIdTyp
 	*((uint8*)(&region->data[off])) = data;
 
 	if (addr == VDEV_TX_FLAG(0)) {
+
 		uint32 tx_off = VDEV_TX_DATA_BASE - region->start;
 		Std_ReturnType err;
 		memcpy(&vdev_control.comm.write_data.buffer[VDEV_TX_DATA_BODY_OFF], &region->data[tx_off + VDEV_TX_DATA_BODY_OFF], VDEV_TX_DATA_BODY_SIZE);
 		memcpy(&vdev_control.comm.write_data.buffer[VDEV_TX_SIM_TIME(VDEV_SIM_INX_ME)],  (void*)&vdev_control.vdev_sim_time[VDEV_SIM_INX_ME], 8U);
 		memcpy(&vdev_control.comm.write_data.buffer[VDEV_TX_SIM_TIME(VDEV_SIM_INX_YOU)], (void*)&vdev_control.vdev_sim_time[VDEV_SIM_INX_YOU], 8U);
 		//printf("sim_time=%llu\n", vdev_udp_control.vdev_sim_time[VDEV_SIM_INX_ME]);
-		err = udp_comm_remote_write(&vdev_control.comm, vdev_control.remote_ipaddr);
+//		err = udp_comm_remote_write(&vdev_control.comm, vdev_control.remote_ipaddr);
 		if (err != STD_E_OK) {
 			printf("WARNING: vdevput_data8: udp send error=%d\n", err);
 		}
+
 	}
 	else {
 	}
