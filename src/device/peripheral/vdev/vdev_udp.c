@@ -148,22 +148,49 @@ static Std_ReturnType vdev_udp_packet_check(const char *p)
 	}
 	return STD_E_OK;
 }
+struct timeval previous_sent = {0};
 
 static Std_ReturnType vdev_thread_do_proc(MpthrIdType id)
 {
 	Std_ReturnType err;
 	uint32 off = VDEV_RX_DATA_BASE - VDEV_BASE;
 	uint64 curr_stime;
-
+	gettimeofday(&previous_sent,0);
 	while (1) {
-		struct timeval timeout = { 0, 10*1000}; // 10msec
-		err = udp_comm_read_with_timeout(&vdev_control.comm,&timeout);
+		err = 0;
+		struct timeval cur;
+		gettimeofday(&cur,0);
+		int diff = (cur.tv_sec-previous_sent.tv_sec)*1000000 + cur.tv_usec-previous_sent.tv_usec;
+		if ( diff < 10*1000) { // 前の送信から10msec以内なら10msecになる時間待ってから受信を行う
+			int left = 10*1000 - diff;
+			struct timeval next = {0,left};
+			err = udp_comm_read_with_timeout(&vdev_control.comm,&next);
+		} else {
+			// すでに時間が経ったので、即送信とする
+			err = STD_E_TIMEOUT;
+		}
 		//		err = udp_comm_read(&vdev_control.comm);
 		if (err == STD_E_TIMEOUT ) {
-			err = udp_comm_remote_write(&vdev_control.comm, vdev_control.remote_ipaddr);
-			if (err != STD_E_OK) {
-				printf("WARNING: vdevput_data8: udp send error=%d\n", err);
+			// タイムアウトと判定されている場合、udp_comm_read_with_timeout()で待っている間に
+			// EV3RT側の周期ですでに送信が行われている場合がある
+			// 10msec経っていない場合はここでスキップする
+			mpthread_lock(vdev_thrid);
+			gettimeofday(&cur,0);
+			diff = (cur.tv_sec-previous_sent.tv_sec)*1000000 + cur.tv_usec-previous_sent.tv_usec;
+			if ( diff >= 10*1000 )  {
+				// 前の送信から10msec以上経っているので、送信を行う
+
+				err = udp_comm_remote_write(&vdev_control.comm, vdev_control.remote_ipaddr);
+				if (err != STD_E_OK) {
+					printf("WARNING: vdevput_data8: udp send error=%d\n", err);
+				}
+
+				gettimeofday(&previous_sent,0);
+			} else {
+				// skip until next timming
 			}
+			mpthread_unlock(vdev_thrid);
+
 			continue;
 		} else if (err != STD_E_OK) {
 			continue;
@@ -218,11 +245,16 @@ static Std_ReturnType vdev_udp_put_data8(MpuAddressRegionType *region, CoreIdTyp
 
 		uint32 tx_off = VDEV_TX_DATA_BASE - region->start;
 		Std_ReturnType err;
+		mpthread_lock(vdev_thrid);
+
 		memcpy(&vdev_control.comm.write_data.buffer[VDEV_TX_DATA_BODY_OFF], &region->data[tx_off + VDEV_TX_DATA_BODY_OFF], VDEV_TX_DATA_BODY_SIZE);
 		memcpy(&vdev_control.comm.write_data.buffer[VDEV_TX_SIM_TIME(VDEV_SIM_INX_ME)],  (void*)&vdev_control.vdev_sim_time[VDEV_SIM_INX_ME], 8U);
 		memcpy(&vdev_control.comm.write_data.buffer[VDEV_TX_SIM_TIME(VDEV_SIM_INX_YOU)], (void*)&vdev_control.vdev_sim_time[VDEV_SIM_INX_YOU], 8U);
 		//printf("sim_time=%llu\n", vdev_udp_control.vdev_sim_time[VDEV_SIM_INX_ME]);
-//		err = udp_comm_remote_write(&vdev_control.comm, vdev_control.remote_ipaddr);
+		err = udp_comm_remote_write(&vdev_control.comm, vdev_control.remote_ipaddr);
+		gettimeofday(&previous_sent,0);
+		mpthread_unlock(vdev_thrid);
+
 		if (err != STD_E_OK) {
 			printf("WARNING: vdevput_data8: udp send error=%d\n", err);
 		}
