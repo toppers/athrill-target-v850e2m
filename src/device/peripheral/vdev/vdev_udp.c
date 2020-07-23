@@ -124,7 +124,7 @@ void device_init_vdev_udp(MpuAddressRegionType *region)
 
 	// Complemental TX sending thread
 	err = cpuemu_get_devcfg_value("DEVICE_CONFIG_COMPLEMENTAL_TX_SENDING", &enable_complemental_send);
-	ASSERT(err == STD_E_OK);
+	printf("DEVICE_CONFIG_COMPLEMENTAL_TX_SENDING=%d\n",enable_complemental_send);
 
 	if ( enable_complemental_send ) {
 		err = mpthread_register(&vdev_send_thrid, &vdev_send_op);
@@ -136,11 +136,9 @@ void device_init_vdev_udp(MpuAddressRegionType *region)
 
 	// Reset Area
 	err = cpuemu_get_devcfg_value("DEVICE_CONFIG_RESET_AREA_OFFSET", &reset_area_off);
-	ASSERT(err == STD_E_OK);
 	printf("DEVICE_CONFIG_RESET_AREA_OFFSET=%d\n",reset_area_off);
 
 	err = cpuemu_get_devcfg_value("DEVICE_CONFIG_RESET_AREA_SIZE", &reset_area_size);
-	ASSERT(err == STD_E_OK);
 	printf("DEVICE_CONFIG_RESET_AREA_SIZE=%d\n",reset_area_size);
 
 	if ( enable_complemental_send ) {
