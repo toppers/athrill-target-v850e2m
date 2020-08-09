@@ -3224,7 +3224,6 @@ int op_exec_floorf_sul_F(TargetCoreType *cpu)
 	uint32 reg3_0 = cpu->decoded_code->type_f.reg3;
 	uint32 reg3_1 = cpu->decoded_code->type_f.reg3 + 1;
     FloatBinaryDataType reg2_data;
-    FloatBinaryDataType reg3_data;
 	uint64 result_data;
 
 	if (reg2 >= CPU_GREG_NUM) {
@@ -3256,7 +3255,7 @@ int op_exec_floorf_sul_F(TargetCoreType *cpu)
             } else if ( reg2_data.data > (uint64)ULONG_MAX) {
                 result = (uint64)ULONG_MAX;
             } else {
-                float result_ = floorf(reg2_data.data);
+                (void)floorf(reg2_data.data);
                 result = (uint64)floorf(reg2_data.data);
                 is_invalid = FALSE;
             }
