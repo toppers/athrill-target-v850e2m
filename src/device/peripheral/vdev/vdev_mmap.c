@@ -90,20 +90,41 @@ void device_supply_clock_vdev_mmap(DeviceClockType *dev_clock)
 
 static Std_ReturnType vdev_mmap_get_data8(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint8 *data)
 {
-	uint32 off = (addr - region->start) + VDEV_RX_DATA_BODY_OFF;
-	*data = *((uint8*)(&vdev_control.rx_data[off]));
+	uint32 off;
+	if (addr < VDEV_TX_DATA_BASE) {
+		off = (addr - region->start) + VDEV_RX_DATA_BODY_OFF;
+		*data = *((uint8*)(&vdev_control.rx_data[off]));
+	}
+	else {
+		off = (addr - VDEV_TX_DATA_BASE) + VDEV_TX_DATA_BODY_OFF;
+		*data = *((uint8*)(&vdev_control.tx_data[off]));
+	}
 	return STD_E_OK;
 }
 static Std_ReturnType vdev_mmap_get_data16(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint16 *data)
 {
-	uint32 off = (addr - region->start) + VDEV_RX_DATA_BODY_OFF;
-	*data = *((uint16*)(&vdev_control.rx_data[off]));
+	uint32 off;
+	if (addr < VDEV_TX_DATA_BASE) {
+		off = (addr - region->start) + VDEV_RX_DATA_BODY_OFF;
+		*data = *((uint16*)(&vdev_control.rx_data[off]));
+	}
+	else {
+		off = (addr - VDEV_TX_DATA_BASE) + VDEV_TX_DATA_BODY_OFF;
+		*data = *((uint16*)(&vdev_control.tx_data[off]));
+	}
 	return STD_E_OK;
 }
 static Std_ReturnType vdev_mmap_get_data32(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint32 *data)
 {
-	uint32 off = (addr - region->start) + VDEV_RX_DATA_BODY_OFF;
-	*data = *((uint32*)(&vdev_control.rx_data[off]));
+	uint32 off;
+	if (addr < VDEV_TX_DATA_BASE) {
+		off = (addr - region->start) + VDEV_RX_DATA_BODY_OFF;
+		*data = *((uint32*)(&vdev_control.rx_data[off]));
+	}
+	else {
+		off = (addr - VDEV_TX_DATA_BASE) + VDEV_TX_DATA_BODY_OFF;
+		*data = *((uint32*)(&vdev_control.tx_data[off]));
+	}
 	return STD_E_OK;
 }
 static Std_ReturnType vdev_mmap_put_data8(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint8 data)
