@@ -30,6 +30,10 @@ ProfStatType cpuemu_dev_intr_prof;
 #define CPUEMU_DEV_INTR_PROF_END()
 #endif /* CONFIG_STAT_PERF */
 
+#ifdef DISABLE_CAN
+MpuAddressRegionOperationType	can_memory_operation;
+#endif
+
 static DeviceExSerialOpType device_ex_serial_op = {
 		.putchar = dbg_serial_putchar,
 		.getchar = dbg_serial_getchar,
@@ -62,7 +66,9 @@ static void (*device_supply_clock_vdev_func) (DeviceClockType *) = NULL;
 
 void device_init(CpuType *cpu, DeviceClockType *dev_clock)
 {
+#ifndef DISABLE_CAN
 	uint32 enable_mros = 0;
+#endif
 	char *path;
 	dev_clock->clock = 0;
 	dev_clock->intclock = 0;
@@ -81,10 +87,12 @@ void device_init(CpuType *cpu, DeviceClockType *dev_clock)
 	else {
 		device_ex_serial_register_ops(1U, &device_ex_serial_op);
 	}
+#ifndef DISABLE_CAN
 	cpuemu_get_devcfg_value("DEBUG_FUNC_ENABLE_MROS", &enable_mros);
 	if (enable_mros != 0) {
 		device_init_can(&mpu_address_map.map[MPU_ADDRESS_REGION_INX_CAN]);
 	}
+#endif
 	cpuemu_get_devcfg_value("DEBUG_FUNC_ENABLE_VDEV", &enable_vdev);
 	if (enable_vdev != 0) {
 		char *sync_type;
