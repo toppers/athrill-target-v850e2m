@@ -32,7 +32,7 @@ build_all:
 	make -f $(TARGET_MKDIR)/Makefile.device.static all
 	make -f $(CORE_MKDIR)/Makefile.bus all
 	make -f $(CORE_MKDIR)/Makefile.loader all
-	make -f $(CORE_MKDIR)/Makefile.mpu all
+	make -f $(TARGET_MKDIR)/Makefile.mpu.static all
 	make -f $(CORE_MKDIR)/Makefile.std all
 	$(RANLIB) $(AROBJS)
 	$(GCC) -O3 $(LFLAGS) $(AROBJS) -o $(TARGET)  $(LIBS) -static
@@ -58,7 +58,7 @@ $(LIBLOADER):
 	make -f $(CORE_MKDIR)/Makefile.loader all
 
 $(LIBMPU): 
-	make -f $(CORE_MKDIR)/Makefile.mpu all
+	make -f $(TARGET_MKDIR)/Makefile.mpu.static all
 
 $(LIBSTD):
 	make -f $(CORE_MKDIR)/Makefile.std all
@@ -70,7 +70,7 @@ clean:
 	make -f $(CORE_MKDIR)/Makefile.bus clean
 	make -f $(CORE_MKDIR)/Makefile.cui clean
 	make -f $(CORE_MKDIR)/Makefile.loader clean
-	make -f $(CORE_MKDIR)/Makefile.mpu clean
+	make -f $(TARGET_MKDIR)/Makefile.mpu.static clean
 	make -f $(CORE_MKDIR)/Makefile.std clean
 	make -f $(CORE_MKDIR)/Makefile.main clean
 	$(RM) -f $(TARGET) 

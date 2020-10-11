@@ -86,7 +86,11 @@ MpuAddressMapType mpu_address_map = {
 						.size		= MPU_ADDRESS_REGION_SIZE_INX_CAN,
 						.mask		= MPU_ADDRESS_REGION_MASK_CAN,
 						.data		= memory_data_CAN,
+#ifdef DISABLE_CAN
+						.ops		= &default_memory_operation
+#else
 						.ops		= &can_memory_operation
+#endif
 				},
 				/*
 				 * INDEX :sensor/motorレジスタ(仮想用)

@@ -30,9 +30,6 @@ ProfStatType cpuemu_dev_intr_prof;
 #define CPUEMU_DEV_INTR_PROF_END()
 #endif /* CONFIG_STAT_PERF */
 
-#ifdef DISABLE_CAN
-MpuAddressRegionOperationType	can_memory_operation;
-#endif
 
 static DeviceExSerialOpType device_ex_serial_op = {
 		.putchar = dbg_serial_putchar,
