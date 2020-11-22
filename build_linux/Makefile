@@ -23,7 +23,7 @@ AROBJS		+= $(LIBMROS)
 
 all: $(AROBJS)
 	$(RANLIB) $(AROBJS)
-	$(GCC) -O3 $(LFLAGS) $(AROBJS) -o $(TARGET)  $(LIBS) -lm
+	$(GCC) -O3 $(LFLAGS) $(AROBJS) -o $(TARGET)  $(LIBS) -lm -ldl
 	$(CP) $(TARGET) $(INSTALL_DIR)/
 	chmod +x $(INSTALL_DIR)/$(TARGET)
 

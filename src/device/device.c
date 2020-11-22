@@ -6,6 +6,7 @@
 #include "std_device_ops.h"
 #include "athrill_mpthread.h"
 #include "vdev/vdev_private.h"
+#include "athrill_device.h"
 #ifdef SERIAL_FIFO_ENABLE
 #include "serial_fifo.h"
 #endif /* SERIAL_FIFO_ENABLE */
@@ -138,6 +139,10 @@ void device_supply_clock(DeviceClockType *dev_clock)
 	athrill_device_supply_clock_serial_fifo(dev_clock);
 	CPUEMU_DEV_INTR_PROF_END();
 #endif /* SERIAL_FIFO_ENABLE */
+
+#ifdef EXDEV_ENABLE
+	device_supply_clock_exdev(dev_clock);
+#endif /* EXDEV_ENABLE */
 
 	CPUEMU_DEV_INTR_PROF_START();
 	device_supply_clock_intc(dev_clock);
