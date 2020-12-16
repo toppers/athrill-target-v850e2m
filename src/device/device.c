@@ -112,6 +112,10 @@ void device_init(CpuType *cpu, DeviceClockType *dev_clock)
 #ifdef SERIAL_FIFO_ENABLE
 	athrill_device_init_serial_fifo();
 #endif /* SERIAL_FIFO_ENABLE */
+
+#ifdef EXDEV_ENABLE
+	device_init_athrill_exdev();
+#endif /* EXDEV_ENABLE */
 	return;
 }
 

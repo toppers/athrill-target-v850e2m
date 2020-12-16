@@ -12,7 +12,7 @@
  *  Y: function
  *  Z: bug fix, small changes
  */
-#define ATHRILL_TARGET_VERSION "1.0.0"
+#define ATHRILL_TARGET_VERSION "1.0.1"
 
 
 #define CPU_GREG_NUM			(32U)
