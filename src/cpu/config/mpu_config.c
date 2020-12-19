@@ -4,7 +4,10 @@
 #define MPU_ADDRESS_REGION_MASK_PH		0x03FFFFFF
 #define MPU_ADDRESS_REGION_MASK_CPU		0x06FFFFFF
 #define MPU_ADDRESS_REGION_MASK_CAN		0x08FFFFFF
+
+#ifndef DISABLE_DEVICE_VDEV
 #define MPU_ADDRESS_REGION_MASK_VDEV	0xFFFFFFFF
+#endif /* DISABLE_DEVICE_VDEV */
 
 #define MPU_ADDRESS_REGION_SIZE_INX_INTC	(0xFFFFF1FB - 0xFFFFF100)
 #define MPU_ADDRESS_REGION_SIZE_INX_SERIAL	(0xFFFFFA78 - 0xFFFFFA00)
@@ -13,7 +16,10 @@
 #define MPU_ADDRESS_REGION_SIZE_INX_PH0		(1024U * 4U)
 #define MPU_ADDRESS_REGION_SIZE_INX_PH1		(1024U * 12U)
 #define MPU_ADDRESS_REGION_SIZE_INX_CAN		(1024U * 1024U)
+
+#ifndef DISABLE_DEVICE_VDEV
 #define MPU_ADDRESS_REGION_SIZE_INX_VDEV		(1024U * 1024U)
+#endif
 
 static uint8 memory_data_CPU[MPU_ADDRESS_REGION_SIZE_INX_CPU * CPU_CONFIG_CORE_NUM];
 static uint8 memory_data_INTC[MPU_ADDRESS_REGION_SIZE_INX_INTC * CPU_CONFIG_CORE_NUM];
@@ -22,14 +28,20 @@ static uint8 memory_data_TIMER[MPU_ADDRESS_REGION_SIZE_INX_TIMER];
 static uint8 memory_data_PH0[MPU_ADDRESS_REGION_SIZE_INX_PH0];
 static uint8 memory_data_PH1[MPU_ADDRESS_REGION_SIZE_INX_PH1];
 static uint8 memory_data_CAN[MPU_ADDRESS_REGION_SIZE_INX_CAN];
+
+#ifndef DISABLE_DEVICE_VDEV
 static uint8 memory_data_VDEV[MPU_ADDRESS_REGION_SIZE_INX_VDEV];
+#endif
 
 extern MpuAddressRegionOperationType	serial_memory_operation;
 extern MpuAddressRegionOperationType	timer_memory_operation;
 extern MpuAddressRegionOperationType	intc_memory_operation;
 extern MpuAddressRegionOperationType	cpu_register_operation;
 extern MpuAddressRegionOperationType	can_memory_operation;
+
+#ifndef DISABLE_DEVICE_VDEV
 extern MpuAddressRegionOperationType	vdev_memory_operation;
+#endif
 
 MpuAddressMapType mpu_address_map = {
 		.dynamic_map_num = 0,
@@ -92,6 +104,7 @@ MpuAddressMapType mpu_address_map = {
 						.ops		= &can_memory_operation
 #endif
 				},
+#ifndef DISABLE_DEVICE_VDEV
 				/*
 				 * INDEX :sensor/motorレジスタ(仮想用)
 				 */
@@ -105,7 +118,7 @@ MpuAddressMapType mpu_address_map = {
 						.data		= memory_data_VDEV,
 						.ops		= &vdev_memory_operation
 				},
-
+#endif
 				/*
 				 * INDEX :DEVICE(その他内蔵周辺I/O領域)
 				 */

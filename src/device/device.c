@@ -5,7 +5,9 @@
 #include <stdio.h>
 #include "std_device_ops.h"
 #include "athrill_mpthread.h"
+#ifndef DISABLE_DEVICE_VDEV
 #include "vdev/vdev_private.h"
+#endif
 #include "athrill_device.h"
 #ifdef SERIAL_FIFO_ENABLE
 #include "serial_fifo.h"
@@ -59,8 +61,10 @@ static void device_init_clock(MpuAddressRegionType *region)
 	return;
 }
 
+#ifndef DISABLE_DEVICE_VDEV
 static uint32 enable_vdev = 0;
 static void (*device_supply_clock_vdev_func) (DeviceClockType *) = NULL;
+#endif
 
 void device_init(CpuType *cpu, DeviceClockType *dev_clock)
 {
@@ -91,6 +95,8 @@ void device_init(CpuType *cpu, DeviceClockType *dev_clock)
 		device_init_can(&mpu_address_map.map[MPU_ADDRESS_REGION_INX_CAN]);
 	}
 #endif
+
+#ifndef DISABLE_DEVICE_VDEV
 	cpuemu_get_devcfg_value("DEBUG_FUNC_ENABLE_VDEV", &enable_vdev);
 	if (enable_vdev != 0) {
 		char *sync_type;
@@ -109,6 +115,8 @@ void device_init(CpuType *cpu, DeviceClockType *dev_clock)
 		}
 		device_init_vdev(&mpu_address_map.map[MPU_ADDRESS_REGION_INX_VDEV], op_type);
 	}
+#endif
+
 #ifdef SERIAL_FIFO_ENABLE
 	athrill_device_init_serial_fifo();
 #endif /* SERIAL_FIFO_ENABLE */
@@ -132,11 +140,13 @@ void device_supply_clock(DeviceClockType *dev_clock)
 	device_supply_clock_serial(dev_clock);
 	CPUEMU_DEV_SERIAL_PROF_END();
 
+#ifndef DISABLE_DEVICE_VDEV
 	if (enable_vdev == TRUE) {
 		CPUEMU_DEV_INTR_PROF_START();
 		device_supply_clock_vdev_func(dev_clock);
 		CPUEMU_DEV_INTR_PROF_END();
 	}
+#endif
 
 #ifdef SERIAL_FIFO_ENABLE
 	CPUEMU_DEV_INTR_PROF_START();
