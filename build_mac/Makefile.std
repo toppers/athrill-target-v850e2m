@@ -19,6 +19,7 @@ OBJS	+=	token.o
 OBJS	+=	file.o
 OBJS	+=	udp_comm.o
 OBJS	+=	tcp_socket.o
+OBJS	+=	tcp_client.o
 OBJS	+=	tcp_connection.o
 OBJS	+=	tcp_server.o
 OBJS	+=	comm_buffer.o

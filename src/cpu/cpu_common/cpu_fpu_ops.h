@@ -3,8 +3,10 @@
 
 #include "target_cpu.h"
 
+#ifndef DEFINE_FLOAT_TYPEDEF
 typedef float float32;
 typedef double float64;
+#endif
 
 #define FLOAT_SIGN_BIT_POS		31
 #define FLOAT_SIGN_BIT_PTRN		(1U << FLOAT_SIGN_BIT_POS)
