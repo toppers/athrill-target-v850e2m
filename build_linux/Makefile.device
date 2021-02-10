@@ -43,9 +43,12 @@ else
 OBJS	+=	timer.o
 endif
 OBJS	+=	can.o
+ifeq ($(vdev_disable),true)
+else
 OBJS	+=	vdev.o
 OBJS	+=	vdev_mmap.o
 OBJS	+=	vdev_udp.o
+endif
 OBJS	+=	serial.o
 OBJS	+=	dbg_target_serial.o
 OBJS	+=	dbg_target_cpu.o
