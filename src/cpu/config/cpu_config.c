@@ -217,6 +217,70 @@ bool cpu_has_permission(CoreIdType core_id, MpuAddressRegionEnumType region_type
 	return permission;
 }
 
+#ifdef CPU_PERMISSION_OPTIMIZE
+// Optimized cpu_has_permission for clock
+// In this case, region_type is READONLY_MEMORY and access_type is CpuMemoryAccess_EXEC
+// クロックでのパーミッションチェックが多いため、最適化を行う。cpu_has_permissionでの処理を参考に、
+// Clockから呼ばれるケースを想定して余計なif文を外す。access_typeがExecなので、dmp_permissionはtrueに固定となることを利用
+static inline bool cpu_has_permission_for_clock_supply(CoreIdType core_id, MpuAddressRegionEnumType region_type, CpuMemoryAccessType access_type, uint32 addr, uint32 size)
+{
+	uint32 psw = cpu_get_psw(&virtual_cpu.cores[core_id].core.reg.sys);
+	bool permission = FALSE;
+	bool dmp_permission = FALSE;
+	bool imp_permission = FALSE;
+
+	do { // for break quickly
+		/* imp check */
+		if ( IS_TRUSTED_IMP(psw) ) {
+			// imp_permission = TRUE;
+			// このケースでは、パーミッションありとなるので、抜ける。
+			permission = TRUE;
+			break;
+		}
+		else { /* READ or EXEC */
+			// ここもimp_permissionがTRUEならパーミッションありとなるのでぬける
+			imp_permission = cpu_has_permission_imp(core_id, access_type, addr, size);
+			if ( imp_permission ) {
+				permission = TRUE;
+				break;
+			}
+		}
+		/* dmp check */
+//		if ((access_type == CpuMemoryAccess_EXEC) || IS_TRUSTED_DMP(psw)) {
+//			dmp_permission = TRUE;
+//		}
+//		else { /* READ or WRITE */
+//			dmp_permission = cpu_has_permission_dmp(core_id, access_type, addr, size);
+//		}
+//		if (access_type == CpuMemoryAccess_READ) {
+//			if ((dmp_permission == TRUE) || (imp_permission == TRUE)) {
+//				permission = TRUE;
+//			}
+//		}
+//		else if ((dmp_permission == TRUE) && (imp_permission == TRUE)) {
+//			permission = TRUE;
+//		}
+		if (permission == FALSE) {
+			if (imp_permission == FALSE) {
+				virtual_cpu.cores[core_id].core.mpu.exception_error_code = CpuExceptionError_MIP;
+				virtual_cpu.cores[core_id].core.mpu.error_address = cpu_get_current_core_pc();
+				virtual_cpu.cores[core_id].core.mpu.error_access = access_type;
+			}
+			if (dmp_permission == FALSE) {
+				virtual_cpu.cores[core_id].core.mpu.exception_error_code = CpuExceptionError_MDP;
+				virtual_cpu.cores[core_id].core.mpu.error_address = addr;
+				virtual_cpu.cores[core_id].core.mpu.error_access = access_type;
+				break;
+			}
+		}
+	} while(0) ;
+
+	return permission;
+}
+#else
+#define cpu_has_permission_for_clock_supply cpu_has_permission
+#endif
+
 bool cpu_illegal_access(CoreIdType core_id)
 {
 	if (virtual_cpu.cores[core_id].core.mpu.exception_error_code == CpuExceptionError_None) {
@@ -594,7 +658,7 @@ static Std_ReturnType cpu_supply_clock_not_cached(CoreIdType core_id, CachedOper
 		return STD_E_DECODE;
 	}
 
-	permission = cpu_has_permission(core_id,
+	permission = cpu_has_permission_for_clock_supply(core_id,
 			READONLY_MEMORY,
 			CpuMemoryAccess_EXEC,
 			virtual_cpu.cores[core_id].core.reg.pc,
@@ -665,7 +729,7 @@ Std_ReturnType cpu_supply_clock(CoreIdType core_id)
 		virtual_cpu.cores[core_id].core.decoded_code = &cached_code->codes[inx].decoded_code;
 #ifndef DISABLE_MEMPROTECT
 		bool permission;
-		permission = cpu_has_permission(core_id,
+		permission = cpu_has_permission_for_clock_supply(core_id,
 				READONLY_MEMORY,
 				CpuMemoryAccess_EXEC,
 				virtual_cpu.cores[core_id].core.reg.pc,

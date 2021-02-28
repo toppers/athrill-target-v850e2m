@@ -136,9 +136,11 @@ void device_supply_clock(DeviceClockType *dev_clock)
 	device_supply_clock_timer(dev_clock);
 	CPUEMU_DEV_TIMER_PROF_END();
 
+#ifndef DISABLE_SERIAL_CLOCK
 	CPUEMU_DEV_SERIAL_PROF_START();
 	device_supply_clock_serial(dev_clock);
 	CPUEMU_DEV_SERIAL_PROF_END();
+#endif
 
 #ifndef DISABLE_DEVICE_VDEV
 	if (enable_vdev == TRUE) {

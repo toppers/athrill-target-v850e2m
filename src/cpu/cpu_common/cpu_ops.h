@@ -249,28 +249,110 @@ static inline sint32 op_xori(
 /*
  * 指定されたbitに符号ビットがある場合は31bitまで1埋めする(符号拡張)
  */
+
+static sint32 sign_extend_table[] = 
+{
+	0xffffffff,
+	0xfffffffe,
+	0xfffffffc,
+	0xfffffff8,
+	0xfffffff0,
+	0xffffffe0,
+	0xffffffc0,
+	0xffffff80,
+	0xffffff00,
+	0xfffffe00,
+	0xfffffc00,
+	0xfffff800,
+	0xfffff000,
+	0xffffe000,
+	0xffffc000,
+	0xffff8000,
+	0xffff0000,
+	0xfffe0000,
+	0xfffc0000,
+	0xfff80000,
+	0xfff00000,
+	0xffe00000,
+	0xffc00000,
+	0xff800000,
+	0xff000000,
+	0xfe000000,
+	0xfc000000,
+	0xf8000000,
+	0xf0000000,
+	0xe0000000,
+	0xc0000000,
+	0x80000000,
+};
+
+
 static inline sint32 op_sign_extend(uint32 bit, uint32 data)
 {
 	int i;
 	if (data & (1 << bit)) {
+		// テーブルを使った最適化
+		return data | sign_extend_table[bit];
+#if 0
 		for (i = bit; i < 32; i++) {
 			data = ( data | (1 << i) );//符号拡張する
 		}
+#endif
 	}
 	return data;
 }
 #define OP_FORMAT2_IMM_SIGN_EXTEND(data)	op_sign_extend(4, (data))
+
+
+static sint32 zero_extend_table[] = 
+{
+	0x00000000,
+	0x00000001,
+	0x00000003,
+	0x00000007,
+	0x0000000f,
+	0x0000001f,
+	0x0000003f,
+	0x0000007f,
+	0x000000ff,
+	0x000001ff,
+	0x000003ff,
+	0x000007ff,
+	0x00000fff,
+	0x00001fff,
+	0x00003fff,
+	0x00007fff,
+	0x0000ffff,
+	0x0001ffff,
+	0x0003ffff,
+	0x0007ffff,
+	0x000fffff,
+	0x001fffff,
+	0x003fffff,
+	0x007fffff,
+	0x00ffffff,
+	0x01ffffff,
+	0x03ffffff,
+	0x07ffffff,
+	0x0fffffff,
+	0x1fffffff,
+	0x3fffffff,
+	0x7fffffff,
+};
 
 /*
  * 指定されたbitから31bitまで０埋めする
  */
 static inline uint32 op_zero_extend(uint32 bit, uint32 data)
 {
+	return (data & zero_extend_table[bit]);
+#if 0
 	int i;
 	for (i = bit; i < 32; i++) {
 		data = ( data & ~(1 << i) );
 	}
 	return data;
+#endif
 }
 #define OP_FORMAT2_IMM_ZERO_EXTEND(data)	op_zero_extend(5, (data))
 
