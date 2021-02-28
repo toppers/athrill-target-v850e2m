@@ -23,7 +23,7 @@ AROBJS		+= $(LIBMROS)
 
 all: $(AROBJS)
 	$(RANLIB) $(AROBJS)
-	$(GCC) -O3 $(LFLAGS) $(AROBJS) -o $(TARGET)  $(LIBS) -lm -ldl
+	$(GCC) -O3 $(LFLAGS) $(AROBJS) -o $(TARGET)  $(LIBS) -lm -ldl  -L/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/12.0.0/lib/darwin -lclang_rt.profile_osx
 	$(CP) $(TARGET) $(INSTALL_DIR)/
 	chmod +x $(INSTALL_DIR)/$(TARGET)
 
