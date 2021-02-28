@@ -289,11 +289,11 @@ static sint32 sign_extend_table[] =
 
 static inline sint32 op_sign_extend(uint32 bit, uint32 data)
 {
-	int i;
 	if (data & (1 << bit)) {
 		// テーブルを使った最適化
 		return data | sign_extend_table[bit];
 #if 0
+		int i;
 		for (i = bit; i < 32; i++) {
 			data = ( data | (1 << i) );//符号拡張する
 		}
