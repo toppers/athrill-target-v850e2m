@@ -21,9 +21,14 @@ AROBJS		+= $(LIBLOADER)
 AROBJS		+= $(LIBSTD)
 AROBJS		+= $(LIBMROS)
 
+MAC_PROF_LDFLAGS	:=
+ifeq ($(mac_prof), true)
+MAC_PROF_LDFLAGS	:=   -L/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/12.0.0/lib/darwin -lclang_rt.profile_osx
+endif
+
 all: $(AROBJS)
 	$(RANLIB) $(AROBJS)
-	$(GCC) -O3 $(LFLAGS) $(AROBJS) -o $(TARGET)  $(LIBS) -lm -ldl  -L/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/12.0.0/lib/darwin -lclang_rt.profile_osx
+	$(GCC) -O3 $(LFLAGS) $(AROBJS) -o $(TARGET)  $(LIBS) -lm -ldl  $(MAC_PROF_LDFLAGSß)
 	$(CP) $(TARGET) $(INSTALL_DIR)/
 	chmod +x $(INSTALL_DIR)/$(TARGET)
 
