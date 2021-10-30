@@ -1,5 +1,6 @@
 #include "op_exec_ops.h"
 #include "cpu.h"
+#include "bus.h"
 
 bool op_exec_cond(TargetCoreType *cpu, uint16 cond)
 {
@@ -177,17 +178,39 @@ int op_exec_jr(TargetCoreType *cpu)
 /*
  * Format6
  */
+static int op_exec_parse_jmp_addr_fmt6(const char* opcode, TargetCoreType* cpu, sint32 *disp32)
+{
+	uint16 imm_high16;
+	uint32 imm_high;
+	uint32 imm_high_addr;
+	uint32 disp = cpu->decoded_code->type6.imm;
+
+	imm_high_addr = cpu->reg.pc + 4U;
+	int err = bus_get_data16(cpu->core_id, imm_high_addr, &imm_high16);
+	if (err != STD_E_OK) {
+		printf("ERROR:%s pc=0x%x type6.imm=%u(0x%x) high_addr=0x%x\n", opcode, cpu->reg.pc, disp, disp, imm_high_addr);
+		return -1;
+	}
+	imm_high = (uint32)(imm_high16);
+	*disp32 = (sint32)( (uint32)((imm_high << 16U) | disp) );
+	return 0;
+}
+
 int op_exec_jmp_6(TargetCoreType *cpu)
 {
 	uint32 reg1 = cpu->decoded_code->type6.reg1;
-	uint32 disp = cpu->decoded_code->type6.imm;
+	sint32 disp;
 
 	if (reg1 >= CPU_GREG_NUM) {
 		return -1;
 	}
+	int ret = op_exec_parse_jmp_addr_fmt6("JMP", cpu, &disp);
+	if (ret < 0) {
+		return -1;
+	}
 
 	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: JMP disp32(%u) r%d(0x%x)\n", cpu->reg.pc, disp, reg1, cpu->reg.r[reg1] + disp));
-	cpu->reg.pc = cpu->reg.r[reg1] + disp;
+	cpu->reg.pc = (uint32)(cpu->reg.r[reg1] + disp);
 
 	return 0;
 }
@@ -195,9 +218,13 @@ int op_exec_jmp_6(TargetCoreType *cpu)
 int op_exec_jarl_6(TargetCoreType *cpu)
 {
 	sint32 reg1 = cpu->decoded_code->type6.reg1;
-	uint32 disp = cpu->decoded_code->type6.imm;
-	uint32 pc = (sint32)cpu->reg.pc;
+	sint32 disp;
+	sint32 pc = (sint32)cpu->reg.pc;
 
+	int ret = op_exec_parse_jmp_addr_fmt6("JARL", cpu, &disp);
+	if (ret < 0) {
+		return -1;
+	}
 	pc += disp;
 
 	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: JARL disp32(%u) r%u(0x%x):0x%x r%u(0x%x)\n",
@@ -215,8 +242,13 @@ int op_exec_jarl_6(TargetCoreType *cpu)
 
 int op_exec_jr_6(TargetCoreType *cpu)
 {
-	uint32 disp = cpu->decoded_code->type6.imm;
-	uint32 pc = (uint32)cpu->reg.pc;
+	sint32 disp;
+	sint32 pc = (uint32)cpu->reg.pc;
+
+	int ret = op_exec_parse_jmp_addr_fmt6("JR", cpu, &disp);
+	if (ret < 0) {
+		return -1;
+	}
 
 	pc += disp;
 

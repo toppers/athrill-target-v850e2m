@@ -286,7 +286,7 @@ int op_exec_ldbu(TargetCoreType *cpu)
 
 	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: LD.BU disp16(%d),r%d(0x%x), r%d(0x%x):0x%x\n", cpu->reg.pc, disp, reg1, cpu->reg.r[reg1], reg2, cpu->reg.r[reg2], data8));
 
-	cpu->reg.r[reg2] = data8;
+	cpu->reg.r[reg2] = (sint32)((uint32)data8);
 
 	cpu->reg.pc += 4;
 	return 0;
@@ -320,7 +320,7 @@ int op_exec_ld_bu_14(TargetCoreType *cpu)
 	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: LD.BU disp23(%d),r%d(0x%x), r%d(0x%x):0x%x\n",
 			cpu->reg.pc, disp, reg1, cpu->reg.r[reg1], reg3, cpu->reg.r[reg3], data8));
 
-	cpu->reg.r[reg3] = data8;
+	cpu->reg.r[reg3] = (sint32)((uint32)data8);
 
 	cpu->reg.pc += 6;
 	return 0;
@@ -450,7 +450,7 @@ int op_exec_ldhu(TargetCoreType *cpu)
 {
 	uint32 addr;
 	uint32 ret;
-	uint32 disp;
+	sint32 disp;
 	uint32 reg1 = cpu->decoded_code->type7.reg1;
 	uint32 reg2 = cpu->decoded_code->type7.reg2;
 	uint16 data16;
@@ -463,7 +463,7 @@ int op_exec_ldhu(TargetCoreType *cpu)
 		return -1;
 	}
 
-	disp = op_zero_extend(15, (cpu->decoded_code->type7.disp << 1) );
+	disp = op_sign_extend(15, (cpu->decoded_code->type7.disp << 1) );
 	addr = cpu->reg.r[reg1] + disp;
 
 	err = bus_get_data16(cpu->core_id, addr, &data16);
@@ -506,7 +506,7 @@ int op_exec_ld_hu_14(TargetCoreType *cpu)
 	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: LD.HU disp23(%d),r%d(0x%x), r%d(0x%x):0x%x\n",
 			cpu->reg.pc, disp, reg1, cpu->reg.r[reg1], reg3, cpu->reg.r[reg3], data16));
 
-	cpu->reg.r[reg3] = data16;
+	cpu->reg.r[reg3] = (sint32)((uint32)data16);
 
 	cpu->reg.pc += 6;
 	return 0;
