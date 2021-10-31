@@ -1378,7 +1378,7 @@ int op_exec_mac_11(TargetCoreType *cpu)
 	uint32 reg1 = cpu->decoded_code->type11.reg1;
 	uint32 reg2 = cpu->decoded_code->type11.reg2;
 	uint32 reg3 = cpu->decoded_code->type11.reg3;
-	uint32 reg4 = (cpu->decoded_code->type11.rfu << 1U) | cpu->decoded_code->type11.sub2;
+	uint32 reg4 = ((cpu->decoded_code->type11.rfu << 1U) | cpu->decoded_code->type11.sub2) << 1U;
 	uint32 reg3plus1 = reg3 + 1;
 	uint32 reg4plus1 = reg4 + 1;
 	sint64 reg1_data = cpu->reg.r[reg1];
@@ -1434,7 +1434,7 @@ int op_exec_macu_11(TargetCoreType *cpu)
 	uint32 reg1 = cpu->decoded_code->type11.reg1;
 	uint32 reg2 = cpu->decoded_code->type11.reg2;
 	uint32 reg3 = cpu->decoded_code->type11.reg3;
-	uint32 reg4 = (cpu->decoded_code->type11.rfu << 1U) | cpu->decoded_code->type11.sub2;
+	uint32 reg4 = ((cpu->decoded_code->type11.rfu << 1U) | cpu->decoded_code->type11.sub2) << 1U;
 	uint32 reg3plus1 = reg3 + 1;
 	uint32 reg4plus1 = reg4 + 1;
 	sint64 reg1_data = cpu->reg.r[reg1];
