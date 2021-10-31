@@ -61,7 +61,7 @@ int op_exec_sldbu(TargetCoreType *cpu)
 	}
 
 	disp = cpu->decoded_code->type4_2.disp;
-	disp = op_zero_extend(3, disp);
+	disp = op_zero_extend(4, disp);
 	addr = cpu->reg.r[reg1] + disp;
 
 	err = bus_get_data8(cpu->core_id, addr, &data8);
@@ -96,7 +96,7 @@ int op_exec_sldhu(TargetCoreType *cpu)
 	}
 
 	disp = ( (cpu->decoded_code->type4_2.disp) << 1U );
-	disp = op_zero_extend(4, disp);
+	disp = op_zero_extend(5, disp);
 	addr = cpu->reg.r[reg1] + disp;
 
 	err = bus_get_data16(cpu->core_id, addr, &data16);
