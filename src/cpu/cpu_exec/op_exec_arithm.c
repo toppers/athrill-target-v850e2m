@@ -1061,9 +1061,9 @@ int op_exec_mulu(TargetCoreType *cpu)
 	uint32 reg1 = cpu->decoded_code->type11.reg1;
 	uint32 reg2 = cpu->decoded_code->type11.reg2;
 	uint32 reg3 = cpu->decoded_code->type11.reg3;
-	uint64 reg1_data = cpu->reg.r[reg1];
-	uint64 reg2_data = cpu->reg.r[reg2];
-	uint64 reg3_data = cpu->reg.r[reg3];
+	uint64 reg1_data = (uint32)cpu->reg.r[reg1];
+	uint64 reg2_data = (uint32)cpu->reg.r[reg2];
+	uint64 reg3_data = (uint32)cpu->reg.r[reg3];
 	uint64 result;
 	uint64 result_u;
 
@@ -1167,7 +1167,7 @@ int op_exec_mulu_12(TargetCoreType *cpu)
 	imm9_high = (cpu->decoded_code->type12.immh & 0xF);
 	imm9 = (imm9_high << 5U) | imm9_low;
 
-	reg2_data = cpu->reg.r[reg2];
+	reg2_data = (uint32)cpu->reg.r[reg2];
 
 	result = reg2_data * imm9;
 
@@ -1437,10 +1437,10 @@ int op_exec_macu_11(TargetCoreType *cpu)
 	uint32 reg4 = ((cpu->decoded_code->type11.rfu << 1U) | cpu->decoded_code->type11.sub2) << 1U;
 	uint32 reg3plus1 = reg3 + 1;
 	uint32 reg4plus1 = reg4 + 1;
-	sint64 reg1_data = cpu->reg.r[reg1];
-	sint64 reg2_data = cpu->reg.r[reg2];
-	sint64 reg3plus1_data = cpu->reg.r[reg3plus1];
-	sint64 reg3_data  = cpu->reg.r[reg3];
+	uint64 reg1_data = (uint32)cpu->reg.r[reg1];
+	uint64 reg2_data = (uint32)cpu->reg.r[reg2];
+	uint64 reg3plus1_data = (uint32)cpu->reg.r[reg3plus1];
+	uint64 reg3_data  = (uint32)cpu->reg.r[reg3];
 	uint64 result1;
 	uint64 result2;
 	uint64 result;
@@ -1470,7 +1470,7 @@ int op_exec_macu_11(TargetCoreType *cpu)
 	result = result1 + result2;
 	result_data = (uint32*)&result;
 
-	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: MAC r%d(%u),r%d(%u),r%d(%u),r%d(%u):%u, %u\n",
+	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: MACU r%d(%u),r%d(%u),r%d(%u),r%d(%u):%u, %u\n",
 			cpu->reg.pc,
 			reg1, cpu->reg.r[reg1],
 			reg2, cpu->reg.r[reg2],
