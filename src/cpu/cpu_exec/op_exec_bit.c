@@ -374,6 +374,78 @@ int op_exec_not1_9(TargetCoreType *cpu)
 	return 0;
 }
 
+
+static const uint32 schlr_search_bitval[2][32] = {
+	{
+		0, /* 0 */
+		0, /* 1 */
+		0, /* 2 */
+		0, /* 3 */
+		0, /* 4 */
+		0, /* 5 */
+		0, /* 6 */
+		0, /* 7 */
+		0, /* 8 */
+		0, /* 9 */
+		0, /* 10 */
+		0, /* 11 */
+		0, /* 12 */
+		0, /* 13 */
+		0, /* 14 */
+		0, /* 15 */
+		0, /* 16 */
+		0, /* 17 */
+		0, /* 18 */
+		0, /* 19 */
+		0, /* 20 */
+		0, /* 21 */
+		0, /* 22 */
+		0, /* 23 */
+		0, /* 24 */
+		0, /* 25 */
+		0, /* 26 */
+		0, /* 27 */
+		0, /* 28 */
+		0, /* 29 */
+		0, /* 30 */
+		0, /* 31 */
+	},
+	{
+		(1U << 0), /* 0 */
+		(1U << 1), /* 1 */
+		(1U << 2), /* 2 */
+		(1U << 3), /* 3 */
+		(1U << 4), /* 4 */
+		(1U << 5), /* 5 */
+		(1U << 6), /* 6 */
+		(1U << 7), /* 7 */
+		(1U << 8), /* 8 */
+		(1U << 9), /* 9 */
+		(1U << 10), /* 10 */
+		(1U << 11), /* 11 */
+		(1U << 12), /* 12 */
+		(1U << 13), /* 13 */
+		(1U << 14), /* 14 */
+		(1U << 15), /* 15 */
+		(1U << 16), /* 16 */
+		(1U << 17), /* 17 */
+		(1U << 18), /* 18 */
+		(1U << 19), /* 19 */
+		(1U << 20), /* 20 */
+		(1U << 21), /* 21 */
+		(1U << 22), /* 22 */
+		(1U << 23), /* 23 */
+		(1U << 24), /* 24 */
+		(1U << 25), /* 25 */
+		(1U << 26), /* 26 */
+		(1U << 27), /* 27 */
+		(1U << 28), /* 28 */
+		(1U << 29), /* 29 */
+		(1U << 30), /* 30 */
+		(1U << 31), /* 31 */
+	},
+};
+
 static int op_exec_schlr_9(TargetCoreType *cpu, uint32 search_bitval, bool search_left)
 {
 	sint32 reg2 = cpu->decoded_code->type9.reg2;
@@ -388,7 +460,7 @@ static int op_exec_schlr_9(TargetCoreType *cpu, uint32 search_bitval, bool searc
 	if (search_left == TRUE) {
 		dir = "L";
 		for (i = 0; i < 32; i++) {
-			if ((reg2_data & (1U << (31 - i))) == search_bitval) {
+			if ((reg2_data & (1U << (31 - i))) == schlr_search_bitval[search_bitval][(31 - i)]) {
 				isFound = TRUE;
 				break;
 			}
@@ -400,7 +472,7 @@ static int op_exec_schlr_9(TargetCoreType *cpu, uint32 search_bitval, bool searc
 	else {
 		dir = "R";
 		for (i = 0; i < 32; i++) {
-			if ((reg2_data & (1U << (i))) == search_bitval) {
+			if ((reg2_data & (1U << (i))) == schlr_search_bitval[search_bitval][i]) {
 				isFound = TRUE;
 				break;
 			}
