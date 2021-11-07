@@ -797,7 +797,7 @@ int op_exec_caxi(TargetCoreType *cpu)
 	cpu->reg.r[reg3] = (sint32)((uint32)((uint16)token));
 
 	op_chk_and_set_borrow(&cpu->reg, reg2_data, token);
-	op_chk_and_set_overflow(&cpu->reg, reg2_data, -token);
+	op_chk_and_set_overflow(&cpu->reg, reg2_data, -((sint64)token));
 	op_chk_and_set_zero(&cpu->reg, result);
 	op_chk_and_set_sign(&cpu->reg, result);
 

@@ -180,7 +180,7 @@ int op_exec_sub(TargetCoreType *cpu)
 
 
 	op_chk_and_set_borrow(&cpu->reg, reg2_data, reg1_data);
-	op_chk_and_set_overflow(&cpu->reg, reg2_data, -reg1_data);
+	op_chk_and_set_overflow(&cpu->reg, reg2_data, -((sint64)reg1_data));
 	op_chk_and_set_zero(&cpu->reg, result);
 	op_chk_and_set_sign(&cpu->reg, result);
 
@@ -209,7 +209,7 @@ int op_exec_subr(TargetCoreType *cpu)
 	cpu->reg.r[reg2] = result;
 
 	op_chk_and_set_borrow(&cpu->reg, reg1_data, reg2_data);
-	op_chk_and_set_overflow(&cpu->reg, reg1_data, -reg2_data);
+	op_chk_and_set_overflow(&cpu->reg, reg1_data, -((sint64)reg2_data));
 	op_chk_and_set_zero(&cpu->reg, result);
 	op_chk_and_set_sign(&cpu->reg, result);
 
@@ -235,7 +235,7 @@ int op_exec_cmp_1(TargetCoreType *cpu)
 	result = reg2_data - reg1_data;
 
 	op_chk_and_set_borrow(&cpu->reg, reg2_data, reg1_data);
-	op_chk_and_set_overflow(&cpu->reg, reg2_data, -reg1_data);
+	op_chk_and_set_overflow(&cpu->reg, reg2_data, -((sint64)reg1_data));
 	op_chk_and_set_zero(&cpu->reg, result);
 	op_chk_and_set_sign(&cpu->reg, result);
 	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: CMP r%d(%d),r%d(%d):%d:psw=0x%x\n", cpu->reg.pc, reg1, cpu->reg.r[reg1], reg2, cpu->reg.r[reg2], result, sys_get_cpu_base(&cpu->reg)->r[SYS_REG_PSW]));
@@ -379,7 +379,7 @@ int op_exec_cmp_2(TargetCoreType *cpu)
 	result = reg2_data - imm_data;
 
 	op_chk_and_set_borrow(&cpu->reg, reg2_data, imm_data);
-	op_chk_and_set_overflow(&cpu->reg, reg2_data, -imm_data);
+	op_chk_and_set_overflow(&cpu->reg, reg2_data, -((sint64)imm_data));
 	op_chk_and_set_zero(&cpu->reg, result);
 	op_chk_and_set_sign(&cpu->reg, result);
 	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: CMP imm5(%d),r%d(%d):%d:psw=0x%x\n", cpu->reg.pc, imm_data, reg2, cpu->reg.r[reg2], result, sys_get_cpu_base(&cpu->reg)->r[SYS_REG_PSW]));
@@ -1365,7 +1365,7 @@ int op_exec_sbf_11(TargetCoreType *cpu)
 
 
 	op_chk_and_set_borrow3(&cpu->reg, reg2_data, reg1_data, add_data);
-	op_chk_and_set_overflow3(&cpu->reg, reg2_data, -reg1_data, -add_data);
+	op_chk_and_set_overflow3(&cpu->reg, reg2_data, -((sint64)reg1_data), -((sint64)add_data));
 	op_chk_and_set_zero(&cpu->reg, result);
 	op_chk_and_set_sign(&cpu->reg, result);
 
