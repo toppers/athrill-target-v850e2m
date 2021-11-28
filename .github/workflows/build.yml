@@ -1,0 +1,21 @@
+name: build
+
+on:
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+        with:
+          submodules: true  # Fetch athrill repo
+          fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
+
+      - name: Build athrill
+        run: |
+          cd build_linux
+          make
+          make list
+          ../athrill/bin/linux/athrill2
