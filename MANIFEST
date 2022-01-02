@@ -1,5 +1,5 @@
 PACKAGE athrill-target-v850e2m
-VERSION 1.0.0
+VERSION 1.0.1
 
 LICENSE.md
 MANIFEST
@@ -12,7 +12,10 @@ build_clang/Makefile.env
 build_linux/Makefile
 build_linux/Makefile.cpu
 build_linux/Makefile.device
+build_linux/Makefile.device.static
 build_linux/Makefile.env
+build_linux/Makefile.mpu.static
+build_linux/Makefile.static
 build_mac/Makefile
 build_mac/Makefile.cpu
 build_mac/Makefile.device
