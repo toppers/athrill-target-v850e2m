@@ -1,0 +1,7 @@
+E_PACKAGE athrill-target-v850e2m
+VERSION %date
+
+INCLUDE MANIFEST
+INCLUDE ../athrill/MANIFEST
+
+build_mac/athrill2
