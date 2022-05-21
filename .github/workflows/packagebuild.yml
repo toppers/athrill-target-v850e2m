@@ -7,27 +7,78 @@ on:
       - 'RC*'
 
 jobs:
-  build:
-    runs-on: ubuntu-18.04
+  build-targets-job:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+
     steps:
+      - name: Setup cmake
+        uses: jwlawson/actions-setup-cmake@v1.12
+        with:
+          github-api-token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Checkout Repository
         uses: actions/checkout@v2
         with:
           submodules: true  # Fetch athrill repo
           fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
+        
+      - name: Checkout toppers utils
+        run:  git clone https://github.com/mitsut/toppers_utils.git
 
-      - name: Build athrill
+      - name: Build athrill for Linux or Mac
+        if:  " (matrix.os == 'ubuntu-latest') || (matrix.os == 'macos-latest') " 
         run: |
-          cd build_linux
+          mkdir build
+          cd build
+          cmake -H.. 
           make
+          ./athrill2
+      
+      - name: Setup MinGW for Windows
+        if:  matrix.os == 'windows-latest'
+        uses: egor-tensin/setup-mingw@v2
 
-      - name: Archive package
-        id: get_archive
+      - name: Build athrill for Windows
+        if:  matrix.os == 'windows-latest'
         run: |
-          git clone https://github.com/mitsut/toppers_utils.git
+          mkdir build_win
+          mkdir build
+          cd build
+          cmake -G"MinGW Makefiles" ..
+          make
+          .\athrill2.exe
+
+      - name: Move to build folder(linux)
+        if:  matrix.os == 'ubuntu-latest'
+        run: |
+          cp build/athrill2 build_linux/
           perl toppers_utils/makerelease E_PACKAGE
-          FILE_NAME="$(ls -1 RELEASE/ | sed -n 1p)"
-          echo ::set-output name=FILE_NAME::${FILE_NAME}
+      - name: Move to build folder(mac)
+        if:  matrix.os == 'macos-latest'
+        run: |
+          cp build/athrill2 build_mac/
+          perl toppers_utils/makerelease E_PACKAGE.darwin
+      - name: Move to build folder(win)
+        if:  matrix.os == 'windows-latest'
+        run: |
+          cp build/athrill2.exe build_win/
+          perl toppers_utils/makerelease E_PACKAGE.win
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: athrill-targets
+          path: RELEASE/*.tar.gz
+  
+  MakeRelease:
+    runs-on: ubuntu-latest
+    needs: [build-targets-job]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
 
       - name: Get the version
         id: get_version
@@ -42,27 +93,24 @@ jobs:
           COMMIT_SUMMARY="${COMMIT_SUMMARY//$'\n'/'%0A'}"
           echo ::set-output name=COMMIT_SUMMARY::$COMMIT_SUMMARY
 
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+
+      - name: Display structure of downloaded files
+        run: ls -R
+
       - name: Create Release
         id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
         with:
           tag_name: ${{ steps.get_version.outputs.VERSION }}
-          release_name: Release ${{ steps.get_version.outputs.VERSION }}
+          name: Release ${{ steps.get_version.outputs.VERSION }}
           body: |
             ${{ steps.get_commit_summary.outputs.COMMIT_SUMMARY }}
           draft: true
           prerelease: true
-
-      - uses: actions/upload-release-asset@master
+          files: |
+            ./athrill-targets/*.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          # 添付ファイルのパス (必須)
-          asset_path: ./RELEASE/${{ steps.get_archive.outputs.FILE_NAME }}
-          # 添付ファイルの表示名 (必須)
-          asset_name: ${{ steps.get_archive.outputs.FILE_NAME }}
-          # 添付ファイルに対応する content-type (必須)
-          asset_content_type: application/zip

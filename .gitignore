@@ -2,3 +2,4 @@
 *.a
 athrill2
 RELEASE/
+build/

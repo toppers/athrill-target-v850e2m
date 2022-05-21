@@ -5,17 +5,39 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-18.04
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+
     steps:
+      - name: Setup cmake
+        uses: jwlawson/actions-setup-cmake@v1.12
+
       - name: Checkout Repository
         uses: actions/checkout@v2
         with:
           submodules: true  # Fetch athrill repo
           fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
 
-      - name: Build athrill
+      - name: Build athrill for Linux or Mac
+        if:  " (matrix.os == 'ubuntu-latest') || (matrix.os == 'macos-latest') " 
         run: |
-          cd build_linux
+          mkdir build
+          cd build
+          cmake -H.. 
           make
-          make list
-          ../athrill/bin/linux/athrill2
+          ./athrill2
+
+      - name: Setup MinGW for Windows
+        if:  matrix.os == 'windows-latest'
+        uses: egor-tensin/setup-mingw@v2
+
+      - name: Build athrill for Windows
+        if:  matrix.os == 'windows-latest'
+        run: |
+          mkdir build
+          cd build
+          cmake -G"MinGW Makefiles" ..
+          make
+          .\athrill2.exe
