@@ -7,25 +7,66 @@ on:
       - 'RC*'
 
 jobs:
-  build:
-    runs-on: ubuntu-18.04
+  packagebuild:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+
     steps:
+      - name: Setup cmake
+        uses: jwlawson/actions-setup-cmake@v1.12
+        with:
+          github-api-token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Checkout Repository
         uses: actions/checkout@v2
         with:
           submodules: true  # Fetch athrill repo
           fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
+        
+      - name: Checkout toppers utils
+        run:  git clone https://github.com/mitsut/toppers_utils.git
 
-      - name: Build athrill
+      - name: Build athrill for Linux or Mac
+        if:  " (matrix.os == 'ubuntu-latest') || (matrix.os == 'macos-latest') " 
         run: |
-          cd build_linux
+          mkdir build
+          cd build
+          cmake -H.. 
           make
+          ./athrill2
+      
+      - name: Setup MinGW for Windows
+        if:  matrix.os == 'windows-latest'
+        uses: egor-tensin/setup-mingw@v2
+        run: |
+          mkdir build_win
+          cd build
+          cmake -G"MinGW Makefiles" ..
+          make
+          .\athrill2.exe
+
+      - name: Move to build folder(linux)
+        if:  matrix.os == 'ubuntu-latest'
+        run: |
+          cp build/athrill2 build_linux/
+          perl toppers_utils/makerelease E_PACKAGE
+      - name: Move to build folder(mac)
+        if:  matrix.os == 'macos-latest'
+        run: |
+          cp build/athrill2 build_mac/
+          perl toppers_utils/makerelease E_PACKAGE.darwin
+      - name: Move to build folder(win)
+        if:  matrix.os == 'windows-latest'
+        run: |
+          cp build/athrill2.exe build_win/
+          perl toppers_utils/makerelease E_PACKAGE.win
 
       - name: Archive package
         id: get_archive
         run: |
-          git clone https://github.com/mitsut/toppers_utils.git
-          perl toppers_utils/makerelease E_PACKAGE
+          ls -la RELEASE/
           FILE_NAME="$(ls -1 RELEASE/ | sed -n 1p)"
           echo ::set-output name=FILE_NAME::${FILE_NAME}
 
