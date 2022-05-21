@@ -1,4 +1,4 @@
-E_PACKAGE athrill-target-v850e2m
+E_PACKAGE athrill-target-v850e2m-x86_64-darwin
 VERSION %date
 
 INCLUDE MANIFEST
