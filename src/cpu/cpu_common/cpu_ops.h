@@ -188,7 +188,7 @@ static inline sint32 op_ori(
 
 static inline sint32 op_satadd(
 		CpuRegisterType *cpu,
-		sint32 data_l, sint32 data_r)
+		sint32 data_l, sint64 data_r)
 {
 	sint32 ret;
 	sint64 data_r64 = data_r;

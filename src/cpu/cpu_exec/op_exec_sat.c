@@ -36,7 +36,7 @@ int op_exec_satsub_1(TargetCoreType *cpu)
 	if (reg2 >= CPU_GREG_NUM) {
 		return -1;
 	}
-	result = op_satadd(&cpu->reg, cpu->reg.r[reg2], -((sint32)cpu->reg.r[reg1]));
+	result = op_satadd(&cpu->reg, cpu->reg.r[reg2], -((sint64)cpu->reg.r[reg1]));
 	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: SATSUB r%d(%d),r%d(%d):%d\n", cpu->reg.pc, reg1, cpu->reg.r[reg1], reg2, cpu->reg.r[reg2], result));
 
 	cpu->reg.r[reg2] = result;
@@ -56,7 +56,7 @@ int op_exec_satsubr_1(TargetCoreType *cpu)
 	if (reg2 >= CPU_GREG_NUM) {
 		return -1;
 	}
-	result = op_satadd(&cpu->reg, cpu->reg.r[reg1], -((sint32)cpu->reg.r[reg2]));
+	result = op_satadd(&cpu->reg, cpu->reg.r[reg1], -((sint64)cpu->reg.r[reg2]));
 	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: SATSUBR r%d(%d),r%d(%d):%d\n",
 			cpu->reg.pc,
 			reg1, cpu->reg.r[reg1],
@@ -167,7 +167,7 @@ int op_exec_satsub_11(TargetCoreType *cpu)
 	if (reg3 >= CPU_GREG_NUM) {
 		return -1;
 	}
-	result = op_satadd(&cpu->reg, cpu->reg.r[reg2], -((sint32)cpu->reg.r[reg1]));
+	result = op_satadd(&cpu->reg, cpu->reg.r[reg2], -((sint64)cpu->reg.r[reg1]));
 	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: SATSUB r%d(%d),r%d(%d), r%d(%d):%d\n",
 			cpu->reg.pc,
 			reg1, cpu->reg.r[reg1],
