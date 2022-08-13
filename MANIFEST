@@ -1,6 +1,9 @@
 PACKAGE athrill-target-v850e2m
-VERSION 1.0.1
+VERSION 1.0.2
 
+CMakeLists.txt
+E_PACKAGE
+E_PACKAGE.darwin
 LICENSE.md
 MANIFEST
 README.md
@@ -38,14 +41,14 @@ src/cpu/cpu_dec/op_parse.c
 src/cpu/cpu_dec/op_parse.h
 src/cpu/cpu_dec/op_parse_private.c
 src/cpu/cpu_dec/op_parse_private.h
+src/cpu/cpu_exec/op_exec.c
+src/cpu/cpu_exec/op_exec.h
 src/cpu/cpu_exec/op_exec_arithm.c
 src/cpu/cpu_exec/op_exec_bit.c
 src/cpu/cpu_exec/op_exec_branch.c
-src/cpu/cpu_exec/op_exec.c
 src/cpu/cpu_exec/op_exec_dbg.c
 src/cpu/cpu_exec/op_exec_div.c
 src/cpu/cpu_exec/op_exec_fpu.c
-src/cpu/cpu_exec/op_exec.h
 src/cpu/cpu_exec/op_exec_load.c
 src/cpu/cpu_exec/op_exec_logic.c
 src/cpu/cpu_exec/op_exec_ops.h
@@ -63,12 +66,12 @@ src/device/intc/intc.h
 src/device/peripheral/can/can.c
 src/device/peripheral/inc/can.h
 src/device/peripheral/inc/serial.h
-src/device/peripheral/inc/timer32.h
 src/device/peripheral/inc/timer.h
+src/device/peripheral/inc/timer32.h
 src/device/peripheral/inc/vdev.h
 src/device/peripheral/serial/serial.c
-src/device/peripheral/timer/timer32.c
 src/device/peripheral/timer/timer.c
+src/device/peripheral/timer/timer32.c
 src/device/peripheral/vdev/vdev.c
 src/device/peripheral/vdev/vdev_mmap.c
 src/device/peripheral/vdev/vdev_private.h
