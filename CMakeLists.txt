@@ -19,6 +19,8 @@ else()
     message(STATUS "CMAKE_HOST_SYSTEM_NAME is others")
 endif()
 
+add_definitions(-D DISABLE_DEVICE_VDEV -D CPUEMU_CLOCK_BUG_FIX -DSEARCH_REGION_OPTIMIZE -DCPU_PERMISSION_OPTIMIZE -DDISABLE_SERIAL_CLOCK -DDISABLE_BUS_ACCESS_LOG -DOPTIMIZE_USE_ONLY_1CPU -DMINIMUM_DEVICE_CONFIG -DENABLE_REUSE_UDP_SOCKET -DEXDEV_ENABLE)
+
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -g -Wall -Wunknown-pragmas -Wimplicit-int -Wtrigraphs -std=gnu99 -O3")
 
 
@@ -128,7 +130,7 @@ target_sources(device PRIVATE
     "${CORE_DIR}/device/peripheral/serial/fifo/serial_fifo.c"
     "${TARGET_DIR}/device/device.c"
     "${TARGET_DIR}/device/intc/intc.c"
-    "${TARGET_DIR}/device/peripheral/timer/timer.c"
+    "${TARGET_DIR}/device/peripheral/timer/timer32.c"
     "${TARGET_DIR}/device/peripheral/serial/serial.c"
     "${TARGET_DIR}/device/peripheral/can/can.c"
     "${TARGET_DIR}/debugger/executor/concrete_executor/dbg_target_serial.c"
@@ -140,9 +142,6 @@ target_sources(device PRIVATE
     "${CORE_DIR}/device/peripheral/athrill_device.c" 
     "${CORE_DIR}/device/peripheral/athrill_syscall_device.c" 
     "${CORE_DIR}/device/peripheral/athrill_mpthread.c" 
-    "${TARGET_DIR}/device/peripheral/vdev/vdev.c"
-    "${TARGET_DIR}/device/peripheral/vdev/vdev_mmap.c"
-    "${TARGET_DIR}/device/peripheral/vdev/vdev_udp.c"
 )
 endif()
 
