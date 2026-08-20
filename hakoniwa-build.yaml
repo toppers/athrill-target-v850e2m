@@ -6,8 +6,8 @@ build:
   parallel: 0
 
 features:
-  exdev: auto
-  mros: auto
+  exdev: true
+  mros: false
   vdev: false
 
 validation:

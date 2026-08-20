@@ -18,7 +18,7 @@
       },
       "cacheVariables": {
         "ATHRILL_SOURCE_DIR": "${sourceDir}/../athrill",
-        "ATHRILL_ENABLE_EXDEV": "OFF",
+        "ATHRILL_ENABLE_EXDEV": "ON",
         "ATHRILL_ENABLE_MROS": "OFF",
         "ATHRILL_ENABLE_VDEV": "OFF",
         "BUILD_TESTING": "ON",

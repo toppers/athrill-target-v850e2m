@@ -31,29 +31,10 @@ include("${_athrill_cmake_module}")
 
 set(ATHRILL_TARGET_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
-if(WIN32)
-    set(_athrill_exdev_default OFF)
-    set(_athrill_mros_default OFF)
-else()
-    set(_athrill_exdev_default ON)
-    set(_athrill_mros_default ON)
-endif()
-
-option(ATHRILL_ENABLE_EXDEV "Enable external device loading" ${_athrill_exdev_default})
-option(ATHRILL_ENABLE_MROS "Build the legacy mROS integration" ${_athrill_mros_default})
+option(ATHRILL_ENABLE_EXDEV "Enable external device loading" ON)
+option(ATHRILL_ENABLE_MROS "Build the legacy mROS integration" OFF)
 option(ATHRILL_ENABLE_VDEV "Enable the legacy VDEV implementation" OFF)
 
-if(WIN32 AND ATHRILL_ENABLE_EXDEV)
-    message(FATAL_ERROR "ATHRILL_ENABLE_EXDEV is not yet supported on Windows")
-endif()
-if(NOT WIN32 AND NOT ATHRILL_ENABLE_EXDEV)
-    message(FATAL_ERROR
-        "The current POSIX V850E2M implementation requires ATHRILL_ENABLE_EXDEV=ON")
-endif()
-if(NOT WIN32 AND NOT ATHRILL_ENABLE_MROS)
-    message(FATAL_ERROR
-        "The current POSIX V850E2M implementation requires ATHRILL_ENABLE_MROS=ON")
-endif()
 if(ATHRILL_ENABLE_VDEV)
     message(FATAL_ERROR "ATHRILL_ENABLE_VDEV is not yet supported by the CMake build")
 endif()
@@ -176,6 +157,9 @@ set(_athrill_device_sources
 )
 if(ATHRILL_ENABLE_EXDEV)
     list(APPEND _athrill_device_sources ${ATHRILL_DEVICE_EXDEV_SOURCES})
+    if(NOT WIN32)
+        list(APPEND _athrill_device_sources ${ATHRILL_DEVICE_EXDEV_POSIX_SOURCES})
+    endif()
 endif()
 if(ATHRILL_ENABLE_MROS)
     list(APPEND _athrill_device_sources
@@ -305,6 +289,35 @@ if(BUILD_TESTING)
     )
     athrill_apply_common_settings(athrill-argument-parser-test)
     add_test(NAME athrill-argument-parser COMMAND athrill-argument-parser-test)
+
+    if(ATHRILL_ENABLE_EXDEV)
+        add_library(athrill-exdev-test-device SHARED
+            "test/exdev_test_device.c"
+        )
+        target_include_directories(athrill-exdev-test-device PRIVATE
+            "${CMAKE_CURRENT_SOURCE_DIR}/test"
+        )
+        athrill_apply_common_settings(athrill-exdev-test-device)
+        set_target_properties(athrill-exdev-test-device PROPERTIES
+            PREFIX ""
+        )
+
+        add_executable(athrill-shared-library-test
+            "test/shared_library_test.c"
+            "${ATHRILL_SRC_DIR}/lib/shared_library.c"
+        )
+        target_include_directories(athrill-shared-library-test PRIVATE
+            "${CMAKE_CURRENT_SOURCE_DIR}/test"
+        )
+        athrill_apply_common_settings(athrill-shared-library-test)
+        target_link_libraries(athrill-shared-library-test PRIVATE
+            ${CMAKE_DL_LIBS}
+        )
+        add_test(NAME athrill-exdev-shared-library
+            COMMAND athrill-shared-library-test
+                $<TARGET_FILE:athrill-exdev-test-device>
+        )
+    endif()
 endif()
 
 message(STATUS "Athrill source: ${ATHRILL_ROOT}")

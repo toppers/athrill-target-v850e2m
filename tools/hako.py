@@ -19,7 +19,7 @@ VALID_BUILD_TYPES = {"Debug", "Release", "RelWithDebInfo", "MinSizeRel"}
 DEFAULT_CONFIG: dict[str, Any] = {
     "version": 1,
     "build": {"type": "Release", "dir": ".hako/build", "parallel": 0},
-    "features": {"exdev": False, "mros": False, "vdev": False},
+    "features": {"exdev": True, "mros": False, "vdev": False},
     "validation": {"tests": True},
     "paths": {"athrill_root": "../athrill", "vcpkg_root": ""},
 }
@@ -212,11 +212,14 @@ class BuildContext:
 def create_context(manifest: Path, repo_root: Path, dry_run: bool = False) -> BuildContext:
     cfg = resolve_config(load_simple_yaml(manifest))
     platform_name, arch = _host_platform()
-    for feature in ("exdev", "mros"):
-        if cfg["features"][feature] == "auto":
-            cfg["features"][feature] = platform_name != "windows"
-    if platform_name == "windows" and any(cfg["features"].values()):
-        raise ConfigError("Windows currently requires features.exdev/mros/vdev=false")
+    if cfg["features"]["exdev"] == "auto":
+        cfg["features"]["exdev"] = True
+    if cfg["features"]["mros"] == "auto":
+        cfg["features"]["mros"] = False
+    if platform_name == "windows" and (
+        cfg["features"]["mros"] or cfg["features"]["vdev"]
+    ):
+        raise ConfigError("Windows currently requires features.mros/vdev=false")
     return BuildContext(
         repo_root=repo_root,
         manifest=manifest,
