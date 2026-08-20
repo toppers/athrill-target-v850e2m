@@ -268,9 +268,9 @@ def _cmake_bool(value: bool) -> str:
     return "ON" if value else "OFF"
 
 
-def configure(ctx: BuildContext) -> None:
+def configure_command(ctx: BuildContext) -> list[str]:
     command = [
-        "cmake", "--fresh", "-S", ".", "-B", _command_path(ctx.build_dir, ctx.repo_root), "-G", "Ninja",
+        "cmake", "--fresh", "-S", ".", "-B", _command_path(ctx.build_dir, ctx.repo_root),
         f'-DCMAKE_BUILD_TYPE={ctx.cfg["build"]["type"]}',
         f'-DATHRILL_SOURCE_DIR={_command_path(ctx.athrill_root, ctx.repo_root)}',
         f'-DATHRILL_ENABLE_EXDEV={_cmake_bool(ctx.cfg["features"]["exdev"])}',
@@ -281,8 +281,16 @@ def configure(ctx: BuildContext) -> None:
     if ctx.platform_name == "windows":
         if not ctx.vcpkg_root:
             raise ConfigError("vcpkg was not found; set paths.vcpkg_root or VCPKG_ROOT")
-        command += [f'-DCMAKE_TOOLCHAIN_FILE={ctx.vcpkg_root / "scripts" / "buildsystems" / "vcpkg.cmake"}', "-DVCPKG_TARGET_TRIPLET=x64-windows-static"]
-    _run(ctx, command)
+        command += [
+            "-G", "Ninja",
+            f'-DCMAKE_TOOLCHAIN_FILE={ctx.vcpkg_root / "scripts" / "buildsystems" / "vcpkg.cmake"}',
+            "-DVCPKG_TARGET_TRIPLET=x64-windows-static",
+        ]
+    return command
+
+
+def configure(ctx: BuildContext) -> None:
+    _run(ctx, configure_command(ctx))
     write_resolved(ctx)
 
 
@@ -411,10 +419,10 @@ def install(ctx: BuildContext, install_dir: Path) -> None:
 def doctor(ctx: BuildContext) -> bool:
     checks = {
         "cmake": shutil.which("cmake") is not None,
-        "ninja": shutil.which("ninja") is not None,
         "athrill common CMake": (ctx.athrill_root / "cmake" / "AthrillCore.cmake").is_file(),
     }
     if ctx.platform_name == "windows":
+        checks["ninja"] = shutil.which("ninja") is not None
         checks["Visual Studio C++"] = ctx.vsdevcmd is not None
         checks["vcpkg"] = ctx.vcpkg_root is not None
     for name, ok in checks.items():
