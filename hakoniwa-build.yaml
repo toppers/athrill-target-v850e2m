@@ -1,0 +1,18 @@
+version: 1
+
+build:
+  type: Release
+  dir: .hako/build
+  parallel: 0
+
+features:
+  exdev: true
+  mros: false
+  vdev: false
+
+validation:
+  tests: true
+
+paths:
+  athrill_root: ../athrill
+  vcpkg_root: C:\project\vcpkg

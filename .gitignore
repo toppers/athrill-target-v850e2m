@@ -3,3 +3,6 @@
 athrill2
 RELEASE/
 build/
+.hako/
+__pycache__/
+*.pyc
