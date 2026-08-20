@@ -1,0 +1,8 @@
+{
+  "name": "athrill-target-v850e2m",
+  "version-string": "1.0.2",
+  "dependencies": [
+    "getopt-win32",
+    "pthreads"
+  ]
+}
