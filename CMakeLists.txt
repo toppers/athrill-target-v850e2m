@@ -12,7 +12,6 @@ if(WIN32)
             "Configure from PowerShell with the vcpkg toolchain.")
     endif()
     find_package(PThreads4W CONFIG REQUIRED)
-    find_package(getopt CONFIG REQUIRED)
 else()
     find_package(Threads REQUIRED)
 endif()
@@ -85,7 +84,6 @@ if(WIN32)
     target_compile_definitions(athrill_host_platform INTERFACE PTW32_STATIC_LIB)
     target_link_libraries(athrill_host_platform INTERFACE
         PThreads4W::PThreads4W
-        getopt::getopt_static
         ws2_32
     )
 else()
@@ -297,6 +295,16 @@ install(TARGETS athrill2
 
 if(BUILD_TESTING)
     add_test(NAME athrill2-usage COMMAND athrill2)
+
+    add_executable(athrill-argument-parser-test
+        "test/argument_parser_test.c"
+        "${ATHRILL_SRC_DIR}/main/option/argument_parser.c"
+    )
+    target_include_directories(athrill-argument-parser-test PRIVATE
+        "${ATHRILL_SRC_DIR}/main/option"
+    )
+    athrill_apply_common_settings(athrill-argument-parser-test)
+    add_test(NAME athrill-argument-parser COMMAND athrill-argument-parser-test)
 endif()
 
 message(STATUS "Athrill source: ${ATHRILL_ROOT}")
