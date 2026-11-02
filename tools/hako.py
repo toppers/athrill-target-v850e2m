@@ -367,7 +367,7 @@ def _git_revision(repo: Path) -> str:
 
 
 def write_receipt(ctx: BuildContext, install_dir: Path) -> Path:
-    executable = Path("bin") / ("athrill2.exe" if ctx.platform_name == "windows" else "athrill2")
+    executable = Path("bin") / ("athrill3.exe" if ctx.platform_name == "windows" else "athrill3")
     if not (install_dir / executable).is_file():
         raise ConfigError(f"installed executable not found: {install_dir / executable}")
     receipt_root = install_dir / "share" / "hakoniwa" / "receipts"

@@ -20,7 +20,7 @@
 
 static void test_clustered_flags(void)
 {
-    const char *argv[] = {"athrill2", "-irb", "program.elf"};
+    const char *argv[] = {"athrill3", "-irb", "program.elf"};
     ArgumentParserState state;
 
     argument_parser_init(&state);
@@ -33,7 +33,7 @@ static void test_clustered_flags(void)
 
 static void test_required_arguments(void)
 {
-    const char *argv[] = {"athrill2", "-t", "100", "-c3", "program.elf"};
+    const char *argv[] = {"athrill3", "-t", "100", "-c3", "program.elf"};
     ArgumentParserState state;
 
     argument_parser_init(&state);
@@ -49,7 +49,7 @@ static void test_required_arguments(void)
 
 static void test_end_marker(void)
 {
-    const char *argv[] = {"athrill2", "-i", "--", "-program.elf"};
+    const char *argv[] = {"athrill3", "-i", "--", "-program.elf"};
     ArgumentParserState state;
 
     argument_parser_init(&state);
@@ -60,7 +60,7 @@ static void test_end_marker(void)
 
 static void test_unknown_option(void)
 {
-    const char *argv[] = {"athrill2", "-x", "program.elf"};
+    const char *argv[] = {"athrill3", "-x", "program.elf"};
     ArgumentParserState state;
 
     argument_parser_init(&state);
@@ -71,7 +71,7 @@ static void test_unknown_option(void)
 
 static void test_missing_argument(void)
 {
-    const char *argv[] = {"athrill2", "-t"};
+    const char *argv[] = {"athrill3", "-t"};
     ArgumentParserState state;
 
     argument_parser_init(&state);
@@ -83,7 +83,7 @@ static void test_missing_argument(void)
 
 static void test_non_option_stops_parser(void)
 {
-    const char *argv[] = {"athrill2", "program.elf", "-i"};
+    const char *argv[] = {"athrill3", "program.elf", "-i"};
     ArgumentParserState state;
 
     argument_parser_init(&state);

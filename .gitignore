@@ -1,6 +1,6 @@
 *.o
 *.a
-athrill2
+athrill3
 RELEASE/
 build/
 .hako/

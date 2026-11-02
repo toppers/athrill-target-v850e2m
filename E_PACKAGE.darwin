@@ -4,4 +4,4 @@ VERSION %date
 INCLUDE MANIFEST
 INCLUDE ../athrill/MANIFEST
 
-build_mac/athrill2
+build_mac/athrill3

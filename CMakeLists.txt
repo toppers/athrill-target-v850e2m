@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(athrill2 VERSION 1.0.2 LANGUAGES C CXX)
+project(athrill3 VERSION 1.0.2 LANGUAGES C CXX)
 
 include(GNUInstallDirs)
 include(CTest)
@@ -251,8 +251,8 @@ if(ATHRILL_ENABLE_MROS)
     list(APPEND _athrill_optional_libraries athrill_mros)
 endif()
 
-add_executable(athrill2 "${ATHRILL_MAIN_ENTRY_SOURCE}")
-target_include_directories(athrill2 PRIVATE
+add_executable(athrill3 "${ATHRILL_MAIN_ENTRY_SOURCE}")
+target_include_directories(athrill3 PRIVATE
     "${ATHRILL_SRC_DIR}"
     "${ATHRILL_SRC_DIR}/lib/dwarf"
     "${ATHRILL_SRC_DIR}/bus"
@@ -266,8 +266,8 @@ target_include_directories(athrill2 PRIVATE
     "${ATHRILL_TARGET_SOURCE_DIR}/cpu/config"
     "${ATHRILL_TARGET_SOURCE_DIR}/debugger/interaction/inc"
 )
-athrill_v850_configure_target(athrill2)
-target_link_libraries(athrill2 PRIVATE
+athrill_v850_configure_target(athrill3)
+target_link_libraries(athrill3 PRIVATE
     athrill_main
     athrill_cui
     athrill_v850_cpu
@@ -280,18 +280,18 @@ target_link_libraries(athrill2 PRIVATE
     athrill_host_platform
 )
 if(ATHRILL_HAKONIWA_RPATH)
-    set_target_properties(athrill2 PROPERTIES
+    set_target_properties(athrill3 PROPERTIES
         BUILD_RPATH "${ATHRILL_HAKONIWA_RPATH}"
         INSTALL_RPATH "${ATHRILL_HAKONIWA_RPATH}"
     )
 endif()
 
-install(TARGETS athrill2
+install(TARGETS athrill3
     RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
 )
 
 if(BUILD_TESTING)
-    add_test(NAME athrill2-usage COMMAND athrill2)
+    add_test(NAME athrill3-usage COMMAND athrill3)
 
     add_executable(athrill-argument-parser-test
         "test/argument_parser_test.c"
