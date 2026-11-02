@@ -303,6 +303,19 @@ if(BUILD_TESTING)
     athrill_apply_common_settings(athrill-argument-parser-test)
     add_test(NAME athrill-argument-parser COMMAND athrill-argument-parser-test)
 
+    # Malformed ELF files must be rejected cleanly. Needs a valid V850 ELF,
+    # e.g. baremetal-athrill-v850e2m/workspace/step1/test_main.elf.
+    set(V850_SAMPLE_ELF "" CACHE FILEPATH "Valid V850 ELF for the malformed ELF test (optional)")
+    set(V850_SAMPLE_MEMORY "${CMAKE_CURRENT_SOURCE_DIR}/../baremetal-athrill-v850e2m/workspace/run/memory.txt"
+        CACHE FILEPATH "Memory map for V850_SAMPLE_ELF")
+    find_package(Python3 COMPONENTS Interpreter)
+    if(Python3_FOUND AND V850_SAMPLE_ELF AND EXISTS "${V850_SAMPLE_ELF}")
+        add_test(NAME athrill-malformed-elf COMMAND Python3::Interpreter
+            "${ATHRILL_SOURCE_DIR}/test/malformed_elf_test.py"
+            --athrill $<TARGET_FILE:athrill3>
+            --memory "${V850_SAMPLE_MEMORY}" --elf "${V850_SAMPLE_ELF}")
+    endif()
+
     if(ATHRILL_ENABLE_EXDEV)
         add_library(athrill-exdev-test-device SHARED
             "test/exdev_test_device.c"
