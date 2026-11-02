@@ -2,13 +2,13 @@
 #include "athrill_mpthread.h"
 #include "cpuemu_ops.h"
 
-static Std_ReturnType vdev_udp_get_data8(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint8 *data);
-static Std_ReturnType vdev_udp_get_data16(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint16 *data);
-static Std_ReturnType vdev_udp_get_data32(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint32 *data);
-static Std_ReturnType vdev_udp_put_data8(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint8 data);
-static Std_ReturnType vdev_udp_put_data16(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint16 data);
-static Std_ReturnType vdev_udp_put_data32(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint32 data);
-static Std_ReturnType vdev_udp_get_pointer(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint8 **data);
+static Std_ReturnType vdev_udp_get_data8(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint8 *data);
+static Std_ReturnType vdev_udp_get_data16(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint16 *data);
+static Std_ReturnType vdev_udp_get_data32(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint32 *data);
+static Std_ReturnType vdev_udp_put_data8(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint8 data);
+static Std_ReturnType vdev_udp_put_data16(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint16 data);
+static Std_ReturnType vdev_udp_put_data32(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint32 data);
+static Std_ReturnType vdev_udp_get_pointer(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint8 **data);
 
 MpuAddressRegionOperationType	vdev_udp_memory_operation = {
 		.get_data8 		= 	vdev_udp_get_data8,
@@ -290,25 +290,25 @@ static Std_ReturnType vdev_send_thread_do_init(MpthrIdType id)
 	//nothing to do
 	return STD_E_OK;
 }
-static Std_ReturnType vdev_udp_get_data8(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint8 *data)
+static Std_ReturnType vdev_udp_get_data8(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint8 *data)
 {
 	uint32 off = (addr - region->start) + VDEV_RX_DATA_BODY_OFF;
 	*data = *((uint8*)(&region->data[off]));
 	return STD_E_OK;
 }
-static Std_ReturnType vdev_udp_get_data16(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint16 *data)
+static Std_ReturnType vdev_udp_get_data16(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint16 *data)
 {
 	uint32 off = (addr - region->start) + VDEV_RX_DATA_BODY_OFF;
 	*data = *((uint16*)(&region->data[off]));
 	return STD_E_OK;
 }
-static Std_ReturnType vdev_udp_get_data32(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint32 *data)
+static Std_ReturnType vdev_udp_get_data32(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint32 *data)
 {
 	uint32 off = (addr - region->start) + VDEV_RX_DATA_BODY_OFF;
 	*data = *((uint32*)(&region->data[off]));
 	return STD_E_OK;
 }
-static Std_ReturnType vdev_udp_put_data8(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint8 data)
+static Std_ReturnType vdev_udp_put_data8(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint8 data)
 {
 	uint32 off = (addr - region->start) + VDEV_TX_DATA_BODY_OFF;
 	*((uint8*)(&region->data[off])) = data;
@@ -344,19 +344,19 @@ static Std_ReturnType vdev_udp_put_data8(MpuAddressRegionType *region, CoreIdTyp
 
 	return STD_E_OK;
 }
-static Std_ReturnType vdev_udp_put_data16(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint16 data)
+static Std_ReturnType vdev_udp_put_data16(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint16 data)
 {
 	uint32 off = (addr - region->start) + VDEV_TX_DATA_BODY_OFF;
 	*((uint16*)(&region->data[off])) = data;
 	return STD_E_OK;
 }
-static Std_ReturnType vdev_udp_put_data32(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint32 data)
+static Std_ReturnType vdev_udp_put_data32(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint32 data)
 {
 	uint32 off = (addr - region->start) + VDEV_TX_DATA_BODY_OFF;
 	*((uint32*)(&region->data[off])) = data;
 	return STD_E_OK;
 }
-static Std_ReturnType vdev_udp_get_pointer(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint8 **data)
+static Std_ReturnType vdev_udp_get_pointer(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint8 **data)
 {
 	uint32 off = (addr - region->start) + VDEV_TX_DATA_BODY_OFF;
 	*data = &region->data[off];

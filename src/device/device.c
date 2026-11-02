@@ -191,31 +191,31 @@ void device_supply_clock(DeviceClockType *dev_clock)
 }
 
 
-int device_io_write8(MpuAddressRegionType *region,  uint32 addr, uint8 data)
+int device_io_write8(MpuAddressRegionType *region,  AthrillAddrType addr, uint8 data)
 {
 	return region->ops->put_data8(region, CPU_CONFIG_CORE_ID_0, (addr & region->mask), data);
 }
-int device_io_write16(MpuAddressRegionType *region, uint32 addr, uint16 data)
+int device_io_write16(MpuAddressRegionType *region, AthrillAddrType addr, uint16 data)
 {
 	return region->ops->put_data16(region, CPU_CONFIG_CORE_ID_0, (addr & region->mask), data);
 }
 
-int device_io_write32(MpuAddressRegionType *region, uint32 addr, uint32 data)
+int device_io_write32(MpuAddressRegionType *region, AthrillAddrType addr, uint32 data)
 {
 	return region->ops->put_data32(region, CPU_CONFIG_CORE_ID_0, (addr & region->mask), data);
 }
 
-int device_io_read8(MpuAddressRegionType *region, uint32 addr, uint8 *data)
+int device_io_read8(MpuAddressRegionType *region, AthrillAddrType addr, uint8 *data)
 {
 	return region->ops->get_data8(region, CPU_CONFIG_CORE_ID_0, (addr & region->mask), data);
 }
 
-int device_io_read16(MpuAddressRegionType *region, uint32 addr, uint16 *data)
+int device_io_read16(MpuAddressRegionType *region, AthrillAddrType addr, uint16 *data)
 {
 	return region->ops->get_data16(region, CPU_CONFIG_CORE_ID_0, (addr & region->mask), data);
 }
 
-int device_io_read32(MpuAddressRegionType *region, uint32 addr, uint32 *data)
+int device_io_read32(MpuAddressRegionType *region, AthrillAddrType addr, uint32 *data)
 {
 	return region->ops->get_data32(region, CPU_CONFIG_CORE_ID_0, (addr & region->mask), data);
 }

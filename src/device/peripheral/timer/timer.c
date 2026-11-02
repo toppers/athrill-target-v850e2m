@@ -23,13 +23,13 @@ typedef struct {
 	uint16 				fd;
 } TimerDeviceType;
 
-static Std_ReturnType timer_get_data8(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint8 *data);
-static Std_ReturnType timer_get_data16(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint16 *data);
-static Std_ReturnType timer_get_data32(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint32 *data);
-static Std_ReturnType timer_put_data8(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint8 data);
-static Std_ReturnType timer_put_data16(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint16 data);
-static Std_ReturnType timer_put_data32(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint32 data);
-static Std_ReturnType timer_get_pointer(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint8 **data);
+static Std_ReturnType timer_get_data8(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint8 *data);
+static Std_ReturnType timer_get_data16(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint16 *data);
+static Std_ReturnType timer_get_data32(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint32 *data);
+static Std_ReturnType timer_put_data8(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint8 data);
+static Std_ReturnType timer_put_data16(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint16 data);
+static Std_ReturnType timer_put_data32(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint32 data);
+static Std_ReturnType timer_get_pointer(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint8 **data);
 
 MpuAddressRegionOperationType	timer_memory_operation = {
 		.get_data8 		= 	timer_get_data8,
@@ -152,13 +152,13 @@ void device_supply_clock_timer(DeviceClockType *dev_clock)
 }
 
 
-static Std_ReturnType timer_get_data8(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint8 *data)
+static Std_ReturnType timer_get_data8(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint8 *data)
 {
 	uint32 off = (addr - region->start);
 	*data = *((uint8*)(&region->data[off]));
 	return STD_E_OK;
 }
-static Std_ReturnType timer_get_data16(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint16 *data)
+static Std_ReturnType timer_get_data16(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint16 *data)
 {
 	uint8 ch;
 	for (ch = 0; ch < TAAnChannelNum; ch++) {
@@ -169,13 +169,13 @@ static Std_ReturnType timer_get_data16(MpuAddressRegionType *region, CoreIdType 
 	}
 	return STD_E_SEGV;
 }
-static Std_ReturnType timer_get_data32(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint32 *data)
+static Std_ReturnType timer_get_data32(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint32 *data)
 {
 	uint32 off = (addr - region->start);
 	*data = *((uint32*)(&region->data[off]));
 	return STD_E_OK;
 }
-static Std_ReturnType timer_put_data8(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint8 data)
+static Std_ReturnType timer_put_data8(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint8 data)
 {
 	uint8 ch;
 	uint32 off = (addr - region->start);
@@ -210,7 +210,7 @@ static Std_ReturnType timer_put_data8(MpuAddressRegionType *region, CoreIdType c
 	}
 	return STD_E_OK;
 }
-static Std_ReturnType timer_put_data16(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint16 data)
+static Std_ReturnType timer_put_data16(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint16 data)
 {
 	uint8 ch;
 	uint32 off = (addr - region->start);
@@ -224,13 +224,13 @@ static Std_ReturnType timer_put_data16(MpuAddressRegionType *region, CoreIdType 
 	}
 	return STD_E_OK;
 }
-static Std_ReturnType timer_put_data32(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint32 data)
+static Std_ReturnType timer_put_data32(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint32 data)
 {
 	uint32 off = (addr - region->start);
 	*((uint32*)(&region->data[off])) = data;
 	return STD_E_OK;
 }
-static Std_ReturnType timer_get_pointer(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint8 **data)
+static Std_ReturnType timer_get_pointer(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint8 **data)
 {
 	uint32 off = (addr - region->start);
 	uint8 ch;

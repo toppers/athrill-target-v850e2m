@@ -24,13 +24,13 @@ static void serial_set_str(bool enable, uint8 channel);
 static bool serial_isset_str_ssf(uint8 channel);
 static void serial_set_str_ssf(uint8 channel);
 
-static Std_ReturnType serial_get_data8(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint8 *data);
-static Std_ReturnType serial_get_data16(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint16 *data);
-static Std_ReturnType serial_get_data32(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint32 *data);
-static Std_ReturnType serial_put_data8(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint8 data);
-static Std_ReturnType serial_put_data16(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint16 data);
-static Std_ReturnType serial_put_data32(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint32 data);
-static Std_ReturnType serial_get_pointer(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint8 **data);
+static Std_ReturnType serial_get_data8(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint8 *data);
+static Std_ReturnType serial_get_data16(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint16 *data);
+static Std_ReturnType serial_get_data32(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint32 *data);
+static Std_ReturnType serial_put_data8(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint8 data);
+static Std_ReturnType serial_put_data16(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint16 data);
+static Std_ReturnType serial_put_data32(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint32 data);
+static Std_ReturnType serial_get_pointer(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint8 **data);
 
 MpuAddressRegionOperationType	serial_memory_operation = {
 		.get_data8 		= 	serial_get_data8,
@@ -174,25 +174,25 @@ static void serial_set_str_ssf(uint8 channel)
 	return;
 }
 
-static Std_ReturnType serial_get_data8(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint8 *data)
+static Std_ReturnType serial_get_data8(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint8 *data)
 {
 	uint32 off = (addr - region->start);
 	*data = *((uint8*)(&region->data[off]));
 	return STD_E_OK;
 }
-static Std_ReturnType serial_get_data16(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint16 *data)
+static Std_ReturnType serial_get_data16(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint16 *data)
 {
 	uint32 off = (addr - region->start);
 	*data = *((uint16*)(&region->data[off]));
 	return STD_E_OK;
 }
-static Std_ReturnType serial_get_data32(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint32 *data)
+static Std_ReturnType serial_get_data32(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint32 *data)
 {
 	uint32 off = (addr - region->start);
 	*data = *((uint32*)(&region->data[off]));
 	return STD_E_OK;
 }
-static Std_ReturnType serial_put_data8(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint8 data)
+static Std_ReturnType serial_put_data8(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint8 data)
 {
 	uint32 off = (addr - region->start);
 	*((uint8*)(&region->data[off])) = data;
@@ -216,22 +216,21 @@ static Std_ReturnType serial_put_data8(MpuAddressRegionType *region, CoreIdType 
 	}
 	return STD_E_OK;
 }
-static Std_ReturnType serial_put_data16(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint16 data)
+static Std_ReturnType serial_put_data16(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint16 data)
 {
 	uint32 off = (addr - region->start);
 	*((uint16*)(&region->data[off])) = data;
 	return STD_E_OK;
 }
-static Std_ReturnType serial_put_data32(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint32 data)
+static Std_ReturnType serial_put_data32(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint32 data)
 {
 	uint32 off = (addr - region->start);
 	*((uint32*)(&region->data[off])) = data;
 	return STD_E_OK;
 }
-static Std_ReturnType serial_get_pointer(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint8 **data)
+static Std_ReturnType serial_get_pointer(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint8 **data)
 {
 	uint32 off = (addr - region->start);
 	*data = &region->data[off];
 	return STD_E_OK;
 }
-

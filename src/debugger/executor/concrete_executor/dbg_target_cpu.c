@@ -7,9 +7,9 @@
 
 static void print_register(const char* regname, uint32 addr, char* opt)
 {
-	 uint32 funcaddr;
+	 AthrillAddrType funcaddr;
 	 int funcid;
-	 uint32 gladdr;
+	 AthrillAddrType gladdr;
 	 int glid;
 
 	 funcid = symbol_pc2funcid(addr, &funcaddr);
