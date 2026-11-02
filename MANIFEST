@@ -8,22 +8,6 @@ LICENSE.md
 MANIFEST
 README.md
 
-build_clang/Makefile
-build_clang/Makefile.cpu
-build_clang/Makefile.device
-build_clang/Makefile.env
-build_linux/Makefile
-build_linux/Makefile.cpu
-build_linux/Makefile.device
-build_linux/Makefile.device.static
-build_linux/Makefile.env
-build_linux/Makefile.mpu.static
-build_linux/Makefile.static
-build_mac/Makefile
-build_mac/Makefile.cpu
-build_mac/Makefile.device
-build_mac/Makefile.env
-build_mac/Makefile.std
 
 src/cpu/config/cpu_config.c
 src/cpu/config/cpu_config.h
@@ -76,3 +60,12 @@ src/device/peripheral/vdev/vdev.c
 src/device/peripheral/vdev/vdev_mmap.c
 src/device/peripheral/vdev/vdev_private.h
 src/device/peripheral/vdev/vdev_udp.c
+CMakePresets.json
+hakoniwa-build.yaml
+vcpkg.json
+test/argument_parser_test.c
+test/exdev_test_abi.h
+test/exdev_test_device.c
+test/shared_library_test.c
+test/test_hako.py
+tools/hako.py

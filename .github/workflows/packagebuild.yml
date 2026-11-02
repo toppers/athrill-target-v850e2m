@@ -54,11 +54,13 @@ jobs:
       - name: Move to build folder(linux)
         if:  matrix.os == 'ubuntu-latest'
         run: |
+          mkdir -p build_linux
           cp build/athrill2 build_linux/
           perl toppers_utils/makerelease E_PACKAGE
       - name: Move to build folder(mac)
         if:  matrix.os == 'macos-latest'
         run: |
+          mkdir -p build_mac
           cp build/athrill2 build_mac/
           perl toppers_utils/makerelease E_PACKAGE.darwin
       - name: Move to build folder(win)

@@ -34,14 +34,6 @@ cmake --build --preset windows-msvc-release
 ctest --preset windows-msvc-smoke
 ```
 
-### Legacy Make build
-
-```
-git clone --recursive https://github.com/toppers/athrill-target-v850e2m
-cd athrill-target-v850e2m/build_linux
-make
-```
-
 ### Generic CMake build
 
 ```
