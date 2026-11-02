@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(athrill2 VERSION 1.0.2 LANGUAGES C)
+project(athrill2 VERSION 1.0.2 LANGUAGES C CXX)
 
 include(GNUInstallDirs)
 include(CTest)
@@ -245,7 +245,7 @@ if(ATHRILL_ENABLE_MROS)
     list(APPEND _athrill_optional_libraries athrill_mros)
 endif()
 
-add_executable(athrill2 "${ATHRILL_SRC_DIR}/main/main.c")
+add_executable(athrill2 "${ATHRILL_MAIN_ENTRY_SOURCE}")
 target_include_directories(athrill2 PRIVATE
     "${ATHRILL_SRC_DIR}/lib/dwarf"
     "${ATHRILL_SRC_DIR}/bus"
