@@ -85,6 +85,7 @@ endfunction()
 
 add_library(athrill_main STATIC ${ATHRILL_MAIN_SOURCES})
 target_include_directories(athrill_main PRIVATE
+    "${ATHRILL_SRC_DIR}"
     "${ATHRILL_SRC_DIR}/lib/dwarf"
     "${ATHRILL_SRC_DIR}/bus"
     "${ATHRILL_SRC_DIR}/device/mpu"
@@ -98,6 +99,11 @@ target_include_directories(athrill_main PRIVATE
     "${ATHRILL_TARGET_SOURCE_DIR}/debugger/interaction/inc"
 )
 athrill_v850_configure_target(athrill_main)
+target_link_libraries(athrill_main PUBLIC ${ATHRILL_HAKONIWA_LIBRARIES})
+if(ATHRILL_ENABLE_HAKONIWA)
+    target_compile_definitions(athrill_main PRIVATE
+        ATHRILL_HAKONIWA_DEFAULT_PDUDEF="${ATHRILL_ROOT}/config/hakoniwa/athrill-pdudef.json")
+endif()
 
 add_library(athrill_cui STATIC ${ATHRILL_CUI_SOURCES})
 target_include_directories(athrill_cui PRIVATE
@@ -247,6 +253,7 @@ endif()
 
 add_executable(athrill2 "${ATHRILL_MAIN_ENTRY_SOURCE}")
 target_include_directories(athrill2 PRIVATE
+    "${ATHRILL_SRC_DIR}"
     "${ATHRILL_SRC_DIR}/lib/dwarf"
     "${ATHRILL_SRC_DIR}/bus"
     "${ATHRILL_SRC_DIR}/cpu"
@@ -272,6 +279,12 @@ target_link_libraries(athrill2 PRIVATE
     ${_athrill_optional_libraries}
     athrill_host_platform
 )
+if(ATHRILL_HAKONIWA_RPATH)
+    set_target_properties(athrill2 PROPERTIES
+        BUILD_RPATH "${ATHRILL_HAKONIWA_RPATH}"
+        INSTALL_RPATH "${ATHRILL_HAKONIWA_RPATH}"
+    )
+endif()
 
 install(TARGETS athrill2
     RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
@@ -325,3 +338,4 @@ message(STATUS "Athrill target: V850E2M")
 message(STATUS "Athrill EXDEV: ${ATHRILL_ENABLE_EXDEV}")
 message(STATUS "Athrill mROS: ${ATHRILL_ENABLE_MROS}")
 message(STATUS "Athrill VDEV: ${ATHRILL_ENABLE_VDEV}")
+message(STATUS "Athrill Hakoniwa: ${ATHRILL_ENABLE_HAKONIWA}")

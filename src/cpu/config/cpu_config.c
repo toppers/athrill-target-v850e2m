@@ -7,6 +7,7 @@
 #include "op_exec.h"
 #include "mpu_types.h"
 #include <sys/time.h>
+#include <string.h>
 #include "std_device_ops.h"
 
 CpuType virtual_cpu;
@@ -577,7 +578,7 @@ static void private_cpu_reset(TargetCoreType *cpu)
 {
 	uint32 *sysreg;
 	cpu->reg.pc = 0x00;
-	cpu->reg.r[0] = 0;
+	memset(cpu->reg.r, 0, sizeof(cpu->reg.r));
 
 	cpu->reg.sys.current_grp = SYS_GRP_CPU;
 	cpu->reg.sys.current_bnk = SYS_GRP_CPU_BNK_0;
@@ -887,4 +888,3 @@ CoreIdType cpu_get_core_id(const TargetCoreType *core)
 {
 	return core->core_id;
 }
-
