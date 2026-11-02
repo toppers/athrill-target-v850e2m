@@ -16,8 +16,8 @@ else()
     find_package(Threads REQUIRED)
 endif()
 
-set(ATHRILL_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/athrill"
-    CACHE PATH "Path to the Athrill common source repository")
+set(ATHRILL_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../athrill"
+    CACHE PATH "Path to the Athrill common source repository (a sibling checkout by default)")
 get_filename_component(ATHRILL_SOURCE_DIR "${ATHRILL_SOURCE_DIR}" ABSOLUTE
     BASE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 

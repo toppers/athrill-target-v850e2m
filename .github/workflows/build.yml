@@ -2,6 +2,7 @@ name: build
 
 on:
   push:
+  pull_request:
 
 jobs:
   build:
@@ -11,33 +12,33 @@ jobs:
         os: [ubuntu-latest, macos-latest]
 
     steps:
-      - name: Setup cmake
-        uses: jwlawson/actions-setup-cmake@v1.12
-
+      # Business Pack layout: athrill-target-v850e2m and athrill are sibling
+      # checkouts, and CMake finds the core at ../athrill.
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
-          submodules: true  # Fetch athrill repo
-          fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
+          path: athrill-target-v850e2m
 
-      - name: Build athrill for Linux or Mac
-        if:  " (matrix.os == 'ubuntu-latest') || (matrix.os == 'macos-latest') " 
+      - name: Select the Athrill branch
+        id: athrill_ref
         run: |
-          mkdir build
-          cd build
-          cmake -H.. 
-          make
-          ./athrill2
+          BRANCH="${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
+          if git ls-remote --exit-code --heads https://github.com/toppers/athrill.git "$BRANCH" > /dev/null; then
+            echo "ref=$BRANCH" >> "$GITHUB_OUTPUT"
+          else
+            echo "ref=master" >> "$GITHUB_OUTPUT"
+          fi
 
-      - name: Setup MinGW for Windows
-        if:  matrix.os == 'windows-latest'
-        uses: egor-tensin/setup-mingw@v2
+      - name: Checkout Athrill
+        uses: actions/checkout@v4
+        with:
+          repository: toppers/athrill
+          ref: ${{ steps.athrill_ref.outputs.ref }}
+          path: athrill
 
-      - name: Build athrill for Windows
-        if:  matrix.os == 'windows-latest'
+      - name: Build and test
+        working-directory: athrill-target-v850e2m
         run: |
-          mkdir build
-          cd build
-          cmake -G"MinGW Makefiles" ..
-          make
-          .\athrill2.exe
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=ON
+          cmake --build build
+          ctest --test-dir build --output-on-failure
