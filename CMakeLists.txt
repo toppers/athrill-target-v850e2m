@@ -2,6 +2,12 @@ cmake_minimum_required(VERSION 3.16)
 
 project(athrill3 VERSION 1.0.2 LANGUAGES C CXX)
 
+# The Athrill sources are C11 with GNU extensions. GCC 15 defaults to C23, where
+# bool is a keyword and std_types.h's typedef no longer compiles.
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CMAKE_C_EXTENSIONS ON)
+
 include(GNUInstallDirs)
 include(CTest)
 
