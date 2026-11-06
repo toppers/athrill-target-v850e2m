@@ -11,13 +11,13 @@ static MpuAddressRegionType *intc_region;
 
 static void intc_raise_pending_intr(TargetCoreType *cpu);
 
-static Std_ReturnType intc_get_data8(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint8 *data);
-static Std_ReturnType intc_get_data16(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint16 *data);
-static Std_ReturnType intc_get_data32(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint32 *data);
-static Std_ReturnType intc_put_data8(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint8 data);
-static Std_ReturnType intc_put_data16(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint16 data);
-static Std_ReturnType intc_put_data32(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint32 data);
-static Std_ReturnType intc_get_pointer(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint8 **data);
+static Std_ReturnType intc_get_data8(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint8 *data);
+static Std_ReturnType intc_get_data16(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint16 *data);
+static Std_ReturnType intc_get_data32(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint32 *data);
+static Std_ReturnType intc_put_data8(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint8 data);
+static Std_ReturnType intc_put_data16(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint16 data);
+static Std_ReturnType intc_put_data32(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint32 data);
+static Std_ReturnType intc_get_pointer(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint8 **data);
 
 MpuAddressRegionOperationType	intc_memory_operation = {
 		.get_data8 		= 	intc_get_data8,
@@ -675,14 +675,14 @@ static void intc_hook_update_reg16(CoreIdType core_id, uint32 regaddr, uint16 da
 }
 
 
-static Std_ReturnType intc_get_data8(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint8 *data)
+static Std_ReturnType intc_get_data8(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint8 *data)
 {
 	uint32 off = (addr - region->start);
 	uint8 *datap = &region->data[off + (core_id * (region->size))];
 	*data = *((uint8*)(datap));
 	return STD_E_OK;
 }
-static Std_ReturnType intc_get_data16(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint16 *data)
+static Std_ReturnType intc_get_data16(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint16 *data)
 {
 	uint32 off = (addr - region->start);
 	uint8 *datap = &region->data[off + (core_id * (region->size))];
@@ -690,7 +690,7 @@ static Std_ReturnType intc_get_data16(MpuAddressRegionType *region, CoreIdType c
 
 	return STD_E_OK;
 }
-static Std_ReturnType intc_get_data32(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint32 *data)
+static Std_ReturnType intc_get_data32(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint32 *data)
 {
 	uint32 off = (addr - region->start);
 	uint8 *datap = &region->data[off + (core_id * (region->size))];
@@ -698,7 +698,7 @@ static Std_ReturnType intc_get_data32(MpuAddressRegionType *region, CoreIdType c
 	*data = *((uint32*)(datap));
 	return STD_E_OK;
 }
-static Std_ReturnType intc_put_data8(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint8 data)
+static Std_ReturnType intc_put_data8(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint8 data)
 {
 	uint32 off = (addr - region->start);
 	uint8 *datap = &region->data[off + (core_id * (region->size))];
@@ -708,7 +708,7 @@ static Std_ReturnType intc_put_data8(MpuAddressRegionType *region, CoreIdType co
 
 	return STD_E_OK;
 }
-static Std_ReturnType intc_put_data16(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint16 data)
+static Std_ReturnType intc_put_data16(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint16 data)
 {
 	uint32 off = (addr - region->start);
 	uint8 *datap = &region->data[off + (core_id * (region->size))];
@@ -718,7 +718,7 @@ static Std_ReturnType intc_put_data16(MpuAddressRegionType *region, CoreIdType c
 	*((uint16*)(datap)) = data;
 	return STD_E_OK;
 }
-static Std_ReturnType intc_put_data32(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint32 data)
+static Std_ReturnType intc_put_data32(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint32 data)
 {
 	uint32 off = (addr - region->start);
 	uint8 *datap = &region->data[off + (core_id * (region->size))];
@@ -726,7 +726,7 @@ static Std_ReturnType intc_put_data32(MpuAddressRegionType *region, CoreIdType c
 	*((uint32*)(datap)) = data;
 	return STD_E_OK;
 }
-static Std_ReturnType intc_get_pointer(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint8 **data)
+static Std_ReturnType intc_get_pointer(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint8 **data)
 {
 	uint32 off = (addr - region->start);
 	uint8 *datap = &region->data[off + (core_id * (region->size))];
@@ -734,4 +734,3 @@ static Std_ReturnType intc_get_pointer(MpuAddressRegionType *region, CoreIdType 
 	*data = datap;
 	return STD_E_OK;
 }
-

@@ -4,6 +4,14 @@
 v850e2m Target dependencies for [Athrill](https://github.com/toppers/athrill)
 ## Build
 
+Check out this repository and [Athrill](https://github.com/toppers/athrill) side by side; the build uses the sibling `../athrill` checkout:
+
+```shell
+git clone https://github.com/toppers/athrill.git
+git clone https://github.com/toppers/athrill-target-v850e2m.git
+cd athrill-target-v850e2m
+```
+
 The Business Pack-compatible entry point is:
 
 ```shell
@@ -34,21 +42,16 @@ cmake --build --preset windows-msvc-release
 ctest --preset windows-msvc-smoke
 ```
 
-### Legacy Make build
-
-```
-git clone --recursive https://github.com/toppers/athrill-target-v850e2m
-cd athrill-target-v850e2m/build_linux
-make
-```
-
 ### Generic CMake build
 
+From the `athrill-target-v850e2m` directory:
+
 ```
-git clone --recursive https://github.com/toppers/athrill-target-v850e2m
-cmake -S athrill-target-v850e2m -B athrill-target-v850e2m/build
-cmake --build athrill-target-v850e2m/build
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build
 ```
+
+Pass `-DATHRILL_SOURCE_DIR=<path>` to use an Athrill checkout somewhere else.
 
 
 ## License

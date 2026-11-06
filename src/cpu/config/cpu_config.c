@@ -7,6 +7,7 @@
 #include "op_exec.h"
 #include "mpu_types.h"
 #include <sys/time.h>
+#include <string.h>
 #include "std_device_ops.h"
 
 CpuType virtual_cpu;
@@ -157,7 +158,7 @@ static bool cpu_has_permission_imp(CoreIdType core_id, CpuMemoryAccessType acces
 		return FALSE;
 	}
 }
-bool cpu_has_permission(CoreIdType core_id, MpuAddressRegionEnumType region_type, CpuMemoryAccessType access_type, uint32 addr, uint32 size)
+bool cpu_has_permission(CoreIdType core_id, MpuAddressRegionEnumType region_type, CpuMemoryAccessType access_type, AthrillAddrType addr, AthrillAddrType size)
 {
 	uint32 psw = cpu_get_psw(&virtual_cpu.cores[core_id].core.reg.sys);
 	bool permission = FALSE;
@@ -577,7 +578,7 @@ static void private_cpu_reset(TargetCoreType *cpu)
 {
 	uint32 *sysreg;
 	cpu->reg.pc = 0x00;
-	cpu->reg.r[0] = 0;
+	memset(cpu->reg.r, 0, sizeof(cpu->reg.r));
 
 	cpu->reg.sys.current_grp = SYS_GRP_CPU;
 	cpu->reg.sys.current_bnk = SYS_GRP_CPU_BNK_0;
@@ -778,8 +779,8 @@ void cpu_illegal_opcode_trap(CoreIdType core_id)
 }
 
 
-static Std_ReturnType cpu_get_data32(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint32 *data);
-static Std_ReturnType cpu_put_data32(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint32 data);
+static Std_ReturnType cpu_get_data32(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint32 *data);
+static Std_ReturnType cpu_put_data32(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint32 data);
 
 MpuAddressRegionOperationType cpu_register_operation = {
 		.get_data8 = NULL,
@@ -811,7 +812,7 @@ static uint32 *get_cpu_register_addr(MpuAddressRegionType *region, TargetCoreTyp
 	}
 	return NULL;
 }
-static Std_ReturnType cpu_get_data32(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint32 *data)
+static Std_ReturnType cpu_get_data32(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint32 *data)
 {
 	uint32 *registerp = get_cpu_register_addr(region, &virtual_cpu.current_core->core, addr);
 	if (registerp == NULL) {
@@ -824,7 +825,7 @@ static Std_ReturnType cpu_get_data32(MpuAddressRegionType *region, CoreIdType co
 	return STD_E_OK;
 }
 
-static Std_ReturnType cpu_put_data32(MpuAddressRegionType *region, CoreIdType core_id, uint32 addr, uint32 data)
+static Std_ReturnType cpu_put_data32(MpuAddressRegionType *region, CoreIdType core_id, AthrillAddrType addr, uint32 data)
 {
 	uint32 *registerp = get_cpu_register_addr(region, &virtual_cpu.current_core->core, addr);
 	if (registerp == NULL) {
@@ -854,11 +855,11 @@ uint32 cpu_get_current_core_id(void)
 {
 	return ((const TargetCoreType *)virtual_cpu.current_core)->core_id;
 }
-uint32 cpu_get_current_core_pc(void)
+AthrillAddrType cpu_get_current_core_pc(void)
 {
 	return cpu_get_pc((const TargetCoreType *)virtual_cpu.current_core);
 }
-void cpu_set_core_pc(CoreIdType core_id, uint32 pc)
+void cpu_set_core_pc(CoreIdType core_id, AthrillAddrType pc)
 {
 	virtual_cpu.cores[core_id].core.reg.pc = pc;
 	return;
@@ -879,7 +880,7 @@ uint32 cpu_get_current_core_ep(void)
 }
 
 
-uint32 cpu_get_return_addr(const TargetCoreType *core)
+AthrillAddrType cpu_get_return_addr(const TargetCoreType *core)
 {
 	return core->reg.r[31];
 }
@@ -887,4 +888,3 @@ CoreIdType cpu_get_core_id(const TargetCoreType *core)
 {
 	return core->core_id;
 }
-

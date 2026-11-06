@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(athrill2 VERSION 1.0.2 LANGUAGES C)
+project(athrill3 VERSION 1.0.2 LANGUAGES C CXX)
 
 include(GNUInstallDirs)
 include(CTest)
@@ -16,8 +16,8 @@ else()
     find_package(Threads REQUIRED)
 endif()
 
-set(ATHRILL_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/athrill"
-    CACHE PATH "Path to the Athrill common source repository")
+set(ATHRILL_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../athrill"
+    CACHE PATH "Path to the Athrill common source repository (a sibling checkout by default)")
 get_filename_component(ATHRILL_SOURCE_DIR "${ATHRILL_SOURCE_DIR}" ABSOLUTE
     BASE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 
@@ -85,6 +85,7 @@ endfunction()
 
 add_library(athrill_main STATIC ${ATHRILL_MAIN_SOURCES})
 target_include_directories(athrill_main PRIVATE
+    "${ATHRILL_SRC_DIR}"
     "${ATHRILL_SRC_DIR}/lib/dwarf"
     "${ATHRILL_SRC_DIR}/bus"
     "${ATHRILL_SRC_DIR}/device/mpu"
@@ -98,6 +99,11 @@ target_include_directories(athrill_main PRIVATE
     "${ATHRILL_TARGET_SOURCE_DIR}/debugger/interaction/inc"
 )
 athrill_v850_configure_target(athrill_main)
+target_link_libraries(athrill_main PUBLIC ${ATHRILL_HAKONIWA_LIBRARIES})
+if(ATHRILL_ENABLE_HAKONIWA)
+    target_compile_definitions(athrill_main PRIVATE
+        ATHRILL_HAKONIWA_DEFAULT_PDUDEF="${ATHRILL_ROOT}/config/hakoniwa/athrill-pdudef.json")
+endif()
 
 add_library(athrill_cui STATIC ${ATHRILL_CUI_SOURCES})
 target_include_directories(athrill_cui PRIVATE
@@ -245,8 +251,9 @@ if(ATHRILL_ENABLE_MROS)
     list(APPEND _athrill_optional_libraries athrill_mros)
 endif()
 
-add_executable(athrill2 "${ATHRILL_SRC_DIR}/main/main.c")
-target_include_directories(athrill2 PRIVATE
+add_executable(athrill3 "${ATHRILL_MAIN_ENTRY_SOURCE}")
+target_include_directories(athrill3 PRIVATE
+    "${ATHRILL_SRC_DIR}"
     "${ATHRILL_SRC_DIR}/lib/dwarf"
     "${ATHRILL_SRC_DIR}/bus"
     "${ATHRILL_SRC_DIR}/cpu"
@@ -259,8 +266,8 @@ target_include_directories(athrill2 PRIVATE
     "${ATHRILL_TARGET_SOURCE_DIR}/cpu/config"
     "${ATHRILL_TARGET_SOURCE_DIR}/debugger/interaction/inc"
 )
-athrill_v850_configure_target(athrill2)
-target_link_libraries(athrill2 PRIVATE
+athrill_v850_configure_target(athrill3)
+target_link_libraries(athrill3 PRIVATE
     athrill_main
     athrill_cui
     athrill_v850_cpu
@@ -272,13 +279,19 @@ target_link_libraries(athrill2 PRIVATE
     ${_athrill_optional_libraries}
     athrill_host_platform
 )
+if(ATHRILL_HAKONIWA_RPATH)
+    set_target_properties(athrill3 PROPERTIES
+        BUILD_RPATH "${ATHRILL_HAKONIWA_RPATH}"
+        INSTALL_RPATH "${ATHRILL_HAKONIWA_RPATH}"
+    )
+endif()
 
-install(TARGETS athrill2
+install(TARGETS athrill3
     RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
 )
 
 if(BUILD_TESTING)
-    add_test(NAME athrill2-usage COMMAND athrill2)
+    add_test(NAME athrill3-usage COMMAND athrill3)
 
     add_executable(athrill-argument-parser-test
         "test/argument_parser_test.c"
@@ -289,6 +302,19 @@ if(BUILD_TESTING)
     )
     athrill_apply_common_settings(athrill-argument-parser-test)
     add_test(NAME athrill-argument-parser COMMAND athrill-argument-parser-test)
+
+    # Malformed ELF files must be rejected cleanly. Needs a valid V850 ELF,
+    # e.g. baremetal-athrill-v850e2m/workspace/step1/test_main.elf.
+    set(V850_SAMPLE_ELF "" CACHE FILEPATH "Valid V850 ELF for the malformed ELF test (optional)")
+    set(V850_SAMPLE_MEMORY "${CMAKE_CURRENT_SOURCE_DIR}/../baremetal-athrill-v850e2m/workspace/run/memory.txt"
+        CACHE FILEPATH "Memory map for V850_SAMPLE_ELF")
+    find_package(Python3 COMPONENTS Interpreter)
+    if(Python3_FOUND AND V850_SAMPLE_ELF AND EXISTS "${V850_SAMPLE_ELF}")
+        add_test(NAME athrill-malformed-elf COMMAND Python3::Interpreter
+            "${ATHRILL_SOURCE_DIR}/test/malformed_elf_test.py"
+            --athrill $<TARGET_FILE:athrill3>
+            --memory "${V850_SAMPLE_MEMORY}" --elf "${V850_SAMPLE_ELF}")
+    endif()
 
     if(ATHRILL_ENABLE_EXDEV)
         add_library(athrill-exdev-test-device SHARED
@@ -325,3 +351,4 @@ message(STATUS "Athrill target: V850E2M")
 message(STATUS "Athrill EXDEV: ${ATHRILL_ENABLE_EXDEV}")
 message(STATUS "Athrill mROS: ${ATHRILL_ENABLE_MROS}")
 message(STATUS "Athrill VDEV: ${ATHRILL_ENABLE_VDEV}")
+message(STATUS "Athrill Hakoniwa: ${ATHRILL_ENABLE_HAKONIWA}")

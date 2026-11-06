@@ -31,13 +31,13 @@ extern void device_raise_int(uint16 intno);
 /*
  * メモリアクセス関数
  */
-extern int device_io_write8(MpuAddressRegionType *region, uint32 addr, uint8 data);
-extern int device_io_write16(MpuAddressRegionType *region, uint32 addr, uint16 data);
-extern int device_io_write32(MpuAddressRegionType *region, uint32 addr, uint32 data);
+extern int device_io_write8(MpuAddressRegionType *region, AthrillAddrType addr, uint8 data);
+extern int device_io_write16(MpuAddressRegionType *region, AthrillAddrType addr, uint16 data);
+extern int device_io_write32(MpuAddressRegionType *region, AthrillAddrType addr, uint32 data);
 
-extern int device_io_read8(MpuAddressRegionType *region, uint32 addr, uint8 *data);
-extern int device_io_read16(MpuAddressRegionType *region, uint32 addr, uint16 *data);
-extern int device_io_read32(MpuAddressRegionType *region, uint32 addr, uint32 *data);
+extern int device_io_read8(MpuAddressRegionType *region, AthrillAddrType addr, uint8 *data);
+extern int device_io_read16(MpuAddressRegionType *region, AthrillAddrType addr, uint16 *data);
+extern int device_io_read32(MpuAddressRegionType *region, AthrillAddrType addr, uint32 *data);
 
 /*
  * 割込みコントローラAPI

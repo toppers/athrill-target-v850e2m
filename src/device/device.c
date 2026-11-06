@@ -66,12 +66,24 @@ static uint32 enable_vdev = 0;
 static void (*device_supply_clock_vdev_func) (DeviceClockType *) = NULL;
 #endif
 
+static void device_register_serial_ops(void)
+{
+	char *path;
+
+	device_ex_serial_register_ops(0U, &device_ex_serial_op);
+	if (cpuemu_get_devcfg_string("SERIAL_FILE_PATH", &path) == STD_E_OK) {
+		device_ex_serial_register_ops(1U, &device_ex_serial_file_op);
+	}
+	else {
+		device_ex_serial_register_ops(1U, &device_ex_serial_op);
+	}
+}
+
 void device_init(CpuType *cpu, DeviceClockType *dev_clock)
 {
 #ifndef DISABLE_CAN
 	uint32 enable_mros = 0;
 #endif
-	char *path;
 	dev_clock->clock = 0;
 	dev_clock->intclock = 0;
 	dev_clock->min_intr_interval = DEVICE_CLOCK_MAX_INTERVAL;
@@ -82,13 +94,7 @@ void device_init(CpuType *cpu, DeviceClockType *dev_clock)
 	device_init_timer(&mpu_address_map.map[MPU_ADDRESS_REGION_INX_PH0]);
 
 	device_init_serial(&mpu_address_map.map[MPU_ADDRESS_REGION_INX_SERIAL]);
-	device_ex_serial_register_ops(0U, &device_ex_serial_op);
-	if (cpuemu_get_devcfg_string("SERIAL_FILE_PATH", &path) == STD_E_OK) {
-		device_ex_serial_register_ops(1U, &device_ex_serial_file_op);
-	}
-	else {
-		device_ex_serial_register_ops(1U, &device_ex_serial_op);
-	}
+	device_register_serial_ops();
 #ifndef DISABLE_CAN
 	cpuemu_get_devcfg_value("DEBUG_FUNC_ENABLE_MROS", &enable_mros);
 	if (enable_mros != 0) {
@@ -125,6 +131,23 @@ void device_init(CpuType *cpu, DeviceClockType *dev_clock)
 	device_init_athrill_exdev();
 #endif /* EXDEV_ENABLE */
 	return;
+}
+
+void device_reset(CpuType *cpu, DeviceClockType *dev_clock)
+{
+	/* Reset only emulated state.  device_init() also creates FIFO/VDEV/external
+	 * resources and registers their operations, which are process-lifetime. */
+	dev_clock->clock = 0;
+	dev_clock->intclock = 0;
+	dev_clock->min_intr_interval = DEVICE_CLOCK_MAX_INTERVAL;
+	dev_clock->can_skip_clock = FALSE;
+	dev_clock->is_halt = FALSE;
+	device_init_clock(&mpu_address_map.map[MPU_ADDRESS_REGION_INX_PH0]);
+	device_init_intc(cpu, &mpu_address_map.map[MPU_ADDRESS_REGION_INX_INTC]);
+	device_init_timer(&mpu_address_map.map[MPU_ADDRESS_REGION_INX_PH0]);
+	/* device_init_serial() clears the per-channel output operations. */
+	device_init_serial(&mpu_address_map.map[MPU_ADDRESS_REGION_INX_SERIAL]);
+	device_register_serial_ops();
 }
 
 void device_supply_clock(DeviceClockType *dev_clock)
@@ -168,31 +191,31 @@ void device_supply_clock(DeviceClockType *dev_clock)
 }
 
 
-int device_io_write8(MpuAddressRegionType *region,  uint32 addr, uint8 data)
+int device_io_write8(MpuAddressRegionType *region,  AthrillAddrType addr, uint8 data)
 {
 	return region->ops->put_data8(region, CPU_CONFIG_CORE_ID_0, (addr & region->mask), data);
 }
-int device_io_write16(MpuAddressRegionType *region, uint32 addr, uint16 data)
+int device_io_write16(MpuAddressRegionType *region, AthrillAddrType addr, uint16 data)
 {
 	return region->ops->put_data16(region, CPU_CONFIG_CORE_ID_0, (addr & region->mask), data);
 }
 
-int device_io_write32(MpuAddressRegionType *region, uint32 addr, uint32 data)
+int device_io_write32(MpuAddressRegionType *region, AthrillAddrType addr, uint32 data)
 {
 	return region->ops->put_data32(region, CPU_CONFIG_CORE_ID_0, (addr & region->mask), data);
 }
 
-int device_io_read8(MpuAddressRegionType *region, uint32 addr, uint8 *data)
+int device_io_read8(MpuAddressRegionType *region, AthrillAddrType addr, uint8 *data)
 {
 	return region->ops->get_data8(region, CPU_CONFIG_CORE_ID_0, (addr & region->mask), data);
 }
 
-int device_io_read16(MpuAddressRegionType *region, uint32 addr, uint16 *data)
+int device_io_read16(MpuAddressRegionType *region, AthrillAddrType addr, uint16 *data)
 {
 	return region->ops->get_data16(region, CPU_CONFIG_CORE_ID_0, (addr & region->mask), data);
 }
 
-int device_io_read32(MpuAddressRegionType *region, uint32 addr, uint32 *data)
+int device_io_read32(MpuAddressRegionType *region, AthrillAddrType addr, uint32 *data)
 {
 	return region->ops->get_data32(region, CPU_CONFIG_CORE_ID_0, (addr & region->mask), data);
 }
