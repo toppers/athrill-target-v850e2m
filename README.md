@@ -2,6 +2,10 @@
 ![example workflow](https://github.com/toppers/athrill-target-v850e2m/actions/workflows/build.yml/badge.svg)
 
 v850e2m Target dependencies for [Athrill](https://github.com/toppers/athrill)
+
+See the [configuration reference](docs/configuration.md) for every V850 target parameter and the link to the common
+Athrill options, memory map, and core parameters.
+
 ## Build
 
 Check out this repository and [Athrill](https://github.com/toppers/athrill) side by side; the build uses the sibling `../athrill` checkout:
@@ -57,4 +61,3 @@ Pass `-DATHRILL_SOURCE_DIR=<path>` to use an Athrill checkout somewhere else.
 ## License
 
 This repository is distributed with [TOPPERS License](https://toppers.jp/en/license.html).
-
